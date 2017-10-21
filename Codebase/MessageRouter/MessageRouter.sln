@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter", "MessageRouter\MessageRouter.csproj", "{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter.Tests", "MessageRouter.Tests\MessageRouter.Tests.csproj", "{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9795E1F7-EDC1-4B4C-AADF-5BB529187C83}
+	EndGlobalSection
+EndGlobal
