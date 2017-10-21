@@ -44,8 +44,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GuidMessageIdTests.cs" />
+    <Compile Include="Messages\DataMessageTests.cs" />
+    <Compile Include="Messages\GuidMessageIdTests.cs" />
+    <Compile Include="Messages\MessageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestTaskTests.cs" />
+    <Compile Include="Serialization\BinarySerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

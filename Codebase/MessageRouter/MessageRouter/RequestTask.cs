@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessageRouter.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,18 +21,18 @@ namespace MessageRouter
         /// <summary>
         /// Stores a readonly reference to an action that will send a response <see cref="Message"/>
         /// </summary>
-        public readonly Action<Message> Handler;
+        public readonly Action<Message> ResponseHandler;
 
 
         /// <summary>
         /// Initializes a new instance of a RequestTask composed of the supplied request <see cref="Message"/> and handler
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="responseAction"></param>
-        public RequestTask(Message request, Action<Message> responseAction)
+        /// <param name="responseHandler"></param>
+        public RequestTask(Message request, Action<Message> responseHandler)
         {
             Request = request ?? throw new ArgumentNullException(nameof(request));
-            Handler = responseAction ?? throw new ArgumentNullException(nameof(responseAction));
+            ResponseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
         }
     }
 }
