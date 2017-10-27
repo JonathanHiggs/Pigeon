@@ -1,4 +1,5 @@
-﻿using MessageRouter.Messages;
+﻿using MessageRouter.Client;
+using MessageRouter.Messages;
 using MessageRouter.Senders;
 using Moq;
 using NUnit.Framework;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Tests
+namespace MessageRouter.Tests.Client
 {
     [TestFixture]
     public class MessageClientTests

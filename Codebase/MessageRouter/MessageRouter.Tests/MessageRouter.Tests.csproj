@@ -51,7 +51,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageClientTests.cs" />
+    <Compile Include="Client\MessageClientTests.cs" />
     <Compile Include="Messages\DataMessageTests.cs" />
     <Compile Include="Messages\GuidMessageIdTests.cs" />
     <Compile Include="Messages\MessageFactoryTests.cs" />

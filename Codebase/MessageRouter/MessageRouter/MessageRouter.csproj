@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMessageClient.cs" />
-    <Compile Include="MessageClient.cs" />
+    <Compile Include="Client\IMessageClient.cs" />
+    <Compile Include="Client\MessageClient.cs" />
     <Compile Include="Messages\DataMessage.cs" />
     <Compile Include="Messages\GuidMessageId.cs" />
     <Compile Include="IAddress.cs" />
@@ -58,6 +58,13 @@
     <Compile Include="Senders\ISenderManager.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
+    <Compile Include="Server\IMessageServer.cs" />
+    <Compile Include="Server\IRequestDispatcher.cs" />
+    <Compile Include="Server\IRequestHandler.cs" />
+    <Compile Include="Server\IServerInfo.cs" />
+    <Compile Include="Server\MessageServer.cs" />
+    <Compile Include="Server\RequestDispatcher.cs" />
+    <Compile Include="Server\ServerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Routing\" />

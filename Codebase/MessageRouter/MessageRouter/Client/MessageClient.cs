@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter
+namespace MessageRouter.Client
 {
     /// <summary>
     /// Basic client to make synchronous calls to a remote
