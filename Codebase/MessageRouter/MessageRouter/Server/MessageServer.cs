@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Server
 {
+    /// <summary>
+    /// Basic implementation of active server process that accepts and responds to incoming requests
+    /// </summary>
     public class MessageServer : IMessageServer<IServerInfo>
     {
         private readonly IMessageFactory messageFactory;
@@ -22,6 +25,13 @@ namespace MessageRouter.Server
         public IServerInfo ServerInfo => serverInfo;
 
 
+        /// <summary>
+        /// Initializes a new instance of MessageServer
+        /// </summary>
+        /// <param name="messageFactory"><see cref="IMessageFactory"/> dependency for constructing <see cref="Message"/>s and extracting request objects</param>
+        /// <param name="receiverManager"><see cref="IReceiverManager"/> dependency for managing <see cref="IReceiver"/>s</param>
+        /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> dependency for routing and handling incoming requests</param>
+        /// <param name="name">Name identifying the server</param>
         public MessageServer(IMessageFactory messageFactory, IReceiverManager receiverManager, IRequestDispatcher requestDispatcher, string name)
         {
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
@@ -37,6 +47,9 @@ namespace MessageRouter.Server
         }
 
 
+        /// <summary>
+        /// Synchronously starts the server accepting requests
+        /// </summary>
         public void Run()
         {
             var tokenSource = new CancellationTokenSource();
@@ -44,6 +57,10 @@ namespace MessageRouter.Server
         }
 
 
+        /// <summary>
+        /// Synchronously starts the server accepting requests
+        /// </summary>
+        /// <param name="cancellationToken"></param>
         public void Run(CancellationToken cancellationToken)
         {
             lock (runLock)
@@ -60,7 +77,7 @@ namespace MessageRouter.Server
             {
                 var task = receiverManager.Receive();
 
-                Reply(task);
+                HandleRequestTask(task);
 
                 Thread.Yield();
             }
@@ -73,16 +90,25 @@ namespace MessageRouter.Server
         }
 
 
-        private void Reply(RequestTask task)
+        /// <summary>
+        /// Extracts and responds to requests
+        /// </summary>
+        /// <param name="requestTask">Incoming request task</param>
+        public void HandleRequestTask(RequestTask requestTask)
         {
-            var requestObject = messageFactory.ExtractRequest<object>(task.Request);
+            var requestObject = messageFactory.ExtractRequest<object>(requestTask.Request);
             var responseObject = requestDispatcher.Handle(requestObject);
             var responseMessage = CreateResponse(responseObject);
-            task.ResponseHandler(responseMessage);
+            requestTask.ResponseHandler(responseMessage);
         }
 
 
-        private Message CreateResponse(object responseObject)
+        /// <summary>
+        /// Wraps a response object in a <see cref="Message"/> for returning to remote source
+        /// </summary>
+        /// <param name="responseObject">Response object</param>
+        /// <returns>Response <see cref="Message"/></returns>
+        public Message CreateResponse(object responseObject)
         {
             var createResponse = typeof(IMessageFactory)
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)

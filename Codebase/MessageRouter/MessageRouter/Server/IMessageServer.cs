@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Server
 {
+    /// <summary>
+    /// Interface controls the active server process that accepts and responds to incoming requests 
+    /// </summary>
+    /// <typeparam name="TServerInfo">Type of <see cref="IServerInfo"/> data object the server keeps so
+    /// implemetations can control what state information they expose</typeparam>
     public interface IMessageServer<TServerInfo>
     {
         /// <summary>

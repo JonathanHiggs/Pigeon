@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace MessageRouter.Server
 {
     /// <summary>
-    /// 
+    /// Interface for defining the handling of the specified request type that
+    /// gets registered to an <see cref="IRequestDispatcher"/>
     /// </summary>
-    /// <typeparam name="TRequest"></typeparam>
-    /// <typeparam name="TResponse"></typeparam>
+    /// <typeparam name="TRequest">Type of request object</typeparam>
+    /// <typeparam name="TResponse">Type of response object</typeparam>
     public interface IRequestHandler<TRequest, TResponse>
     {
         /// <summary>

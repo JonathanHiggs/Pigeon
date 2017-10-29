@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MessageRouter</RootNamespace>
     <AssemblyName>MessageRouter</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +65,8 @@
     <Compile Include="Server\IServerInfo.cs" />
     <Compile Include="Server\MessageServer.cs" />
     <Compile Include="Server\RequestDispatcher.cs" />
+    <Compile Include="Server\RequestHandlerDelegate.cs" />
+    <Compile Include="Server\RequestHandlerFunction.cs" />
     <Compile Include="Server\ServerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
