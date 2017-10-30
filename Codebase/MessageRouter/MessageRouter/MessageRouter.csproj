@@ -57,6 +57,9 @@
     <Compile Include="RequestTask.cs" />
     <Compile Include="Senders\ISenderFactory.cs" />
     <Compile Include="Senders\ISenderManager.cs" />
+    <Compile Include="Senders\SenderAlreadyRegisteredException.cs" />
+    <Compile Include="Senders\SenderManager.cs" />
+    <Compile Include="Senders\SenderNotRegisteredException.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Server\IMessageServer.cs" />
@@ -69,8 +72,6 @@
     <Compile Include="Server\RequestHandlerFunction.cs" />
     <Compile Include="Server\ServerInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Routing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
