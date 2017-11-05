@@ -32,10 +32,9 @@ namespace MessageRouter.Messages
         /// <summary>
         /// Extracts a request object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
         /// </summary>
-        /// <typeparam name="TRequest">Type of the request object</typeparam>
         /// <param name="requestMessage">Request Message wrapper</param>
         /// <returns>Request object</returns>
-        TRequest ExtractRequest<TRequest>(Message requestMessage) where TRequest : class;
+        object ExtractRequest(Message requestMessage);
 
 
         /// <summary>

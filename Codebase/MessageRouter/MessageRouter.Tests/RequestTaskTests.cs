@@ -33,7 +33,7 @@ namespace MessageRouter.Tests
             TestDelegate test = () => new RequestTask(null, handler);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
 
 
@@ -47,7 +47,7 @@ namespace MessageRouter.Tests
             TestDelegate test = () => new RequestTask(request, null);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
     }
 }

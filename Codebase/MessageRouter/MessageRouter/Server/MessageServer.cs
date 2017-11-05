@@ -77,7 +77,7 @@ namespace MessageRouter.Server
             {
                 var task = receiverManager.Receive();
 
-                HandleRequestTask(task);
+                HandleAndRespond(task);
 
                 Thread.Yield();
             }
@@ -94,9 +94,9 @@ namespace MessageRouter.Server
         /// Extracts and responds to requests
         /// </summary>
         /// <param name="requestTask">Incoming request task</param>
-        public void HandleRequestTask(RequestTask requestTask)
+        public void HandleAndRespond(RequestTask requestTask)
         {
-            var requestObject = messageFactory.ExtractRequest<object>(requestTask.Request);
+            var requestObject = messageFactory.ExtractRequest(requestTask.Request);
             var responseObject = requestDispatcher.Handle(requestObject);
             var responseMessage = CreateResponse(responseObject);
             requestTask.ResponseHandler(responseMessage);

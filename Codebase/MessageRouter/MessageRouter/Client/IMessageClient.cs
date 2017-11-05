@@ -18,17 +18,5 @@ namespace MessageRouter.Client
         TResponse Send<TResponse, TRequest>(TRequest request)
             where TRequest : class
             where TResponse : class;
-
-
-        /// <summary>
-        /// Initializes connections to remotes
-        /// </summary>
-        void Start();
-
-
-        /// <summary>
-        /// Terminates connections to remotes
-        /// </summary>
-        void Stop();
     }
 }

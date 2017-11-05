@@ -108,7 +108,7 @@ namespace MessageRouter.Tests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), request);
 
             // Act
-            var extractedRequest = factory.ExtractRequest<object>(message);
+            var extractedRequest = factory.ExtractRequest(message);
 
             // Assert
             Assert.AreSame(request, extractedRequest);
@@ -122,24 +122,10 @@ namespace MessageRouter.Tests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), new object());
 
             // Act
-            var extractedRequest = factory.ExtractRequest<Message>(message);
+            var extractedRequest = factory.ExtractRequest(message);
 
             // Assert
             Assert.AreSame(message, extractedRequest);
-        }
-
-
-        [Test]
-        public void ExtractRequest_WithDifferentWrappedType_ThrowsInvalidCastException()
-        {
-            // Arrange
-            var message = new DataMessage<String>(new GuidMessageId(), String.Empty);
-
-            // Act
-            TestDelegate test = () => factory.ExtractRequest<List<String>>(message);
-
-            // Assert
-            Assert.That(test, Throws.InstanceOf<InvalidCastException>());
         }
         #endregion
 

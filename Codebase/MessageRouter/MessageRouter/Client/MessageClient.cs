@@ -49,23 +49,5 @@ namespace MessageRouter.Client
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
         }
-
-
-        /// <summary>
-        /// Initializes connections to remotes
-        /// </summary>
-        public void Start()
-        {
-            senderManager.Start();
-        }
-
-
-        /// <summary>
-        /// Terminates connections to remotes
-        /// </summary>
-        public void Stop()
-        {
-            senderManager.Stop();
-        }
     }
 }

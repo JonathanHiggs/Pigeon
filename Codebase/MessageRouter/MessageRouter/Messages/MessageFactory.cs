@@ -39,12 +39,11 @@ namespace MessageRouter.Messages
         /// <summary>
         /// Extracts a request object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
         /// </summary>
-        /// <typeparam name="TRequest">Type of the request object</typeparam>
         /// <param name="requestMessage">Request Message wrapper</param>
         /// <returns>Request object</returns>
-        public TRequest ExtractRequest<TRequest>(Message requestMessage) where TRequest : class
+        public object ExtractRequest(Message requestMessage)
         {
-            return Extract<TRequest>(requestMessage);
+            return requestMessage.Body;
         }
 
 
@@ -56,7 +55,12 @@ namespace MessageRouter.Messages
         /// <returns>Response object</returns>
         public TResponse ExtractResponse<TResponse>(Message responseMessage) where TResponse : class
         {
-            return Extract<TResponse>(responseMessage);
+            if (typeof(TResponse).IsAssignableFrom(responseMessage.GetType()) && typeof(TResponse) != typeof(object))
+                return responseMessage as TResponse;
+            else if (responseMessage is DataMessage<TResponse>)
+                return (responseMessage as DataMessage<TResponse>).Data;
+            else
+                throw new InvalidCastException($"Unable to extract type {typeof(TResponse).Name} from message");
         }
 
 
@@ -66,18 +70,6 @@ namespace MessageRouter.Messages
             if (typeof(Message).IsAssignableFrom(data.GetType()))
                 return data as Message;
             return new DataMessage<T>(new GuidMessageId(), data);
-        }
-
-
-        private T Extract<T>(Message message)
-            where T : class
-        {
-            if (typeof(T).IsAssignableFrom(message.GetType()) && typeof(T) != typeof(object))
-                return message as T;
-            else if (message is DataMessage<T>)
-                return (message as DataMessage<T>).Data;
-            else
-                throw new InvalidCastException($"Unable to extract type {typeof(T).Name} from message");
         }
     }
 }

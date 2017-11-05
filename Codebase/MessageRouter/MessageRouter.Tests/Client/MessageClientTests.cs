@@ -60,6 +60,7 @@ namespace MessageRouter.Tests.Client
                 .Returns<Message>(m => m);
         }
 
+
         #region Constructor
         [Test]
         public void MessageClient_WithDependencies_Initializes()
@@ -79,7 +80,7 @@ namespace MessageRouter.Tests.Client
             TestDelegate test = () => new MessageClient(null, messageFactory);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
 
 
@@ -90,7 +91,7 @@ namespace MessageRouter.Tests.Client
             TestDelegate test = () => new MessageClient(senderManager, null);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
         #endregion
 
@@ -198,7 +199,7 @@ namespace MessageRouter.Tests.Client
             TestDelegate test = () => messageClient.Send<object, object>(null);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
 
 
@@ -221,39 +222,5 @@ namespace MessageRouter.Tests.Client
             Assert.That(test, Throws.InstanceOf<IOException>());
         }
         #endregion
-
-
-        [Test]
-        public void Start_CallsSenderManagerStart()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-
-            // Act
-            messageClient.Start();
-
-            // Assert
-            mockSenderManager
-                .Verify(
-                    m => m.Start(),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Stop_CallsSenderManagerStop()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-
-            // Act
-            messageClient.Stop();
-
-            // Assert
-            mockSenderManager
-                .Verify(
-                    m => m.Stop(),
-                    Times.Once);
-        }
     }
 }

@@ -33,7 +33,7 @@ namespace MessageRouter.Tests
             TestDelegate test = () => new DataMessage<object>(null, data);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
 
 
@@ -47,7 +47,7 @@ namespace MessageRouter.Tests
             TestDelegate test = () => new DataMessage<object>(id, null);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<ArgumentNullException>());
+            Assert.That(test, Throws.ArgumentNullException);
         }
 
 
