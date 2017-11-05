@@ -48,10 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetMQReceiver.cs" />
+    <Compile Include="NetMQReceiverManager.cs" />
+    <Compile Include="NetMQSender.cs" />
+    <Compile Include="NetMQSenderFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MessageRouter\MessageRouter.csproj">
+      <Project>{c2a46fa7-da9e-4f04-8d00-58cdd401d5f2}</Project>
+      <Name>MessageRouter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
