@@ -49,7 +49,9 @@
     <Compile Include="Messages\IMessageFactory.cs" />
     <Compile Include="Messages\IMessageId.cs" />
     <Compile Include="Receivers\IReceiver.cs" />
+    <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverManager.cs" />
+    <Compile Include="Receivers\ReceiverManager.cs" />
     <Compile Include="Senders\ISender.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageFactory.cs" />

@@ -1,18 +1,18 @@
-﻿using MessageRouter.Receivers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Addresses;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.Receivers
 {
-    public class NetMQReceiverManager : IReceiverManager
+    public class ReceiverManager : IReceiverManager
     {
-        private readonly NetMQReceiver receiver;
+        private IReceiver receiver;
 
-
-        public NetMQReceiverManager(NetMQReceiver receiver)
+        
+        public ReceiverManager(IReceiver receiver)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
         }

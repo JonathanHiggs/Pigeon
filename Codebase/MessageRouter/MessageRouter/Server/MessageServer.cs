@@ -29,7 +29,7 @@ namespace MessageRouter.Server
         /// Initializes a new instance of MessageServer
         /// </summary>
         /// <param name="messageFactory"><see cref="IMessageFactory"/> dependency for constructing <see cref="Message"/>s and extracting request objects</param>
-        /// <param name="receiverManager"><see cref="IReceiverManager"/> dependency for managing <see cref="IReceiver"/>s</param>
+        /// <param name="receiverManager"><see cref="IReceiverFactory"/> dependency for managing <see cref="IReceiver"/>s</param>
         /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> dependency for routing and handling incoming requests</param>
         /// <param name="name">Name identifying the server</param>
         public MessageServer(IMessageFactory messageFactory, IReceiverManager receiverManager, IRequestDispatcher requestDispatcher, string name)

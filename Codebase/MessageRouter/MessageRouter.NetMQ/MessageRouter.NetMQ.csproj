@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NetMQReceiver.cs" />
-    <Compile Include="NetMQReceiverManager.cs" />
+    <Compile Include="NetMQReceiverFactory.cs" />
     <Compile Include="NetMQSender.cs" />
     <Compile Include="NetMQSenderFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
