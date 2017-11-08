@@ -45,7 +45,7 @@
     <Compile Include="Client\MessageClient.cs" />
     <Compile Include="Messages\DataMessage.cs" />
     <Compile Include="Messages\GuidMessageId.cs" />
-    <Compile Include="IAddress.cs" />
+    <Compile Include="Addresses\IAddress.cs" />
     <Compile Include="Messages\IMessageFactory.cs" />
     <Compile Include="Messages\IMessageId.cs" />
     <Compile Include="Receivers\IReceiver.cs" />
@@ -71,6 +71,7 @@
     <Compile Include="Server\RequestHandlerDelegate.cs" />
     <Compile Include="Server\RequestHandlerFunction.cs" />
     <Compile Include="Server\ServerInfo.cs" />
+    <Compile Include="Addresses\TcpAddress.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

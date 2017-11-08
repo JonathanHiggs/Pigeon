@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Tests.Serialization
+namespace MessageRouter.UnitTests.Serialization
 {
     [TestFixture]
     public class BinarySerializerTests

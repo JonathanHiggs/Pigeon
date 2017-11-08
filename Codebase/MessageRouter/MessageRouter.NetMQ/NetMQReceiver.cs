@@ -1,4 +1,5 @@
-﻿using MessageRouter.Messages;
+﻿using MessageRouter.Addresses;
+using MessageRouter.Messages;
 using MessageRouter.Receivers;
 using MessageRouter.Serialization;
 using NetMQ;
@@ -51,9 +52,6 @@ namespace MessageRouter.NetMQ
         public RequestTask Receive()
         {
             var requestMessage = routerSocket.ReceiveMultipartMessage();
-
-            if (requestMessage.FrameCount != 3 || requestMessage.FrameCount != 5)
-                throw new InvalidOperationException("Request message has unexpected FrameCount");
             
             var request = ExtractRequest(requestMessage);
 
@@ -93,10 +91,10 @@ namespace MessageRouter.NetMQ
 
         private Message ExtractRequest(NetMQMessage message)
         {
-            if (message.FrameCount == 3)
+            if (message.FrameCount == 3 || message.FrameCount == 4)
                 // Synchronous messages have request in slot 2
                 return binarySerializer.Deserialize<Message>(message[2].ToByteArray());
-            else if (message.FrameCount == 5)
+            else if (message.FrameCount == 5 || message.FrameCount == 6)
                 // Asynchronous messages have request in slot 4
                 return binarySerializer.Deserialize<Message>(message[4].ToByteArray());
             else

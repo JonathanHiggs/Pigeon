@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using MessageRouter.Messages;
 
-namespace MessageRouter.Tests
+namespace MessageRouter.UnitTests
 {
     [TestFixture]
     public class GuidMessageIdTests

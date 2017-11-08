@@ -7,6 +7,7 @@ using MessageRouter.Messages;
 using MessageRouter.Serialization;
 using NetMQ.Sockets;
 using NetMQ;
+using MessageRouter.Addresses;
 
 namespace MessageRouter.NetMQ
 {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Messages
 {
+    [Serializable]
     public class GuidMessageId : IMessageId
     {
         private Guid guid;

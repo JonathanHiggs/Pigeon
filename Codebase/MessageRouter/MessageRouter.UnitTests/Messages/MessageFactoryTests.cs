@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MessageRouter.Messages;
 using System.Collections.Generic;
 
-namespace MessageRouter.Tests.Messages
+namespace MessageRouter.UnitTests.Messages
 {
     [TestFixture]
     public class MessageFactoryTests

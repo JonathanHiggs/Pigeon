@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Tests.Server
+namespace MessageRouter.UnitTests.Server
 {
     [TestFixture]
     public class MessageServerTests
@@ -143,8 +143,7 @@ namespace MessageRouter.Tests.Server
             var messageServer = new MessageServer(messageFactory, receiverManager, requestDispatcher, name);
             var requestObject = "something";
             var message = new DataMessage<string>(new GuidMessageId(), requestObject);
-            var responded = false;
-            var task = new RequestTask(message, _ => responded = true);
+            var task = new RequestTask(message, _ => { });
 
             // Act
             messageServer.HandleAndRespond(task);
@@ -164,8 +163,7 @@ namespace MessageRouter.Tests.Server
             var messageServer = new MessageServer(messageFactory, receiverManager, requestDispatcher, name);
             var requestObject = "something";
             var message = new DataMessage<string>(new GuidMessageId(), requestObject);
-            var responded = false;
-            var task = new RequestTask(message, _ => responded = true);
+            var task = new RequestTask(message, _ => { });
 
             // Act
             messageServer.HandleAndRespond(task);

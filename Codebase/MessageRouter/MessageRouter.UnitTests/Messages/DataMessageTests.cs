@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace MessageRouter.Tests
+namespace MessageRouter.UnitTests
 {
     [TestFixture]
     public class DataMessageTests
