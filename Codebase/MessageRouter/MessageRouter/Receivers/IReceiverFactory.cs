@@ -9,11 +9,15 @@ using MessageRouter.Addresses;
 namespace MessageRouter.Receivers
 {
     /// <summary>
-    /// Manages the state of Receivers and can be used to combine several Receivers to create a remote that
-    /// can receiver requests from multiple sources
+    /// Factory for <see cref="IReceiver"/>s
     /// </summary>
     public interface IReceiverFactory
     {
+        /// <summary>
+        /// Creates a new instance of a <see cref="IReceiver"/> bound to the spllied <see cref="IAddress"/>
+        /// </summary>
+        /// <param name="address">Address of local bind</param>
+        /// <returns>Receiver bound to the address</returns>
         IReceiver Create(IAddress address);
     }
 }

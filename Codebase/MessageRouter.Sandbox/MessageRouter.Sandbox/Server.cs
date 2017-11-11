@@ -1,6 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.NetMQ;
+using MessageRouter.Receivers;
 using MessageRouter.Serialization;
 using MessageRouter.Server;
 using NetMQ.Sockets;
@@ -19,7 +20,8 @@ namespace MessageRouter.Sandbox
             var socket = new RouterSocket();
             var serializer = new BinarySerializer();
             var receiver = new NetMQReceiver(socket, serializer);
-            var receiverManager = new NetMQReceiverManager(receiver);
+            //var receiverFactory = new NetMQReceiverFactory(receiver);
+            var receiverManager = new ReceiverManager(receiver);
             var messageFactory = new MessageFactory();
             var requestDispatcher = new RequestDispatcher();
             var server = new MessageServer(messageFactory, receiverManager, requestDispatcher, "Server");

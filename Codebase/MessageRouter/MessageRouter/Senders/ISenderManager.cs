@@ -13,10 +13,10 @@ namespace MessageRouter.Senders
     public interface ISenderManager
     {
         /// <summary>
-        /// Registers a 
+        /// Registers an <see cref="IAddress"/> as the remote destination for the Request type
         /// </summary>
-        /// <typeparam name="TRequest"></typeparam>
-        /// <param name="address"></param>
+        /// <typeparam name="TRequest">Type of request object</typeparam>
+        /// <param name="address">Address of remote</param>
         void Add<TRequest>(IAddress address);
 
 

@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,37 +14,53 @@ namespace MessageRouter.Senders
     public class SenderManager : ISenderManager
     {
         private readonly ISenderFactory senderFactory;
+        private readonly Dictionary<IAddress, ISender> senders = new Dictionary<IAddress, ISender>();
         private readonly Dictionary<Type, ISender> routingTable = new Dictionary<Type, ISender>();
         private readonly object lockObj = new object();
 
 
+        /// <summary>
+        /// Initializes a new SenderFactory
+        /// </summary>
+        /// <param name="senderFactory">SenderFactory dependency</param>
         public SenderManager(ISenderFactory senderFactory)
         {
             this.senderFactory = senderFactory ?? throw new ArgumentNullException(nameof(senderFactory));
         }
 
 
+        /// <summary>
+        /// Registers an <see cref="IAddress"/> as the remote destination for the Request type
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request object</typeparam>
+        /// <param name="address">Address of remote</param>
         public void Add<TRequest>(IAddress address)
         {
             lock (lockObj)
             {
                 foreach (var kv in routingTable)
                     if (kv.Key.IsAssignableFrom(typeof(TRequest)))
-                        throw new SenderAlreadyRegisteredException<TRequest>(kv.Value);
+                        throw new SenderAlreadyRegisteredException(kv.Value, typeof(TRequest));
 
-                var sender = senderFactory.Create(address);
+                var sender = GetOrCreate(address);
 
                 routingTable.Add(typeof(TRequest), sender);
             }
         }
 
+
+        /// <summary>
+        /// Resolves a <see cref="ISender"/> for the type of the request with the configured routing
+        /// </summary>
+        /// <typeparam name="TRequest">Request type</typeparam>
+        /// <returns>Sender for the request type</returns>
         public ISender SenderFor<TRequest>()
         {
             foreach (var kv in routingTable)
                 if (kv.Key.IsAssignableFrom(typeof(TRequest)))
                     return kv.Value;
 
-            throw new SenderNotRegisteredException<TRequest>();
+            throw new SenderNotRegisteredException(typeof(TRequest));
         }
 
 
@@ -68,6 +85,19 @@ namespace MessageRouter.Senders
         {
             Add<TRequest>(address);
             return this;
+        }
+
+
+        private ISender GetOrCreate(IAddress address)
+        {
+            if (senders.ContainsKey(address))
+                return senders[address];
+
+            var sender = senderFactory.Create(address);
+
+            senders[address] = sender;
+
+            return sender;
         }
     }
 }

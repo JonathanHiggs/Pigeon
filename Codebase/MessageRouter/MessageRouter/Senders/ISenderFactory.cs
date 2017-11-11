@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Senders
 {
+    /// <summary>
+    /// Factory <see cref="ISender"/>s
+    /// </summary>
     public interface ISenderFactory
     {
         /// <summary>
