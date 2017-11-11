@@ -39,7 +39,7 @@ namespace MessageRouter.NetMQ.Tests
             var request = new DataMessage<string>(new GuidMessageId(), "Hi?");
 
             // Act
-            var response = sender.Send(request).Body.ToString();
+            var response = sender.SendAndReceive(request).Body.ToString();
 
             // Assert
             Assert.That(response, Is.EqualTo("Hello"));

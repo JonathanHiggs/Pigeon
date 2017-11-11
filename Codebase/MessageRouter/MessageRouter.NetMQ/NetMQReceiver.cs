@@ -15,7 +15,7 @@ namespace MessageRouter.NetMQ
     public class NetMQReceiver : IReceiver
     {
         private readonly ICollection<IAddress> addresses = new List<IAddress>();
-        private readonly RouterSocket routerSocket;
+        protected readonly RouterSocket routerSocket;
         private readonly ISerializer<byte[]> binarySerializer;
 
 

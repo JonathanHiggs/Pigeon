@@ -45,7 +45,7 @@ namespace MessageRouter.Client
 
             var requestMessage = messageFactory.CreateRequest<TRequest>(request);
             var sender = senderManager.SenderFor<TRequest>();
-            var responseMessage = sender.Send(requestMessage);
+            var responseMessage = sender.SendAndReceive(requestMessage);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
         }

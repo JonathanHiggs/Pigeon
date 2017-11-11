@@ -44,6 +44,6 @@ namespace MessageRouter
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        Message Send(Message message);
+        Message SendAndReceive(Message message);
     }
 }

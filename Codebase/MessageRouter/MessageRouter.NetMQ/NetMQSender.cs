@@ -50,7 +50,7 @@ namespace MessageRouter.NetMQ
         }
 
 
-        public Message Send(Message message)
+        public Message SendAndReceive(Message message)
         {
             var requestMessage = new NetMQMessage();
             requestMessage.AppendEmptyFrame();

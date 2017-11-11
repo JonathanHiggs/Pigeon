@@ -56,7 +56,7 @@ namespace MessageRouter.UnitTests.Client
                 .Returns(sender);
 
             mockSender
-                .Setup(m => m.Send(It.IsAny<Message>()))
+                .Setup(m => m.SendAndReceive(It.IsAny<Message>()))
                 .Returns<Message>(m => m);
         }
 
@@ -165,7 +165,7 @@ namespace MessageRouter.UnitTests.Client
             // Assert
             mockSender
                 .Verify(
-                    m => m.Send(It.IsAny<Message>()),
+                    m => m.SendAndReceive(It.IsAny<Message>()),
                     Times.Once);
         }
 
@@ -212,7 +212,7 @@ namespace MessageRouter.UnitTests.Client
             var exception = new IOException();
 
             mockSender
-                .Setup(m => m.Send(It.IsAny<Message>()))
+                .Setup(m => m.SendAndReceive(It.IsAny<Message>()))
                 .Returns(new DataMessage<Exception>(new GuidMessageId(), exception));
 
             // Act
