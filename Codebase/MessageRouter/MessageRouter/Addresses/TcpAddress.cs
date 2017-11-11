@@ -47,6 +47,11 @@ namespace MessageRouter.Addresses
             {
                 return new TcpAddress("localhost", port);
             }
+
+            public TcpAddress Named(string name, int port)
+            {
+                return new TcpAddress(name, port);
+            }
         }
     }
 }
