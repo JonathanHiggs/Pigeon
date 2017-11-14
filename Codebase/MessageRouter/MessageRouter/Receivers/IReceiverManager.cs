@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace MessageRouter.Receivers
 {
     /// <summary>
-    /// Manages the state of Receivers and can be used to combine several Receivers to create a remote that
-    /// can receiver requests from multiple sources
+    /// Manages the state of <see cref="IReceiver"/>s and can be used to combine several to create a remote that
+    /// can accept incoming requests from multiple sources and transports
     /// </summary>
     public interface IReceiverManager
     {

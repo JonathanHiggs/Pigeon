@@ -9,7 +9,8 @@ using MessageRouter.Addresses;
 namespace MessageRouter.Receivers
 {
     /// <summary>
-    /// Interface encapsulates a connection that is able to receive and synchronously reply to incoming messages from a remote
+    /// Interface encapsulates a connection that is able to bind to an <see cref="IAddress"/> to receive and synchronously reply 
+    /// to incoming messages from remote <see cref="ISender"/>
     /// </summary>
     public interface IReceiver
     {
@@ -29,12 +30,12 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Stops the receiver listening for incoming messages on the specified <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address">Bound address to unbind</param>
         void Unbind(IAddress address);
 
 
         /// <summary>
-        /// Synchronously retrieves a <see cref="RequestTask"/>
+        /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>
         /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
         RequestTask Receive();

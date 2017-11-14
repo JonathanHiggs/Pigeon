@@ -1,5 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Messages;
+using MessageRouter.Receivers;
+using MessageRouter.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace MessageRouter
 {
     /// <summary>
-    /// Interface encapsulates a connection to a remote that is able to be sent synchronous requests
+    /// Interface encapsulates a connection to a remote that is able to be sent synchronous <see cref="Message"/>s
     /// </summary>
     public interface ISender
     {
@@ -20,7 +22,7 @@ namespace MessageRouter
 
 
         /// <summary>
-        /// Gets the type of the message serializer the sender uses
+        /// Gets the type of the message <see cref="ISerializer<>"/> the sender uses
         /// </summary>
         Type SerializerType { get; }
 
@@ -40,7 +42,7 @@ namespace MessageRouter
 
 
         /// <summary>
-        /// Sends a request <see cref="Message"/> to the connected remote and returns the response <see cref="Message"/>
+        /// Sends a request <see cref="Message"/> to the connected remote<see cref="IReeceiver"/> and returns the response <see cref="Message"/>
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>

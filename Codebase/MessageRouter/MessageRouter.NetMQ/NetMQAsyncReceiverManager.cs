@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ
 {
     /// <summary>
-    /// 
+    /// NetMQ implementation of <see cref="IAsyncReceiverManager"/>. Manages the state of NetMQ <see cref="NetMQAsyncReceiver"/>s
     /// </summary>
     public class NetMQAsyncReceiverManager : IAsyncReceiverManager
     {
@@ -19,6 +19,9 @@ namespace MessageRouter.NetMQ
         private Task pollerTask;
 
 
+        /// <summary>
+        /// Raised when an incoming message is received
+        /// </summary>
         public event RequestTaskDelegate RequestReceived;
 
 

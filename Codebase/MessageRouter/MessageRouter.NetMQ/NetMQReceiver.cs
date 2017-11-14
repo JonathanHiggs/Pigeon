@@ -12,6 +12,11 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.NetMQ
 {
+    /// <summary>
+    /// Implementation of <see cref="IReceiver"/> that wraps a NetMQ <see cref="RouterSocket"/>. Encapsulates a connection
+    /// that is able to bind to an <see cref="IAddress"/> to receive and synchronously reply to incoming messages from
+    /// connected remote <see cref="ISender"/>s
+    /// </summary>
     public class NetMQReceiver : IReceiver
     {
         private readonly ICollection<IAddress> addresses = new List<IAddress>();
@@ -19,9 +24,17 @@ namespace MessageRouter.NetMQ
         private readonly ISerializer<byte[]> binarySerializer;
 
 
+        /// <summary>
+        /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
+        /// </summary>
         public IEnumerable<IAddress> Addresses => addresses;
 
 
+        /// <summary>
+        /// Initializes a new instance of a NetMQReceiver
+        /// </summary>
+        /// <param name="routerSocket">Inner NetMQ RouterSocket</param>
+        /// <param name="binarySerializer">Binary serializer</param>
         public NetMQReceiver(RouterSocket routerSocket, ISerializer<byte[]> binarySerializer)
         {
             this.routerSocket = routerSocket ?? throw new ArgumentNullException(nameof(routerSocket));
@@ -29,6 +42,10 @@ namespace MessageRouter.NetMQ
         }
 
 
+        /// <summary>
+        /// Starts the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// </summary>
+        /// <param name="address">Address to bind to</param>
         public void Bind(IAddress address)
         {
             if (!addresses.Contains(address))
@@ -39,6 +56,10 @@ namespace MessageRouter.NetMQ
         }
 
 
+        /// <summary>
+        /// Stops the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// </summary>
+        /// <param name="address">Bound address to unbind</param>
         public void Unbind(IAddress address)
         {
             if (addresses.Contains(address))
@@ -49,6 +70,10 @@ namespace MessageRouter.NetMQ
         }
 
 
+        /// <summary>
+        /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
+        /// </summary>
+        /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
         public RequestTask Receive()
         {
             var requestMessage = routerSocket.ReceiveMultipartMessage();
