@@ -49,10 +49,14 @@
     <Compile Include="Addresses\IAddress.cs" />
     <Compile Include="Messages\IMessageFactory.cs" />
     <Compile Include="Messages\IMessageId.cs" />
+    <Compile Include="Receivers\IAsyncReceiver.cs" />
+    <Compile Include="Receivers\IAsyncReceiverManager.cs" />
     <Compile Include="Receivers\IReceiver.cs" />
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverManager.cs" />
     <Compile Include="Receivers\ReceiverManager.cs" />
+    <Compile Include="Receivers\RequestTaskDelegate.cs" />
+    <Compile Include="Senders\IAsyncSender.cs" />
     <Compile Include="Senders\ISender.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageFactory.cs" />
@@ -65,6 +69,8 @@
     <Compile Include="Diagnostics\SenderNotRegisteredException.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
+    <Compile Include="Server\AsyncMessageServer.cs" />
+    <Compile Include="Server\IAsyncMessageServer.cs" />
     <Compile Include="Server\IMessageServer.cs" />
     <Compile Include="Server\IRequestDispatcher.cs" />
     <Compile Include="Server\IRequestHandler.cs" />
