@@ -13,24 +13,32 @@ namespace MessageRouter.Senders
     public interface ISenderManager
     {
         /// <summary>
-        /// Registers an <see cref="IAddress"/> as the remote destination for the Request type
+        /// Registers an <see cref="IAddress"/> as the remote destination for the TRequest type
         /// </summary>
         /// <typeparam name="TRequest">Type of request object</typeparam>
         /// <param name="address">Address of remote</param>
-        void Add<TRequest>(IAddress address);
-
-
-        void AddAsync<TRequest>(IAddress address);
+        void AddRequestMapping<TRequest>(IAddress address);
 
 
         /// <summary>
-        /// Resolves a <see cref="ISender"/> for the type of the request with the configured routing
+        /// Resolves an <see cref="ISender"/> for the type of the request with the configured routing
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <returns>Sender for the request type</returns>
         ISender SenderFor<TRequest>();
 
 
+        /// <summary>
+        /// Resolves an <see cref="IAsyncSender"/> for the type of the request with the configured routing
+        /// </summary>
+        /// <typeparam name="TRequest">Request type</typeparam>
+        /// <returns>Sender for the request type</returns>
         IAsyncSender AsyncSenderFor<TRequest>();
+
+
+        void Start();
+
+
+        void Stop();
     }
 }

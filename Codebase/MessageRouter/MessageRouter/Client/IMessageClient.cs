@@ -23,5 +23,11 @@ namespace MessageRouter.Client
         Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, double timeout)
             where TRequest : class
             where TResponse : class;
+
+
+        void Start();
+
+
+        void Stop();
     }
 }

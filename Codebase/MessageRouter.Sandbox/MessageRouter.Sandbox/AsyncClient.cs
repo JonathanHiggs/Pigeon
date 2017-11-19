@@ -18,7 +18,7 @@ namespace MessageRouter.Sandbox
         {
             var random = new Random();
             var poller = new NetMQPoller();
-            var senderFactory = new NetMQSenderFactory();
+            var senderFactory = new NetMQSenderFactory(poller);
             var senderManager = new NetMQSenderManager(senderFactory, poller);
             var messageFactory = new MessageFactory();
             var client = new MessageClient(senderManager, messageFactory);
@@ -26,10 +26,9 @@ namespace MessageRouter.Sandbox
             Console.WriteLine("Enter server name: ");
             var serverName = Console.ReadLine();
 
-            senderManager.AddAsync<TestMessage>(TcpAddress.Client.Named(serverName, 5555));
-
-            poller.RunAsync();
-
+            senderManager.AddRequestMapping<TestMessage>(TcpAddress.Client.Named(serverName, 5555));
+            client.Start();
+            
             Console.WriteLine("Press return to send message");
             Console.WriteLine("Enter 'stop' to end");
 
@@ -41,16 +40,23 @@ namespace MessageRouter.Sandbox
                 
                 Task.Factory.StartNew(async () =>
                 {
-                    var request = new TestMessage { Num = random.Next(100) };
-                    Console.WriteLine($"Sending: {request.Num}");
+                    try
+                    {
+                        var request = new TestMessage { Num = random.Next(100) };
+                        Console.WriteLine($"Sending: {request.Num}");
 
-                    var response = await client.SendAsync<TestMessage, TestMessage>(request, 99999);
-                    Console.WriteLine($"Received: {response.Num}");
+                        var response = await client.SendAsync<TestMessage, TestMessage>(request, 99999);
+                        Console.WriteLine($"Received: {response.Num}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 });
             }
             while (true);
 
-            poller.StopAsync();
+            client.Stop();
         }
     }
 }

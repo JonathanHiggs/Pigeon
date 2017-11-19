@@ -11,27 +11,32 @@ namespace MessageRouter.Addresses
         private int port;
         private string address;
 
+
         public TcpAddress(string address, int port)
         {
             this.port = port;
             this.address = address;
         }
 
+
         public bool Equals(IAddress other)
         {
-            throw new NotImplementedException();
+            return this.ToString() == other.ToString();
         }
+
 
         public override string ToString()
         {
             return $"tcp://{address}:{port}";
         }
 
+
         private static ServerBuilder serverBuilder = new ServerBuilder();
         public static ServerBuilder Server => serverBuilder;
 
         private static ClientBuilder clientBuilder = new ClientBuilder();
         public static ClientBuilder Client => clientBuilder;
+
 
         public class ServerBuilder
         {
@@ -40,6 +45,7 @@ namespace MessageRouter.Addresses
                 return new TcpAddress("*", port);
             }
         }
+
 
         public class ClientBuilder
         {

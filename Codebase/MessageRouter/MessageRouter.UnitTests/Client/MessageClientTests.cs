@@ -216,7 +216,7 @@ namespace MessageRouter.UnitTests.Client
                 .Returns(new DataMessage<Exception>(new GuidMessageId(), exception));
 
             // Act
-            TestDelegate test = () => messageClient.Send<string, object>(request);
+            TestDelegate test = () => messageClient.Send<object, string>(request);
 
             // Assert
             Assert.That(test, Throws.InstanceOf<IOException>());

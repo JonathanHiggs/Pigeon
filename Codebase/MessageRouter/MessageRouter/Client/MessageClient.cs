@@ -64,5 +64,11 @@ namespace MessageRouter.Client
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
         }
+
+
+        public void Start() => senderManager.Start();
+
+
+        public void Stop() => senderManager.Stop();
     }
 }

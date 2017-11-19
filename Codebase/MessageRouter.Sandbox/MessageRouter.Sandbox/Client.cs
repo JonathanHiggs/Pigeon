@@ -3,6 +3,7 @@ using MessageRouter.Client;
 using MessageRouter.Messages;
 using MessageRouter.NetMQ;
 using MessageRouter.Senders;
+using NetMQ;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,8 @@ namespace MessageRouter.Sandbox
         public static void Run()
         {
             var random = new Random();
-            var senderFactory = new NetMQSenderFactory();
+            var poller = new NetMQPoller();
+            var senderFactory = new NetMQSenderFactory(poller);
             var senderManager = new SenderManager(senderFactory);
             var messageFactory = new MessageFactory();
             var client = new MessageClient(senderManager, messageFactory);
@@ -24,7 +26,7 @@ namespace MessageRouter.Sandbox
             Console.WriteLine("Enter server name: ");
             var serverName = Console.ReadLine();
 
-            senderManager.Add<TestMessage>(TcpAddress.Client.Named(serverName, 5555));
+            senderManager.AddRequestMapping<TestMessage>(TcpAddress.Client.Named(serverName, 5555));
 
             while (true)
             {

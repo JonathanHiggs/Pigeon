@@ -1,6 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
+using NetMQ;
 using NetMQ.Sockets;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,14 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQSenderFactory : ISenderFactory
     {
+        private readonly NetMQPoller poller;
         private readonly ISerializer<byte[]> binarySerializer = new BinarySerializer();
+
+
+        public NetMQSenderFactory(NetMQPoller poller)
+        {
+            this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
+        }
 
 
         /// <summary>
@@ -45,6 +53,7 @@ namespace MessageRouter.NetMQ
             var asyncSocket = new AsyncSocket(dealerSocket);
             var sender = new NetMQAsyncSender(asyncSocket, binarySerializer);
 
+            poller.Add(dealerSocket);
             sender.Connect(address);
 
             return sender;
