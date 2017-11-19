@@ -82,6 +82,8 @@ namespace MessageRouter.Server
 
                 running = false;
                 serverInfo.StartUpTimeStamp = null;
+
+                receiverManager.Stop();
             }
         }
 

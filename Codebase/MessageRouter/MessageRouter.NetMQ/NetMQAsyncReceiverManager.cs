@@ -16,7 +16,6 @@ namespace MessageRouter.NetMQ
     {
         private readonly NetMQAsyncReceiver receiver;
         private readonly NetMQPoller poller;
-        private Task pollerTask;
 
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace MessageRouter.NetMQ
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             this.poller = new NetMQPoller { receiver.PollableSocket };
 
-            receiver.RequestReceived += RequestReceived;
+            receiver.RequestReceived += OnRequestReceived;
         }
 
 
@@ -53,6 +52,13 @@ namespace MessageRouter.NetMQ
         public void Stop()
         {
             poller.StopAsync();
+            receiver.UnbindAll();
+        }
+
+
+        private void OnRequestReceived(object sender, RequestTask requestTask)
+        {
+            RequestReceived?.Invoke(sender, requestTask);
         }
     }
 }

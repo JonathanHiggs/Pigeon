@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ.Tests
 {
     [TestFixture]
-    public class TestClass
+    public class SenderReceiverTest
     {
         [Test]
-        public void TestMethod()
+        public void SendAndReceive()
         {
             // Arrange
             var binarySerializer = new BinarySerializer();

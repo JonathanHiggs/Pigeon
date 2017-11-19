@@ -70,6 +70,15 @@ namespace MessageRouter.NetMQ
         }
 
 
+        public void UnbindAll()
+        {
+            foreach (var address in addresses)
+                routerSocket.Unbind(address.ToString());
+
+            addresses.Clear();
+        }
+
+
         /// <summary>
         /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>

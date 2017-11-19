@@ -21,6 +21,9 @@ namespace MessageRouter.NetMQ
         private object requestIdLockObj = new object();
 
 
+        public ISocketPollable PollableSocket => socket;
+
+
         /// <summary>
         /// Initializes a new instance of an AsyncSocket
         /// </summary>

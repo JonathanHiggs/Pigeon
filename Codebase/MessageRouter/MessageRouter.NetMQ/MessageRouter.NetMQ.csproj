@@ -56,6 +56,7 @@
     <Compile Include="NetMQReceiverFactory.cs" />
     <Compile Include="NetMQSender.cs" />
     <Compile Include="NetMQSenderFactory.cs" />
+    <Compile Include="NetMQSenderManager.cs" />
     <Compile Include="NetMQTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

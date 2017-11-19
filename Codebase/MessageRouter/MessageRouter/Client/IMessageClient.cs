@@ -11,11 +11,16 @@ namespace MessageRouter.Client
         /// <summary>
         /// Dispatches a request to a remote routed by the <see cref="ISenderManager"/>
         /// </summary>
-        /// <typeparam name="TResponse">Expected reponse type</typeparam>
         /// <typeparam name="TRequest">Request type</typeparam>
+        /// <typeparam name="TResponse">Expected reponse type</typeparam>
         /// <param name="request">Request object</param>
         /// <returns>Response object</returns>
-        TResponse Send<TResponse, TRequest>(TRequest request)
+        TResponse Send<TRequest, TResponse>(TRequest request)
+            where TRequest : class
+            where TResponse : class;
+
+
+        Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, double timeout)
             where TRequest : class
             where TResponse : class;
     }

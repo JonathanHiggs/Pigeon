@@ -34,6 +34,9 @@ namespace MessageRouter.Receivers
         void Unbind(IAddress address);
 
 
+        void UnbindAll();
+
+
         /// <summary>
         /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>

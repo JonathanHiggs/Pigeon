@@ -20,11 +20,17 @@ namespace MessageRouter.Senders
         void Add<TRequest>(IAddress address);
 
 
+        void AddAsync<TRequest>(IAddress address);
+
+
         /// <summary>
         /// Resolves a <see cref="ISender"/> for the type of the request with the configured routing
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <returns>Sender for the request type</returns>
         ISender SenderFor<TRequest>();
+
+
+        IAsyncSender AsyncSenderFor<TRequest>();
     }
 }

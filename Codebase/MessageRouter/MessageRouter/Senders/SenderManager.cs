@@ -15,7 +15,9 @@ namespace MessageRouter.Senders
     {
         private readonly ISenderFactory senderFactory;
         private readonly Dictionary<IAddress, ISender> senders = new Dictionary<IAddress, ISender>();
+        private readonly Dictionary<IAddress, IAsyncSender> asyncSenders = new Dictionary<IAddress, IAsyncSender>();
         private readonly Dictionary<Type, ISender> routingTable = new Dictionary<Type, ISender>();
+        private readonly Dictionary<Type, IAsyncSender> asyncRoutingTable = new Dictionary<Type, IAsyncSender>();
         private readonly object lockObj = new object();
 
 
@@ -49,6 +51,21 @@ namespace MessageRouter.Senders
         }
 
 
+        public void AddAsync<TRequest>(IAddress address)
+        {
+            lock (lockObj)
+            {
+                foreach (var kv in asyncRoutingTable)
+                    if (kv.Key.IsAssignableFrom(typeof(TRequest)))
+                        throw new SenderAlreadyRegisteredException(kv.Value, typeof(TRequest));
+
+                var sender = GetOrCreateAsync(address);
+
+                asyncRoutingTable.Add(typeof(TRequest), sender);
+            }
+        }
+
+
         /// <summary>
         /// Resolves a <see cref="ISender"/> for the type of the request with the configured routing
         /// </summary>
@@ -57,6 +74,16 @@ namespace MessageRouter.Senders
         public ISender SenderFor<TRequest>()
         {
             foreach (var kv in routingTable)
+                if (kv.Key.IsAssignableFrom(typeof(TRequest)))
+                    return kv.Value;
+
+            throw new SenderNotRegisteredException(typeof(TRequest));
+        }
+
+
+        public IAsyncSender AsyncSenderFor<TRequest>()
+        {
+            foreach (var kv in asyncRoutingTable)
                 if (kv.Key.IsAssignableFrom(typeof(TRequest)))
                     return kv.Value;
 
@@ -88,7 +115,7 @@ namespace MessageRouter.Senders
         }
 
 
-        private ISender GetOrCreate(IAddress address)
+        protected ISender GetOrCreate(IAddress address)
         {
             if (senders.ContainsKey(address))
                 return senders[address];
@@ -96,6 +123,19 @@ namespace MessageRouter.Senders
             var sender = senderFactory.Create(address);
 
             senders[address] = sender;
+
+            return sender;
+        }
+
+
+        protected IAsyncSender GetOrCreateAsync(IAddress address)
+        {
+            if (asyncSenders.ContainsKey(address))
+                return asyncSenders[address];
+
+            var sender = senderFactory.CreateAsync(address);
+
+            asyncSenders[address] = sender;
 
             return sender;
         }

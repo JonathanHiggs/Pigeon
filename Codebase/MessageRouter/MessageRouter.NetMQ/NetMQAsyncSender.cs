@@ -35,6 +35,9 @@ namespace MessageRouter.NetMQ
         public Type SerializerType => typeof(ISerializer<byte[]>);
 
 
+        public ISocketPollable PollableSocket => socket.PollableSocket;
+
+
         /// <summary>
         /// Initializes a new instance of a NetMQAsyncSender
         /// </summary>
@@ -93,13 +96,13 @@ namespace MessageRouter.NetMQ
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        public async Task<Message> SendAndReceiveAsync(Message request)
+        public async Task<Message> SendAndReceiveAsync(Message request, double timeout = 0.0)
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();
             message.Append(binarySerializer.Serialize<Message>(request));
 
-            var responseMessage = await socket.SendAndReceive(message);
+            var responseMessage = await socket.SendAndReceive(message, timeout);
 
             return binarySerializer.Deserialize<Message>(responseMessage[1].ToByteArray());
         }

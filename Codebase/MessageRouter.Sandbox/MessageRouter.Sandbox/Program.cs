@@ -23,8 +23,16 @@ namespace MessageRouter.Sandbox
                     Server.Run();
                     break;
 
+                case "AsyncServer":
+                    AsyncServer.Run();
+                    break;
+
                 case "Client":
                     Client.Run();
+                    break;
+
+                case "AsyncClient":
+                    AsyncClient.Run();
                     break;
 
                 default:

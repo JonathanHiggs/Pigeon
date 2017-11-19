@@ -18,7 +18,8 @@ namespace MessageRouter.Senders
         /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
         /// </summary>
         /// <param name="message">Request message</param>
+        /// <param name="timeout"></param>
         /// <returns>Response message</returns>
-        Task<Message> SendAndReceiveAsync(Message message);
+        Task<Message> SendAndReceiveAsync(Message message, double timeout);
     }
 }
