@@ -77,15 +77,22 @@ namespace MessageRouter.Server
             }
 
             // Main loop
-            do
+            try
             {
-                var task = receiverManager.Receive();
+                do
+                {
+                    var task = receiverManager.Receive();
 
-                HandleAndRespond(task);
+                    HandleAndRespond(task);
 
-                Thread.Yield();
+                    Thread.Yield();
+                }
+                while (!cancellationToken.IsCancellationRequested);
             }
-            while (!cancellationToken.IsCancellationRequested);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             lock (runLock)
             {

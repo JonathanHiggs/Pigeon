@@ -42,7 +42,7 @@ namespace MessageRouter.Sandbox
         private static TestMessage Handler(TestMessage request)
         {
             Console.WriteLine($"Received {request.Num}");
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
             Console.WriteLine($"Responding to {request.Num}");
             return new TestMessage { Num = request.Num + 1 };
         }

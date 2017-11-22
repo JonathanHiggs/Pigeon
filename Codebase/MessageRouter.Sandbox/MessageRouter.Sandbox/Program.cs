@@ -10,33 +10,45 @@ namespace MessageRouter.Sandbox
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter the subprogram name: ");
-            var name = Console.ReadLine();
-
-            switch (name)
+            while (true)
             {
-                case "SenderReceiver":
-                    SenderReceiver.Run();
-                    break;
+                Console.Write("Enter Exit to quit");
+                Console.Write("Enter the subprogram name: ");
+                var name = Console.ReadLine();
 
-                case "Server":
-                    Server.Run();
-                    break;
+                switch (name)
+                {
+                    case "SenderReceiver":
+                        SenderReceiver.Run();
+                        break;
 
-                case "AsyncServer":
-                    AsyncServer.Run();
-                    break;
+                    case "Server":
+                        Server.Run();
+                        break;
 
-                case "Client":
-                    Client.Run();
-                    break;
+                    case "AsyncServer":
+                        AsyncServer.Run();
+                        break;
 
-                case "AsyncClient":
-                    AsyncClient.Run();
-                    break;
+                    case "Client":
+                        Client.Run();
+                        break;
 
-                default:
-                    throw new NotImplementedException();
+                    case "AsyncClient":
+                        AsyncClient.Run();
+                        break;
+
+                    case "Clear":
+                        Console.Clear();
+                        break;
+
+                    case "Exit":
+                        return;
+
+                    default:
+                        Console.WriteLine($"Subprogram not recognised");
+                        break;
+                }
             }
         }
     }

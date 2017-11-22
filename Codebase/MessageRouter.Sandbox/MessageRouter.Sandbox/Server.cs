@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MessageRouter.Sandbox
@@ -30,13 +31,22 @@ namespace MessageRouter.Sandbox
 
             receiver.Bind(TcpAddress.Wildcard(5555));
 
-            server.Run();
+            var cancel = new CancellationTokenSource();
+            var serverTask = Task.Factory.StartNew(() => server.Run(cancel.Token));
+            
+            Console.WriteLine("Press enter to stop server");
+            Console.ReadLine();
+
+            cancel.Cancel();
+            receiver.UnbindAll();
         }
 
 
         private static TestMessage Handler(TestMessage request)
         {
             Console.WriteLine($"Received {request.Num}");
+            Thread.Sleep(3000);
+            Console.WriteLine($"Returning {request.Num + 1}");
             return new TestMessage { Num = request.Num + 1 };
         }
     }
