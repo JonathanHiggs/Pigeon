@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Addresses
 {
+    /// <summary>
+    /// Represents different methods of addressing a remote resource
+    /// </summary>
     public interface IAddress : IEquatable<IAddress>
     {
     }

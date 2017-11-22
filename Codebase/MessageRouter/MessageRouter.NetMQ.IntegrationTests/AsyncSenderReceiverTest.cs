@@ -36,8 +36,8 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var request = new DataMessage<string>(new GuidMessageId(), "Hello");
             
             // Act
-            receiver.Bind(TcpAddress.Server.Port(5555));
-            sender.Connect(TcpAddress.Client.Localhost(5555));
+            receiver.Bind(TcpAddress.Wildcard(5555));
+            sender.Connect(TcpAddress.Localhost(5555));
             receiverManager.Start();
 
             var response = await sender.SendAndReceiveAsync(request, 3600.0);

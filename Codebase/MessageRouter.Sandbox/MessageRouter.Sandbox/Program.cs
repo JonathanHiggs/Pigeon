@@ -10,34 +10,36 @@ namespace MessageRouter.Sandbox
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter the subprogram name: ");
-            var name = Console.ReadLine();
+            RegexTest.Run();
 
-            switch (name)
-            {
-                case "SenderReceiver":
-                    SenderReceiver.Run();
-                    break;
+            //Console.WriteLine("Enter the subprogram name: ");
+            //var name = Console.ReadLine();
 
-                case "Server":
-                    Server.Run();
-                    break;
+            //switch (name)
+            //{
+            //    case "SenderReceiver":
+            //        SenderReceiver.Run();
+            //        break;
 
-                case "AsyncServer":
-                    AsyncServer.Run();
-                    break;
+            //    case "Server":
+            //        Server.Run();
+            //        break;
 
-                case "Client":
-                    Client.Run();
-                    break;
+            //    case "AsyncServer":
+            //        AsyncServer.Run();
+            //        break;
 
-                case "AsyncClient":
-                    AsyncClient.Run();
-                    break;
+            //    case "Client":
+            //        Client.Run();
+            //        break;
 
-                default:
-                    throw new NotImplementedException();
-            }
+            //    case "AsyncClient":
+            //        AsyncClient.Run();
+            //        break;
+
+            //    default:
+            //        throw new NotImplementedException();
+            //}
 
         }
     }

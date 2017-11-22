@@ -26,7 +26,7 @@ namespace MessageRouter.Sandbox
             Console.WriteLine("Enter server name: ");
             var serverName = Console.ReadLine();
 
-            senderManager.AddRequestMapping<TestMessage>(TcpAddress.Client.Named(serverName, 5555));
+            senderManager.AddRequestMapping<TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555));
 
             while (true)
             {
