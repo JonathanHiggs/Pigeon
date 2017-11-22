@@ -15,6 +15,14 @@ namespace MessageRouter.Client
     {
         private readonly ISenderManager senderManager;
         private readonly IMessageFactory messageFactory;
+        private bool running = false;
+        private object lockObj = new object();
+
+
+        /// <summary>
+        /// Gets the status of the client
+        /// </summary>
+        public bool IsRunning => running;
 
 
         /// <summary>
@@ -51,7 +59,31 @@ namespace MessageRouter.Client
         }
 
 
-        public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, double timeout = 3600.0)
+        /// <summary>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// Default timeout of one hour
+        /// </summary>
+        /// <typeparam name="TRequest">Request type</typeparam>
+        /// <typeparam name="TResponse">Expected response type</typeparam>
+        /// <param name="request">Request object</param>
+        /// <returns>Response object</returns>
+        public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request)
+            where TRequest : class
+            where TResponse : class
+        {
+            return await SendAsync<TRequest, TResponse>(request, TimeSpan.FromHours(1));
+        }
+
+
+        /// <summary>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// </summary>
+        /// <typeparam name="TRequest">Request type</typeparam>
+        /// <typeparam name="TResponse">Expected response type</typeparam>
+        /// <param name="request">Request object</param>
+        /// <param name="timeout">Time to wait for a response before throwing an exception</param>
+        /// <returns>Response object</returns>
+        public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, TimeSpan timeout)
             where TRequest : class
             where TResponse : class
         {
@@ -66,9 +98,35 @@ namespace MessageRouter.Client
         }
 
 
-        public void Start() => senderManager.Start();
+        /// <summary>
+        /// Starts the <see cref="Client"/> running
+        /// </summary>
+        public void Start()
+        {
+            lock (lockObj)
+            {
+                if (running)
+                    throw new InvalidOperationException($"{GetType().Name} is already running");
+
+                senderManager.Start();
+                running = true;
+            }
+        }
 
 
-        public void Stop() => senderManager.Stop();
+        /// <summary>
+        /// Stops the <see cref="Client"/> running and disconnects <see cref="ISender"/>
+        /// </summary>
+        public void Stop()
+        {
+            lock (lockObj)
+            {
+                if (!running)
+                    throw new InvalidOperationException($"{GetType().Name} is not running");
+
+                senderManager.Stop();
+                running = false;
+            }
+        }
     }
 }

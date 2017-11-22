@@ -40,7 +40,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             sender.Connect(TcpAddress.Localhost(5555));
             receiverManager.Start();
 
-            var response = await sender.SendAndReceiveAsync(request, 3600.0);
+            var response = await sender.SendAndReceiveAsync(request);
 
             receiverManager.Stop();
 

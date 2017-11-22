@@ -45,7 +45,7 @@ namespace MessageRouter.Sandbox
                         var request = new TestMessage { Num = random.Next(100) };
                         Console.WriteLine($"Sending: {request.Num}");
 
-                        var response = await client.SendAsync<TestMessage, TestMessage>(request, 99999);
+                        var response = await client.SendAsync<TestMessage, TestMessage>(request);
                         Console.WriteLine($"Received: {response.Num}");
                     }
                     catch (Exception ex)

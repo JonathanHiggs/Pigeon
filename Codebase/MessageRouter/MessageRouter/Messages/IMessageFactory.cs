@@ -39,6 +39,7 @@ namespace MessageRouter.Messages
 
         /// <summary>
         /// Extracts a responce object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
+        /// ToDo: Add Action<Exception> exception handler
         /// </summary>
         /// <typeparam name="TResponse">Type of the response object</typeparam>
         /// <param name="responseMessage">Response Message wrapper</param>

@@ -36,9 +36,15 @@ namespace MessageRouter.Senders
         IAsyncSender AsyncSenderFor<TRequest>();
 
 
+        /// <summary>
+        /// Starts the <see cref="SenderManager"/> running
+        /// </summary>
         void Start();
 
 
+        /// <summary>
+        /// Stops the <see cref="SenderManager"/> running and disconnects <see cref="ISender"/>s
+        /// </summary>
         void Stop();
     }
 }

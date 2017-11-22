@@ -86,6 +86,5 @@
     <Compile Include="Server\ServerInfo.cs" />
     <Compile Include="Addresses\TcpAddress.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

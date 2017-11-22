@@ -93,16 +93,28 @@ namespace MessageRouter.NetMQ
 
         /// <summary>
         /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
+        /// Default 1 hour timeout
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        public async Task<Message> SendAndReceiveAsync(Message request, double timeout = 0.0)
+        public async Task<Message> SendAndReceiveAsync(Message request)
+        {
+            return await SendAndReceiveAsync(request, TimeSpan.FromHours(1));
+        }
+
+
+        /// <summary>
+        /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
+        /// </summary>
+        /// <param name="message">Request message</param>
+        /// <returns>Response message</returns>
+        public async Task<Message> SendAndReceiveAsync(Message request, TimeSpan timeout)
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();
             message.Append(binarySerializer.Serialize<Message>(request));
 
-            var responseMessage = await socket.SendAndReceive(message, timeout);
+            var responseMessage = await socket.SendAndReceive(message, timeout.TotalMilliseconds);
 
             return binarySerializer.Deserialize<Message>(responseMessage[1].ToByteArray());
         }
