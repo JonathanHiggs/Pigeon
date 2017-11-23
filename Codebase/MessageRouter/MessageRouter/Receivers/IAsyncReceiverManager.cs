@@ -19,13 +19,13 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Asynchronously starts the receiver manager running
+        /// Starts accepting incoming requests
         /// </summary>
         void Start();
 
 
         /// <summary>
-        /// Stops the asynchronous receiver manager
+        /// Stops accepting incoming requests
         /// </summary>
         void Stop();
     }

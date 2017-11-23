@@ -18,19 +18,18 @@ namespace MessageRouter.Sandbox
     {
         public static void Run()
         {
+            var address = TcpAddress.Wildcard(5555);
             var socket = new RouterSocket();
             var serializer = new BinarySerializer();
             var receiver = new NetMQReceiver(socket, serializer);
             //var receiverFactory = new NetMQReceiverFactory(receiver);
-            var receiverManager = new ReceiverManager(receiver);
+            var receiverManager = new ReceiverManager(receiver, address);
             var messageFactory = new MessageFactory();
             var requestDispatcher = new RequestDispatcher();
             var server = new MessageServer(messageFactory, receiverManager, requestDispatcher, "Server");
 
             requestDispatcher.Register<TestMessage, TestMessage>(Handler);
-
-            receiver.Bind(TcpAddress.Wildcard(5555));
-
+            
             var cancel = new CancellationTokenSource();
             var serverTask = Task.Factory.StartNew(() => server.Run(cancel.Token));
             
@@ -38,7 +37,6 @@ namespace MessageRouter.Sandbox
             Console.ReadLine();
 
             cancel.Cancel();
-            receiver.UnbindAll();
         }
 
 

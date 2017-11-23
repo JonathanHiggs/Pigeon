@@ -70,12 +70,29 @@ namespace MessageRouter.NetMQ
         }
 
 
+        /// <summary>
+        /// Stops the receiver listening for incoming messages on all <see cref="IAddress"/>es
+        /// </summary>
         public void UnbindAll()
         {
             foreach (var address in addresses)
                 routerSocket.Unbind(address.ToString());
 
             addresses.Clear();
+        }
+
+
+        public bool TryReceive(out RequestTask requestTask)
+        {
+            NetMQMessage message = default(NetMQMessage);
+            if (!routerSocket.TryReceiveMultipartMessage(ref message))
+            {
+                requestTask = default(RequestTask);
+                return false;
+            }
+
+            requestTask = Handle(message);
+            return true;
         }
 
 
@@ -86,7 +103,12 @@ namespace MessageRouter.NetMQ
         public RequestTask Receive()
         {
             var requestMessage = routerSocket.ReceiveMultipartMessage();
-            
+            return Handle(requestMessage);
+        }
+
+
+        private RequestTask Handle(NetMQMessage requestMessage)
+        {
             var request = ExtractRequest(requestMessage);
 
             var requestTask = new RequestTask(request, (response) =>

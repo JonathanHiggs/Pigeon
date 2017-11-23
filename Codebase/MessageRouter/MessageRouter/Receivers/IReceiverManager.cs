@@ -14,9 +14,29 @@ namespace MessageRouter.Receivers
     public interface IReceiverManager
     {
         /// <summary>
-        /// Synchronously retrieves a RequestTask incoming from a remote
+        /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
         /// </summary>
-        /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
+        /// <returns></returns>
         RequestTask Receive();
+
+
+        /// <summary>
+        /// Synchronously tries receiving a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
+        /// </summary>
+        /// <param name="requestTask">RequestTask</param>
+        /// <returns></returns>
+        bool TryReceive(out RequestTask requestTask);
+
+
+        /// <summary>
+        /// Starts accepting incoming requests
+        /// </summary>
+        void Start();
+
+
+        /// <summary>
+        /// Stops accepting incoming requests
+        /// </summary>
+        void Stop();
     }
 }

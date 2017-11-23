@@ -74,6 +74,7 @@ namespace MessageRouter.Server
 
                 running = true;
                 serverInfo.StartUpTimeStamp = DateTime.Now;
+                receiverManager.Start();
             }
 
             // Main loop
@@ -81,11 +82,10 @@ namespace MessageRouter.Server
             {
                 do
                 {
-                    var task = receiverManager.Receive();
-
-                    HandleAndRespond(task);
-
-                    Thread.Yield();
+                    if (receiverManager.TryReceive(out var task))
+                        HandleAndRespond(task);
+                    
+                    //Thread.Yield();
                 }
                 while (!cancellationToken.IsCancellationRequested);
             }
@@ -98,6 +98,7 @@ namespace MessageRouter.Server
             {
                 running = false;
                 serverInfo.StartUpTimeStamp = null;
+                receiverManager.Stop();
             }
         }
 

@@ -22,7 +22,7 @@ namespace MessageRouter
         /// Stores a readonly reference to an action that will send a response <see cref="Message"/>
         /// </summary>
         public readonly Action<Message> ResponseHandler;
-
+        
 
         /// <summary>
         /// Initializes a new instance of a RequestTask composed of the supplied request <see cref="Message"/> and handler

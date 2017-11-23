@@ -14,25 +14,56 @@ namespace MessageRouter.Receivers
     public class ReceiverManager : IReceiverManager
     {
         private IReceiver receiver;
+        private IAddress address;
 
         
         /// <summary>
         /// Initializes a ReceiverManager
         /// </summary>
         /// <param name="receiver">IReceiver endpoint</param>
-        public ReceiverManager(IReceiver receiver)
+        public ReceiverManager(IReceiver receiver, IAddress address)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
+            this.address = address ?? throw new ArgumentNullException(nameof(address));
         }
 
 
         /// <summary>
-        /// Synchronously retrieves a RequestTask incoming from a remote
+        /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
         /// </summary>
-        /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
+        /// <returns></returns>
         public RequestTask Receive()
         {
             return receiver.Receive();
+        }
+
+
+        /// <summary>
+        /// Synchronously tries receiving a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
+        /// </summary>
+        /// <param name="requestTask">RequestTask</param>
+        /// <returns></returns>
+        public bool TryReceive(out RequestTask requestTask)
+        {
+            return receiver.TryReceive(out requestTask);
+        }
+
+
+        /// <summary>
+        /// Binds the <see cref="IReceiver"/> to the <see cref="IAddress"/> to start accepting incoming requests
+        /// </summary>
+        public void Start()
+        {
+            receiver.Bind(address);
+        }
+
+
+        /// <summary>
+        /// Unbinds the <see cref="IReceiver"/> from the <see cref="IAddress"/> to stop accepting incoming requests
+        /// </summary>
+        public void Stop()
+        {
+            receiver.UnbindAll();
         }
     }
 }
