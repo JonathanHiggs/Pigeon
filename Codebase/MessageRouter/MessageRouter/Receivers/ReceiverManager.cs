@@ -54,7 +54,8 @@ namespace MessageRouter.Receivers
         /// </summary>
         public void Start()
         {
-            receiver.Bind(address);
+            receiver.Add(address);
+            receiver.Bind();
         }
 
 

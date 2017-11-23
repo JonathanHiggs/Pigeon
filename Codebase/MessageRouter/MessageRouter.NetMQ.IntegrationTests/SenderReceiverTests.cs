@@ -24,15 +24,14 @@ namespace MessageRouter.NetMQ.Tests
             var dealerSocket = new DealerSocket();
             var sender = new NetMQSender(dealerSocket, binarySerializer);
             
-            receiver.Bind(TcpAddress.Wildcard(5555));
+            receiver.Add(TcpAddress.Wildcard(5555));
+            receiver.Bind();
             sender.Connect(TcpAddress.Localhost(5555));
 
             Task.Factory.StartNew(() =>
             {
                 var r = receiver.Receive();
-
                 var ret = new DataMessage<string>(new GuidMessageId(), "Hello");
-
                 r.ResponseHandler(ret);
             });
 

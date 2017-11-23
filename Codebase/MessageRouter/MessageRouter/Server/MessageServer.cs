@@ -80,19 +80,16 @@ namespace MessageRouter.Server
             // Main loop
             try
             {
-                do
+                while(true)
                 {
                     if (receiverManager.TryReceive(out var task))
                         HandleAndRespond(task);
-                    
-                    //Thread.Yield();
+
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
-                while (!cancellationToken.IsCancellationRequested);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            catch (OperationCanceledException)
+            { }
 
             lock (runLock)
             {

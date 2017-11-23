@@ -21,23 +21,41 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Starts the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
         /// </summary>
-        /// <param name="address">Address to bind to</param>
-        void Bind(IAddress address);
+        /// <param name="address"></param>
+        void Add(IAddress address);
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Message"/>s on
         /// </summary>
-        /// <param name="address">Bound address to unbind</param>
-        void Unbind(IAddress address);
+        void RemoveAll();
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming messages on all <see cref="IAddress"/>es
+        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Message"/>s on
+        /// </summary>
+        /// <param name="address"></param>
+        void Remove(IAddress address);
+
+        
+        /// <summary>
+        /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
+        /// </summary>
+        void Bind();
+
+
+        /// <summary>
+        /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         void UnbindAll();
+
+
+        /// <summary>
+        /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
+        /// </summary>
+        bool IsBound { get; }
 
 
         /// <summary>
@@ -50,8 +68,8 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>
-        /// <param name="requestTask"></param>
-        /// <returns></returns>
+        /// <param name="requestTask">Combination of the request <see cref="Message"/> and a response Action</param>
+        /// <returns>Boolean flag indicating whether a request task was retrieved</returns>
         bool TryReceive(out RequestTask requestTask);
     }
 }

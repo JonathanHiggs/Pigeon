@@ -28,7 +28,7 @@ namespace MessageRouter.Sandbox
 
             requestDispatcher.Register<TestMessage, TestMessage>(Handler);
 
-            receiver.Bind(TcpAddress.Wildcard(5555));
+            receiver.Add(TcpAddress.Wildcard(5555));
 
             server.Start();
 

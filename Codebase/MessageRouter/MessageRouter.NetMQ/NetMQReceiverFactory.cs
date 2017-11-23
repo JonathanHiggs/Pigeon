@@ -28,7 +28,7 @@ namespace MessageRouter.NetMQ
             var socket = new RouterSocket();
             var receiver = new NetMQReceiver(socket, binarySerializer);
 
-            receiver.Bind(address);
+            receiver.Add(address);
 
             return receiver;
         }
@@ -44,7 +44,7 @@ namespace MessageRouter.NetMQ
             var socket = new RouterSocket();
             var receiver = new NetMQAsyncReceiver(socket, binarySerializer);
 
-            receiver.Bind(address);
+            receiver.Add(address);
 
             return receiver;
         }

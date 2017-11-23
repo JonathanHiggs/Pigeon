@@ -43,8 +43,6 @@
   <ItemGroup>
     <Compile Include="Client\IMessageClient.cs" />
     <Compile Include="Client\MessageClient.cs" />
-    <Compile Include="Diagnostics\ConsoleLogger.cs" />
-    <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
     <Compile Include="Diagnostics\RequestAlreadyMappedException.cs" />
     <Compile Include="Diagnostics\RequestNotMappedException.cs" />
@@ -68,9 +66,7 @@
     <Compile Include="RequestTask.cs" />
     <Compile Include="Senders\ISenderFactory.cs" />
     <Compile Include="Senders\ISenderManager.cs" />
-    <Compile Include="Diagnostics\SenderAlreadyRegisteredException.cs" />
     <Compile Include="Senders\SenderManager.cs" />
-    <Compile Include="Diagnostics\SenderNotRegisteredException.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Server\AsyncMessageServer.cs" />

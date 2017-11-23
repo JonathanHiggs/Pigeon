@@ -19,15 +19,22 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQReceiver : IReceiver
     {
-        private readonly ICollection<IAddress> addresses = new List<IAddress>();
+        private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
         protected readonly RouterSocket routerSocket;
         private readonly ISerializer<byte[]> binarySerializer;
+        private bool isBound = false;
 
 
         /// <summary>
         /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
         /// </summary>
-        public IEnumerable<IAddress> Addresses => addresses;
+        public IEnumerable<IAddress> Addresses => boundStatusByAddress.Keys;
+
+
+        /// <summary>
+        /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
+        /// </summary>
+        public bool IsBound => isBound;
 
 
         /// <summary>
@@ -43,45 +50,97 @@ namespace MessageRouter.NetMQ
 
 
         /// <summary>
-        /// Starts the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
         /// </summary>
-        /// <param name="address">Address to bind to</param>
-        public void Bind(IAddress address)
+        /// <param name="address"></param>
+        public void Add(IAddress address)
         {
-            if (!addresses.Contains(address))
+            if (boundStatusByAddress.ContainsKey(address))
+                return;
+
+            boundStatusByAddress.Add(address, false);
+
+            if (isBound)
             {
                 routerSocket.Bind(address.ToString());
-                addresses.Add(address);
+                boundStatusByAddress[address] = true;
             }
         }
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming messages on the specified <see cref="IAddress"/>
+        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Message"/>s on
         /// </summary>
-        /// <param name="address">Bound address to unbind</param>
-        public void Unbind(IAddress address)
+        public void RemoveAll()
         {
-            if (addresses.Contains(address))
-            {
-                routerSocket.Unbind(address.ToString());
-                addresses.Remove(address);
-            }
+            if (isBound)
+                UnbindAll();
+
+            boundStatusByAddress.Clear();
         }
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming messages on all <see cref="IAddress"/>es
+        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Message"/>s on
+        /// </summary>
+        /// <param name="address"></param>
+        public void Remove(IAddress address)
+        {
+            if (!boundStatusByAddress.ContainsKey(address))
+                return;
+
+            if (isBound && !boundStatusByAddress[address])
+                Unbind(address);
+
+            boundStatusByAddress.Remove(address);
+        }
+
+
+        /// <summary>
+        /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
+        /// </summary>
+        public void Bind()
+        {
+            if (isBound)
+                return;
+
+            foreach (var address in (from address in Addresses
+                                    where !IsAddedAndBound(address)
+                                    select address).ToList())
+            {
+                routerSocket.Bind(address.ToString());
+                boundStatusByAddress[address] = true;
+            }
+
+            isBound = true;
+        }
+
+
+        /// <summary>
+        /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         public void UnbindAll()
         {
-            foreach (var address in addresses)
-                routerSocket.Unbind(address.ToString());
+            if (!isBound)
+                return;
 
-            addresses.Clear();
+            foreach (var address in (from address in Addresses
+                                    where IsAddedAndBound(address)
+                                    select address).ToList())
+            {
+                routerSocket.Unbind(address.ToString());
+                boundStatusByAddress[address] = false;
+            }
+
+            isBound = false;
         }
 
 
+        /// <summary>
+        /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
+        /// </summary>
+        /// <param name="requestTask">Combination of the request <see cref="Message"/> and a response Action</param>
+        /// <returns>Boolean flag indicating whether a request task was retrieved</returns>
         public bool TryReceive(out RequestTask requestTask)
         {
             NetMQMessage message = default(NetMQMessage);
@@ -107,6 +166,7 @@ namespace MessageRouter.NetMQ
         }
 
 
+        #region Message Builders
         private RequestTask Handle(NetMQMessage requestMessage)
         {
             var request = ExtractRequest(requestMessage);
@@ -164,5 +224,27 @@ namespace MessageRouter.NetMQ
             responseMessage.Append(data);
             return responseMessage;
         }
+        #endregion
+
+
+        #region Binding Helpers
+        private bool IsAddedAndBound(IAddress address)
+        {
+            return boundStatusByAddress.TryGetValue(address, out var bound) && bound;
+        }
+        
+
+        private void Unbind(IAddress address)
+        {
+            if (!isBound)
+                return;
+
+            if (!IsAddedAndBound(address))
+                return;
+
+            routerSocket.Unbind(address.ToString());
+            boundStatusByAddress[address] = false;
+        }
+        #endregion
     }
 }

@@ -34,9 +34,8 @@ namespace MessageRouter.NetMQ.IntegrationTests
             };
 
             var request = new DataMessage<string>(new GuidMessageId(), "Hello");
-            
+
             // Act
-            receiver.Bind(TcpAddress.Wildcard(5555));
             sender.Connect(TcpAddress.Localhost(5555));
             receiverManager.Start();
 

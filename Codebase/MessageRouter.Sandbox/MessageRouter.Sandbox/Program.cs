@@ -12,7 +12,7 @@ namespace MessageRouter.Sandbox
         {
             while (true)
             {
-                Console.Write("Enter Exit to quit");
+                Console.WriteLine("Exit to quit");
                 Console.Write("Enter the subprogram name: ");
                 var name = Console.ReadLine();
 
