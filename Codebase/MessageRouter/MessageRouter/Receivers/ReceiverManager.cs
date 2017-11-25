@@ -15,6 +15,8 @@ namespace MessageRouter.Receivers
     {
         private IReceiver receiver;
         private IAddress address;
+        private bool running = false;
+        private object lockObj = new object();
 
         
         /// <summary>
@@ -34,6 +36,9 @@ namespace MessageRouter.Receivers
         /// <returns></returns>
         public RequestTask Receive()
         {
+            if (!running)
+                throw new InvalidOperationException($"{GetType().Name} not started");
+
             return receiver.Receive();
         }
 
@@ -45,6 +50,9 @@ namespace MessageRouter.Receivers
         /// <returns></returns>
         public bool TryReceive(out RequestTask requestTask)
         {
+            if (!running)
+                throw new InvalidOperationException($"{GetType().Name} not runnng");
+
             return receiver.TryReceive(out requestTask);
         }
 
@@ -54,8 +62,16 @@ namespace MessageRouter.Receivers
         /// </summary>
         public void Start()
         {
-            receiver.Add(address);
-            receiver.Bind();
+            lock (lockObj)
+            {
+                if (running)
+                    return;
+
+                receiver.Add(address);
+                receiver.Bind();
+
+                running = true;
+            }
         }
 
 
@@ -64,7 +80,14 @@ namespace MessageRouter.Receivers
         /// </summary>
         public void Stop()
         {
-            receiver.UnbindAll();
+            lock (lockObj)
+            {
+                if (!running)
+                    return;
+
+                receiver.UnbindAll();
+                running = false;
+            }
         }
     }
 }
