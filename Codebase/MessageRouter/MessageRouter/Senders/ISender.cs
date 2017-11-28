@@ -42,20 +42,12 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Sends a request <see cref="Message"/> to the connected remote<see cref="IReeceiver"/> and returns the response <see cref="Message"/>
-        /// </summary>
-        /// <param name="message">Request message</param>
-        /// <returns>Response message</returns>
-        Message SendAndReceive(Message message);
-
-
-        /// <summary>
         /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
         /// Default 1 hour timeout
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        Task<Message> SendAndReceiveAsync(Message message);
+        Task<Message> SendAndReceive(Message message);
 
 
         /// <summary>
@@ -64,6 +56,6 @@ namespace MessageRouter.Senders
         /// <param name="message">Request message</param>
         /// <param name="timeout">Time to wait without a response before throwing an exception</param>
         /// <returns>Response message</returns>
-        Task<Message> SendAndReceiveAsync(Message message, TimeSpan timeout);
+        Task<Message> SendAndReceive(Message message, TimeSpan timeout);
     }
 }

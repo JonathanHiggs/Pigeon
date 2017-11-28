@@ -54,13 +54,9 @@ namespace MessageRouter.UnitTests.Client
             mockSenderManager
                 .Setup(m => m.SenderFor<T>())
                 .Returns(sender);
-
-            mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>()))
-                .Returns<Message>(m => m);
             
             mockSender
-                .Setup(m => m.SendAndReceiveAsync(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
+                .Setup(m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
                 .ReturnsAsync(new DataMessage<T>(new GuidMessageId(), val));
         }
 
@@ -96,134 +92,6 @@ namespace MessageRouter.UnitTests.Client
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
-        }
-        #endregion
-
-
-        #region Send
-        [Test]
-        public void Send_WithSenderReturnRequestObject_ReceivesSameObject()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = messageClient.Send<string, string>(request);
-
-            // Assert
-            Assert.That(response, Is.SameAs(request));
-        }
-
-
-        [Test]
-        public void Send_WithRequest_CreatesRequestMessage()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = messageClient.Send<string, string>(request);
-
-            // Assert
-            mockMessageFactory
-                .Verify(
-                    m => m.CreateRequest<object>(It.IsAny<object>()),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Send_WithRequest_ResolvesSender()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = messageClient.Send<string, string>(request);
-
-            // Assert
-            mockSenderManager
-                .Verify(
-                    m => m.SenderFor<object>(),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Send_WithRequest_SendsMessage()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = messageClient.Send<string, string>(request);
-
-            // Assert
-            mockSender
-                .Verify(
-                    m => m.SendAndReceive(It.IsAny<Message>()),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Send_WithRequest_ExtractsResponse()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = messageClient.Send<string, string>(request);
-
-            // Assert
-            mockMessageFactory
-                .Verify(
-                    m => m.ExtractResponse<string>(It.IsAny<Message>()),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Send_WithNullRequestObject_ThrowsArgumentException()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-
-            // Act
-            TestDelegate test = () => messageClient.Send<object, object>(null);
-
-            // Assert
-            Assert.That(test, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void Send_WithExceptionResponse_ThrowsException()
-        {
-            // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
-            var request = new object();
-            var exception = new IOException();
-
-            mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>()))
-                .Returns(new DataMessage<Exception>(new GuidMessageId(), exception));
-
-            // Act
-            TestDelegate test = () => messageClient.Send<object, string>(request);
-
-            // Assert
-            Assert.That(test, Throws.InstanceOf<IOException>());
         }
         #endregion
 
@@ -297,7 +165,7 @@ namespace MessageRouter.UnitTests.Client
             // Assert
             mockSender
                 .Verify(
-                    m => m.SendAndReceiveAsync(It.IsAny<Message>(), It.IsAny<TimeSpan>()),
+                    m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()),
                     Times.Once);
         }
 
@@ -341,8 +209,8 @@ namespace MessageRouter.UnitTests.Client
             var exception = new IOException();
 
             mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>()))
-                .Returns(new DataMessage<Exception>(new GuidMessageId(), exception));
+                .Setup(m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
+                .ReturnsAsync(new DataMessage<Exception>(new GuidMessageId(), exception));
 
             // Act
             TestDelegate test = async () => await messageClient.SendAsync<object, string>(request);

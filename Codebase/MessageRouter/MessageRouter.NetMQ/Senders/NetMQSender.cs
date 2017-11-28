@@ -82,27 +82,14 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Sends a request <see cref="Message"/> to the connected remote<see cref="IReeceiver"/> and returns the response <see cref="Message"/>
-        /// </summary>
-        /// <param name="message">Request message</param>
-        /// <returns>Response message</returns>
-        public Message SendAndReceive(Message message)
-        {
-            var requestTask = SendAndReceiveAsync(message);
-            requestTask.Wait();
-            return requestTask.Result;
-        }
-
-
-        /// <summary>
         /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
         /// Default 1 hour timeout
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        public async Task<Message> SendAndReceiveAsync(Message request)
+        public async Task<Message> SendAndReceive(Message request)
         {
-            return await SendAndReceiveAsync(request, TimeSpan.FromHours(1));
+            return await SendAndReceive(request, TimeSpan.FromHours(1));
         }
 
 
@@ -111,7 +98,7 @@ namespace MessageRouter.NetMQ.Senders
         /// </summary>
         /// <param name="message">Request message</param>
         /// <returns>Response message</returns>
-        public async Task<Message> SendAndReceiveAsync(Message request, TimeSpan timeout)
+        public async Task<Message> SendAndReceive(Message request, TimeSpan timeout)
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();

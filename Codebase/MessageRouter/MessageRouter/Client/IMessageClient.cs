@@ -10,18 +10,6 @@ namespace MessageRouter.Client
     public interface IMessageClient
     {
         /// <summary>
-        /// Dispatches a request to a remote routed by the <see cref="ISenderManager"/>
-        /// </summary>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <typeparam name="TResponse">Expected reponse type</typeparam>
-        /// <param name="request">Request object</param>
-        /// <returns>Response object</returns>
-        TResponse Send<TRequest, TResponse>(TRequest request)
-            where TRequest : class
-            where TResponse : class;
-
-
-        /// <summary>
         /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
         /// Default timeout of one hour
         /// </summary>

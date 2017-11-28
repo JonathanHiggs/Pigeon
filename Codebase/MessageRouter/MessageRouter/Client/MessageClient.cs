@@ -38,28 +38,6 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Dispatches a request to a remote routed by the <see cref="ISenderManager"/>
-        /// </summary>
-        /// <typeparam name="TResponse">Expected reponse type</typeparam>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <param name="request">Request object</param>
-        /// <returns>Response object</returns>
-        public TResponse Send<TRequest, TResponse>(TRequest request) 
-            where TRequest : class 
-            where TResponse : class
-        {
-            if (null == request)
-                throw new ArgumentNullException(nameof(request));
-
-            var requestMessage = messageFactory.CreateRequest(request);
-            var sender = senderManager.SenderFor<TRequest>();
-            var responseMessage = sender.SendAndReceive(requestMessage);
-            var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
-            return response;
-        }
-
-
-        /// <summary>
         /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
         /// Default timeout of one hour
         /// </summary>
@@ -92,7 +70,7 @@ namespace MessageRouter.Client
 
             var requestMessage = messageFactory.CreateRequest(request);
             var sender = senderManager.SenderFor<TRequest>();
-            var responseMessage = await sender.SendAndReceiveAsync(requestMessage, timeout);
+            var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
         }
