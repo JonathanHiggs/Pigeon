@@ -10,7 +10,7 @@ using MessageRouter.Serialization;
 using NetMQ;
 using NetMQ.Sockets;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
     /// NetMQ implementation of <see cref="IAsyncSender"/> that wraps a <see cref="DealerSocket"/> that connects to remotes

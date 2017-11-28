@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
     /// Wraps a NetMQ DealerSocket to provide an asynchronous socket interface 

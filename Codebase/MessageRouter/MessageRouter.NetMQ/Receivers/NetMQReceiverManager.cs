@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
     /// NetMQ implementation of <see cref="IReceiverManager"/>. Manages the state of <see cref="INetMQReceiver"/>s

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
     /// Factory for NetMQ <see cref="ISender"/>s and <see cref="IAsyncSender"/>s

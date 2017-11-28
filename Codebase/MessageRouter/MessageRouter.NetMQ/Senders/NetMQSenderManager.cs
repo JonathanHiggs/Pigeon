@@ -8,7 +8,7 @@ using MessageRouter.Addresses;
 using NetMQ;
 using MessageRouter.Diagnostics;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Senders
 {
     public class NetMQSenderManager : SenderManager
     {

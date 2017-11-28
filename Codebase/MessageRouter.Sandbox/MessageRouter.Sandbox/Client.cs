@@ -2,6 +2,7 @@
 using MessageRouter.Client;
 using MessageRouter.Messages;
 using MessageRouter.NetMQ;
+using MessageRouter.NetMQ.Senders;
 using MessageRouter.Senders;
 using NetMQ;
 using System;

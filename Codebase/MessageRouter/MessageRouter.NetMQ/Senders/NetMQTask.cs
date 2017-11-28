@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
     /// Wraps together a messaging task with a timeout for async messaging

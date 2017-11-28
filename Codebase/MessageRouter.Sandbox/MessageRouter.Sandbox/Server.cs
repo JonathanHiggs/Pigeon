@@ -1,6 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.NetMQ;
+using MessageRouter.NetMQ.Receivers;
 using MessageRouter.Receivers;
 using MessageRouter.Serialization;
 using MessageRouter.Server;

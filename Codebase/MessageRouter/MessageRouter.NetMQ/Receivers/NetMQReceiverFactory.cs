@@ -8,7 +8,7 @@ using MessageRouter.Addresses;
 using MessageRouter.Serialization;
 using NetMQ.Sockets;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
     /// Factory for NetMQ <see cref="IReceiver"/>s

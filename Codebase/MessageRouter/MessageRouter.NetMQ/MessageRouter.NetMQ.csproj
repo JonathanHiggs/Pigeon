@@ -48,16 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncSocket.cs" />
-    <Compile Include="INetMQReceiver.cs" />
-    <Compile Include="INetMQSender.cs" />
-    <Compile Include="NetMQReceiverManager.cs" />
-    <Compile Include="NetMQSender.cs" />
-    <Compile Include="NetMQReceiver.cs" />
-    <Compile Include="NetMQReceiverFactory.cs" />
-    <Compile Include="NetMQSenderFactory.cs" />
-    <Compile Include="NetMQSenderManager.cs" />
-    <Compile Include="NetMQTask.cs" />
+    <Compile Include="Senders\AsyncSocket.cs" />
+    <Compile Include="Receivers\INetMQReceiver.cs" />
+    <Compile Include="Senders\INetMQSender.cs" />
+    <Compile Include="Receivers\NetMQReceiverManager.cs" />
+    <Compile Include="Senders\NetMQSender.cs" />
+    <Compile Include="Receivers\NetMQReceiver.cs" />
+    <Compile Include="Receivers\NetMQReceiverFactory.cs" />
+    <Compile Include="Senders\NetMQSenderFactory.cs" />
+    <Compile Include="Senders\NetMQSenderManager.cs" />
+    <Compile Include="Senders\NetMQTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
