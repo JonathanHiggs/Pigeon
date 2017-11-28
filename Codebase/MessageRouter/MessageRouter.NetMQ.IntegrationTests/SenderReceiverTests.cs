@@ -22,7 +22,8 @@ namespace MessageRouter.NetMQ.Tests
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, binarySerializer);
             var dealerSocket = new DealerSocket();
-            var sender = new NetMQSender(dealerSocket, binarySerializer);
+            var asyncSocket = new AsyncSocket(dealerSocket);
+            var sender = new NetMQSender(asyncSocket, binarySerializer);
             
             receiver.Add(TcpAddress.Wildcard(5555));
             receiver.Bind();

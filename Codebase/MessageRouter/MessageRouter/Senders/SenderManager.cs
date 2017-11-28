@@ -13,7 +13,6 @@ namespace MessageRouter.Senders
         private readonly ISenderFactory senderFactory;
         private readonly Dictionary<Type, IAddress> routingTable = new Dictionary<Type, IAddress>();
         private readonly Dictionary<IAddress, ISender> senderMapping = new Dictionary<IAddress, ISender>();
-        private readonly Dictionary<IAddress, IAsyncSender> asyncSenderMapping = new Dictionary<IAddress, IAsyncSender>();
 
 
         public SenderManager(ISenderFactory senderFactory)
@@ -32,21 +31,6 @@ namespace MessageRouter.Senders
                         return;
 
             routingTable.Add(typeof(TRequest), address);
-        }
-
-
-        public IAsyncSender AsyncSenderFor<TRequest>()
-        {
-            var address = GetAddressForRequest(typeof(TRequest));
-
-            if (!asyncSenderMapping.TryGetValue(address, out var sender))
-            {
-                // Create sender
-                sender = senderFactory.CreateAsync(address);
-                asyncSenderMapping[address] = sender;
-            }
-
-            return sender;
         }
 
 

@@ -91,7 +91,7 @@ namespace MessageRouter.Client
                 throw new ArgumentNullException(nameof(request));
 
             var requestMessage = messageFactory.CreateRequest(request);
-            var sender = senderManager.AsyncSenderFor<TRequest>();
+            var sender = senderManager.SenderFor<TRequest>();
             var responseMessage = await sender.SendAndReceiveAsync(requestMessage, timeout);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;

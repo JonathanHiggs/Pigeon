@@ -28,7 +28,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
 
             var dealerSocket = new DealerSocket();
             var asyncSocket = new AsyncSocket(dealerSocket);
-            var sender = new NetMQAsyncSender(asyncSocket, binarySerializer);
+            var sender = new NetMQSender(asyncSocket, binarySerializer);
 
             receiverManager.RequestReceived += (s, task) => {
                 var reply = new DataMessage<string>(new GuidMessageId(), "Hi");

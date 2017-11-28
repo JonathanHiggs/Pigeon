@@ -30,10 +30,6 @@ namespace MessageRouter.Sandbox
                         Client.Run();
                         break;
 
-                    case "AsyncClient":
-                        AsyncClient.Run();
-                        break;
-
                     case "Clear":
                         Console.Clear();
                         break;

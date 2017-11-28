@@ -19,7 +19,7 @@ namespace MessageRouter.Sandbox
             var random = new Random();
             var poller = new NetMQPoller();
             var senderFactory = new NetMQSenderFactory(poller);
-            var senderManager = new SenderManager(senderFactory);
+            var senderManager = new NetMQSenderManager(senderFactory, poller);
             var messageFactory = new MessageFactory();
             var client = new MessageClient(senderManager, messageFactory);
 
@@ -27,16 +27,36 @@ namespace MessageRouter.Sandbox
             var serverName = Console.ReadLine();
 
             senderManager.AddRequestMapping<TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555));
+            client.Start();
+            
+            Console.WriteLine("Press return to send message");
+            Console.WriteLine("Enter 'stop' to end");
 
-            while (true)
+            do
             {
-                var request = new TestMessage { Num = random.Next(100) };
-                Console.WriteLine($"Sending: {request.Num}");
-                var response = client.Send<TestMessage, TestMessage>(request);
+                var line = Console.ReadLine();
+                if (line == "stop")
+                    break;
+                
+                Task.Factory.StartNew(async () =>
+                {
+                    try
+                    {
+                        var request = new TestMessage { Num = random.Next(100) };
+                        Console.WriteLine($"Sending: {request.Num}");
 
-                Console.WriteLine($"Received: {response.Num}");
-                Console.ReadLine();
+                        var response = await client.SendAsync<TestMessage, TestMessage>(request);
+                        Console.WriteLine($"Received: {response.Num}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                });
             }
+            while (true);
+
+            client.Stop();
         }
     }
 }

@@ -33,25 +33,9 @@ namespace MessageRouter.NetMQ
         /// <returns>Sender connected to the remote address</returns>
         public ISender Create(IAddress address)
         {
-            var socket = new DealerSocket();
-            var sender = new NetMQSender(socket, binarySerializer);
-
-            sender.Connect(address);
-
-            return sender;
-        }
-
-
-        /// <summary>
-        /// Creates a new instance of an <see cref="IAsyncSender"/> connected to the supplied <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address of the remote the sender will connect to</param>
-        /// <returns>Sender connected to the remote address</returns>
-        public IAsyncSender CreateAsync(IAddress address)
-        {
             var dealerSocket = new DealerSocket();
             var asyncSocket = new AsyncSocket(dealerSocket);
-            var sender = new NetMQAsyncSender(asyncSocket, binarySerializer);
+            var sender = new NetMQSender(asyncSocket, binarySerializer);
 
             poller.Add(dealerSocket);
             sender.Connect(address);

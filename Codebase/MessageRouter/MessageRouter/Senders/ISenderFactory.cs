@@ -18,13 +18,5 @@ namespace MessageRouter.Senders
         /// <param name="address">Address of the remote the sender will connect to</param>
         /// <returns>Sender connected to the remote address</returns>
         ISender Create(IAddress address);
-
-
-        /// <summary>
-        /// Creates a new instance of an <see cref="IAsyncSender"/> connected to the supplied <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address of the remote the sender will connect to</param>
-        /// <returns>Sender connected to the remote address</returns>
-        IAsyncSender CreateAsync(IAddress address);
     }
 }

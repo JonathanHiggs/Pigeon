@@ -50,11 +50,11 @@
   <ItemGroup>
     <Compile Include="AsyncSocket.cs" />
     <Compile Include="INetMQReceiver.cs" />
+    <Compile Include="INetMQSender.cs" />
     <Compile Include="NetMQReceiverManager.cs" />
-    <Compile Include="NetMQAsyncSender.cs" />
+    <Compile Include="NetMQSender.cs" />
     <Compile Include="NetMQReceiver.cs" />
     <Compile Include="NetMQReceiverFactory.cs" />
-    <Compile Include="NetMQSender.cs" />
     <Compile Include="NetMQSenderFactory.cs" />
     <Compile Include="NetMQSenderManager.cs" />
     <Compile Include="NetMQTask.cs" />

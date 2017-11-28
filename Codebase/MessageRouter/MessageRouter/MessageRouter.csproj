@@ -55,7 +55,6 @@
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverManager.cs" />
     <Compile Include="Receivers\RequestTaskDelegate.cs" />
-    <Compile Include="Senders\IAsyncSender.cs" />
     <Compile Include="Senders\ISender.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageFactory.cs" />

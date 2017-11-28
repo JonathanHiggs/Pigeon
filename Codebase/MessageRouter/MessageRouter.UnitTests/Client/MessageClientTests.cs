@@ -17,11 +17,11 @@ namespace MessageRouter.UnitTests.Client
     {
         private readonly Mock<ISenderManager> mockSenderManager = new Mock<ISenderManager>();
         private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private readonly Mock<IAsyncSender> mockSender = new Mock<IAsyncSender>();
+        private readonly Mock<ISender> mockSender = new Mock<ISender>();
 
         private ISenderManager senderManager;
         private IMessageFactory messageFactory;
-        private IAsyncSender sender;
+        private ISender sender;
 
         [SetUp]
         public void Setup()
@@ -53,10 +53,6 @@ namespace MessageRouter.UnitTests.Client
 
             mockSenderManager
                 .Setup(m => m.SenderFor<T>())
-                .Returns(sender);
-
-            mockSenderManager
-                .Setup(m => m.AsyncSenderFor<T>())
                 .Returns(sender);
 
             mockSender
@@ -282,7 +278,7 @@ namespace MessageRouter.UnitTests.Client
             // Assert
             mockSenderManager
                 .Verify(
-                    m => m.AsyncSenderFor<object>(),
+                    m => m.SenderFor<object>(),
                     Times.Once);
         }
 

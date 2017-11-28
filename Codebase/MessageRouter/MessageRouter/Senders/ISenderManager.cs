@@ -29,14 +29,6 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Resolves an <see cref="IAsyncSender"/> for the type of the request with the configured routing
-        /// </summary>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <returns>Sender for the request type</returns>
-        IAsyncSender AsyncSenderFor<TRequest>();
-
-
-        /// <summary>
         /// Starts the <see cref="SenderManager"/> running
         /// </summary>
         void Start();
