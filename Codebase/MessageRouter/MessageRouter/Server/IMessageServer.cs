@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace MessageRouter.Server
 {
     /// <summary>
-    /// Interface controls the active server process that accepts and responds to incoming requests 
+    /// Interface controls the active server process that accepts and responces to incoming request asynchronously
     /// </summary>
-    /// <typeparam name="TServerInfo">Type of <see cref="IServerInfo"/> data object that exposes state information</typeparam>
+    /// <typeparam name="TServerInfo">Type of <see cref="IServerInfo"/> data object that exposes data information</typeparam>
     public interface IMessageServer<TServerInfo> where TServerInfo : IServerInfo
     {
         /// <summary>
@@ -20,15 +20,14 @@ namespace MessageRouter.Server
 
 
         /// <summary>
-        /// Synchronously starts the server running
+        /// Asynchronously starts the server running
         /// </summary>
-        void Run();
+        void Start();
 
 
         /// <summary>
-        /// Synchronously starts the server running with a <see cref="CancellationToken"/> to stop
+        /// Stops the server running
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        void Run(CancellationToken cancellationToken);
+        void Stop();
     }
 }

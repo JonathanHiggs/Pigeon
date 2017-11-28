@@ -16,15 +16,11 @@ namespace MessageRouter.UnitTests.Receivers
         private readonly Mock<IReceiver> mockReceiver = new Mock<IReceiver>();
         private IReceiver receiver;
 
-        private readonly Mock<IAddress> mockAddress = new Mock<IAddress>();
-        private IAddress address;
-
 
         [SetUp]
         public void Setup()
         {
             receiver = mockReceiver.Object;
-            address = mockAddress.Object;
         }
 
 
@@ -32,7 +28,6 @@ namespace MessageRouter.UnitTests.Receivers
         public void TearDown()
         {
             mockReceiver.Reset();
-            mockAddress.Reset();
         }
 
 
@@ -41,18 +36,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void ReceiverManager_WithNullReceiver_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new ReceiverManager(null, address);
-
-            // Assert
-            Assert.That(test, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void ReceiverManager_WithNullAddress_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate test = () => new ReceiverManager(receiver, null);
+            TestDelegate test = () => new ReceiverManager(null);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -65,7 +49,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Receive_WhenStarted_CallsReceiver()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
 
             // Act
@@ -80,7 +64,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Receive_BeforeStarted_ThrowsInvalidOperationException()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
 
             // Act
             TestDelegate test = () => receiverManager.Receive();
@@ -94,7 +78,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Receive_AfterStopped_ThrowsInvalidOperationException()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
             receiverManager.Stop();
 
@@ -112,7 +96,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void TryReceive_WhenStarted_CallsReceiver()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
 
             // Act
@@ -128,7 +112,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void TryReceive_BeforeStarted_ThrowsInvalidOperationException()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
 
             // Act
             TestDelegate test = () => receiverManager.TryReceive(out var requestTask);
@@ -142,7 +126,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void TryReceive_AfterStopped_ThrowsInvalidOperationException()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
             receiverManager.Stop();
 
@@ -160,7 +144,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Start_BindsReceiver()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
 
             // Act
             receiverManager.Start();
@@ -174,7 +158,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Start_WhenAlreadyStarted_DoesNothing()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
 
             // Act
@@ -191,7 +175,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Stop_BeforeStarted_DoesNothing()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
 
             // Act
             TestDelegate test = () => receiverManager.Stop();
@@ -205,7 +189,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Stop_WhenStarted_CallsUnbindAll()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
 
             // Act
@@ -220,7 +204,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Stop_WhenStopped_DoesNothing()
         {
             // Arrange
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new ReceiverManager(receiver);
             receiverManager.Start();
             receiverManager.Stop();
 

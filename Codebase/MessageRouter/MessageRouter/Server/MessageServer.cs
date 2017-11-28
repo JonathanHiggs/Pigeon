@@ -5,13 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MessageRouter.Server
 {
     /// <summary>
-    /// Basic implementation of active server process that accepts and responds to incoming requests
+    /// Basic implementation of an active server process that accepts and responds asynchronously to incoming requests
     /// </summary>
     public class MessageServer : IMessageServer<ServerInfo>
     {
@@ -22,18 +21,18 @@ namespace MessageRouter.Server
         private readonly object runLock = new object();
         private bool running = false;
 
-        
+
         /// <summary>
         /// Gets the current state of the server
         /// </summary>
-        public ServerInfo ServerInfo => serverInfo;
+        public ServerInfo ServerInfo => throw new NotImplementedException();
 
 
         /// <summary>
-        /// Initializes a new instance of MessageServer
+        /// Initializes a new instance of AsyncMessageServer
         /// </summary>
         /// <param name="messageFactory"><see cref="IMessageFactory"/> dependency for constructing <see cref="Message"/>s and extracting request objects</param>
-        /// <param name="receiverManager"><see cref="IReceiverFactory"/> dependency for managing <see cref="IReceiver"/>s</param>
+        /// <param name="receiverManager"><see cref="IReceiverFactory"/> dependency for managing <see cref="IAsyncReceiver"/>s</param>
         /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> dependency for routing and handling incoming requests</param>
         /// <param name="name">Name identifying the server</param>
         public MessageServer(IMessageFactory messageFactory, IReceiverManager receiverManager, IRequestDispatcher requestDispatcher, string name)
@@ -48,24 +47,15 @@ namespace MessageRouter.Server
                 Running = false,
                 StartUpTimeStamp = null
             };
+
+            receiverManager.RequestReceived += HandleAndRespond;
         }
 
 
         /// <summary>
-        /// Synchronously starts the server accepting requests
+        /// Asynchronously starts the server running
         /// </summary>
-        public void Run()
-        {
-            var tokenSource = new CancellationTokenSource();
-            Run(tokenSource.Token);
-        }
-
-
-        /// <summary>
-        /// Synchronously starts the server accepting requests
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        public void Run(CancellationToken cancellationToken)
+        public void Start()
         {
             lock (runLock)
             {
@@ -74,27 +64,25 @@ namespace MessageRouter.Server
 
                 running = true;
                 serverInfo.StartUpTimeStamp = DateTime.Now;
+
                 receiverManager.Start();
             }
+        }
 
-            // Main loop
-            try
-            {
-                while(true)
-                {
-                    if (receiverManager.TryReceive(out var task))
-                        HandleAndRespond(task);
 
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-            }
-            catch (OperationCanceledException)
-            { }
-
+        /// <summary>
+        /// Stops the asynchronous server
+        /// </summary>
+        public void Stop()
+        {
             lock (runLock)
             {
+                if (!running)
+                    throw new InvalidOperationException($"Server {serverInfo.Name} is not currently running");
+
                 running = false;
                 serverInfo.StartUpTimeStamp = null;
+
                 receiverManager.Stop();
             }
         }
@@ -104,15 +92,18 @@ namespace MessageRouter.Server
         /// Extracts and responds to requests
         /// </summary>
         /// <param name="requestTask">Incoming request task</param>
-        public void HandleAndRespond(RequestTask requestTask)
+        private void HandleAndRespond(object sender, RequestTask requestTask)
         {
-            var requestObject = messageFactory.ExtractRequest(requestTask.Request);
-            var responseObject = requestDispatcher.Handle(requestObject);
-            var responseMessage = CreateResponse(responseObject);
-            requestTask.ResponseHandler(responseMessage);
+            Task.Run(() =>
+            {
+                var requestObject = messageFactory.ExtractRequest(requestTask.Request);
+                var responseObject = requestDispatcher.Handle(requestObject);
+                var responseMessage = CreateResponse(responseObject);
+                requestTask.ResponseHandler(responseMessage);
+            });
         }
 
-
+        
         /// <summary>
         /// Wraps a response object in a <see cref="Message"/> for returning to remote source
         /// </summary>

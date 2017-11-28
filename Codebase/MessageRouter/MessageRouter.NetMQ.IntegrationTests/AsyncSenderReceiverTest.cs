@@ -1,6 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Serialization;
+using NetMQ;
 using NetMQ.Sockets;
 using NUnit.Framework;
 using System;
@@ -21,8 +22,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var binarySerializer = new BinarySerializer();
 
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQAsyncReceiver(routerSocket, binarySerializer);
-            var receiverManager = new NetMQAsyncReceiverManager(receiver);
+            var receiver = new NetMQReceiver(routerSocket, binarySerializer);
+            var poller = new NetMQPoller();
+            var receiverManager = new NetMQReceiverManager(receiver, poller);
 
             var dealerSocket = new DealerSocket();
             var asyncSocket = new AsyncSocket(dealerSocket);

@@ -11,7 +11,7 @@ using NetMQ.Sockets;
 namespace MessageRouter.NetMQ
 {
     /// <summary>
-    /// Factory for NetMQ <see cref="IReceiver"/>s and <see cref="IAsyncReceiver"/>s
+    /// Factory for NetMQ <see cref="IReceiver"/>s
     /// </summary>
     public class NetMQReceiverFactory : IReceiverFactory
     {
@@ -27,22 +27,6 @@ namespace MessageRouter.NetMQ
         {
             var socket = new RouterSocket();
             var receiver = new NetMQReceiver(socket, binarySerializer);
-
-            receiver.Add(address);
-
-            return receiver;
-        }
-
-
-        /// <summary>
-        /// Creates a new instance of a <see cref="IAsyncReceiver"/> bound to the supplied <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address of local bound enpoint</param>
-        /// <returns>AsyncReceiver bound to the address</returns>
-        public IAsyncReceiver CreateAsync(IAddress address)
-        {
-            var socket = new RouterSocket();
-            var receiver = new NetMQAsyncReceiver(socket, binarySerializer);
 
             receiver.Add(address);
 

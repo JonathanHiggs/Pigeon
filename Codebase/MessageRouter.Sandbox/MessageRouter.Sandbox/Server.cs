@@ -18,24 +18,22 @@ namespace MessageRouter.Sandbox
     {
         public static void Run()
         {
-            var address = TcpAddress.Wildcard(5555);
             var socket = new RouterSocket();
             var serializer = new BinarySerializer();
             var receiver = new NetMQReceiver(socket, serializer);
-            var receiverManager = new ReceiverManager(receiver, address);
+            var receiverManager = new NetMQReceiverManager(receiver);
             var messageFactory = new MessageFactory();
             var requestDispatcher = new RequestDispatcher();
             var server = new MessageServer(messageFactory, receiverManager, requestDispatcher, "Server");
 
             requestDispatcher.Register<TestMessage, TestMessage>(Handler);
-            
-            var cancel = new CancellationTokenSource();
-            var serverTask = Task.Factory.StartNew(() => RunServer(server, cancel.Token));
+            receiver.Add(TcpAddress.Wildcard(5555));
+            server.Start();
             
             Console.WriteLine("Press enter to stop server");
             Console.ReadLine();
 
-            cancel.Cancel();
+            server.Stop();
         }
 
 
@@ -43,7 +41,7 @@ namespace MessageRouter.Sandbox
         {
             try
             {
-                server.Run(token);
+                server.Start();
             }
             catch(Exception ex)
             {

@@ -14,6 +14,12 @@ namespace MessageRouter.Receivers
     public interface IReceiverManager
     {
         /// <summary>
+        /// Raised when an incoming message is received
+        /// </summary>
+        event RequestTaskDelegate RequestReceived;
+
+
+        /// <summary>
         /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
         /// </summary>
         /// <returns></returns>

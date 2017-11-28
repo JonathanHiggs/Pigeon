@@ -20,6 +20,7 @@ namespace MessageRouter.NetMQ
 
         public IEnumerable<IAddress> Addresses => addresses;
 
+
         public Type SerializerType => binarySerializer.GetType();
 
 

@@ -17,7 +17,7 @@ namespace MessageRouter.NetMQ
     /// that is able to bind to an <see cref="IAddress"/> to receive and synchronously reply to incoming messages from
     /// connected remote <see cref="ISender"/>s
     /// </summary>
-    public class NetMQReceiver : IReceiver
+    public class NetMQReceiver : INetMQReceiver
     {
         private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
         protected readonly RouterSocket routerSocket;
@@ -38,6 +38,18 @@ namespace MessageRouter.NetMQ
 
 
         /// <summary>
+        /// Gets the inner pollable socket
+        /// </summary>
+        public ISocketPollable PollableSocket => routerSocket;
+
+
+        /// <summary>
+        /// Raised when an incoming message is received
+        /// </summary>
+        public event RequestTaskDelegate RequestReceived;
+
+
+        /// <summary>
         /// Initializes a new instance of a NetMQReceiver
         /// </summary>
         /// <param name="routerSocket">Inner NetMQ RouterSocket</param>
@@ -46,6 +58,8 @@ namespace MessageRouter.NetMQ
         {
             this.routerSocket = routerSocket ?? throw new ArgumentNullException(nameof(routerSocket));
             this.binarySerializer = binarySerializer ?? throw new ArgumentNullException(nameof(routerSocket));
+
+            routerSocket.ReceiveReady += OnRequestReceived;
         }
 
 
@@ -163,6 +177,12 @@ namespace MessageRouter.NetMQ
         {
             var requestMessage = routerSocket.ReceiveMultipartMessage();
             return Handle(requestMessage);
+        }
+
+
+        private void OnRequestReceived(object sender, NetMQSocketEventArgs e)
+        {
+            RequestReceived?.Invoke(this, Receive());
         }
 
 

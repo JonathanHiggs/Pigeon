@@ -9,7 +9,7 @@ using MessageRouter.Addresses;
 namespace MessageRouter.Receivers
 {
     /// <summary>
-    /// Interface encapsulates a connection that is able to bind to an <see cref="IAddress"/> to receive and synchronously reply 
+    /// Interface encapsulates a connection that is able to bind to <see cref="IAddress"/>es to receive and reply 
     /// to incoming messages from remote <see cref="ISender"/>
     /// </summary>
     public interface IReceiver
@@ -18,6 +18,18 @@ namespace MessageRouter.Receivers
         /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
         /// </summary>
         IEnumerable<IAddress> Addresses { get; }
+
+
+        /// <summary>
+        /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
+        /// </summary>
+        bool IsBound { get; }
+
+
+        /// <summary>
+        /// Raised when an incoming message is received
+        /// </summary>
+        event RequestTaskDelegate RequestReceived;
 
 
         /// <summary>
@@ -50,12 +62,6 @@ namespace MessageRouter.Receivers
         /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         void UnbindAll();
-
-
-        /// <summary>
-        /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
-        /// </summary>
-        bool IsBound { get; }
 
 
         /// <summary>

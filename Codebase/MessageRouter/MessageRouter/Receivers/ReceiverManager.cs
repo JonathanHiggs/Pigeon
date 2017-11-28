@@ -14,19 +14,23 @@ namespace MessageRouter.Receivers
     public class ReceiverManager : IReceiverManager
     {
         private IReceiver receiver;
-        private IAddress address;
         private bool running = false;
         private object lockObj = new object();
 
-        
+
+        /// <summary>
+        /// Raised when an incoming message is received
+        /// </summary>
+        public event RequestTaskDelegate RequestReceived;
+
+
         /// <summary>
         /// Initializes a ReceiverManager
         /// </summary>
         /// <param name="receiver">IReceiver endpoint</param>
-        public ReceiverManager(IReceiver receiver, IAddress address)
+        public ReceiverManager(IReceiver receiver)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
-            this.address = address ?? throw new ArgumentNullException(nameof(address));
         }
 
 
@@ -66,8 +70,7 @@ namespace MessageRouter.Receivers
             {
                 if (running)
                     return;
-
-                receiver.Add(address);
+                
                 receiver.Bind();
 
                 running = true;

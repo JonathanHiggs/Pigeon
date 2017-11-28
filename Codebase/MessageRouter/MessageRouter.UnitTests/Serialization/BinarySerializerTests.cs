@@ -19,7 +19,7 @@ namespace MessageRouter.UnitTests.Serialization
             var str = "Some string";
 
             // Act
-            var bytes = serializer.Serialize<String>(str);
+            var bytes = serializer.Serialize<string>(str);
 
             // Assert
             Assert.That(bytes, Is.Not.Null);
@@ -33,10 +33,10 @@ namespace MessageRouter.UnitTests.Serialization
             // Arrange
             var serializer = new BinarySerializer();
             var str = "Some string";
-            var bytes = serializer.Serialize<String>(str);
+            var bytes = serializer.Serialize<string>(str);
 
             // Act
-            var deserializedStr = serializer.Deserialize<String>(bytes);
+            var deserializedStr = serializer.Deserialize<string>(bytes);
 
             // Assert
             Assert.That(deserializedStr, Is.EqualTo(str));

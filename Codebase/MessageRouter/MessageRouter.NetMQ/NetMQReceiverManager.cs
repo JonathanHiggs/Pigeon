@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ
 {
     /// <summary>
-    /// NetMQ implementation of <see cref="IAsyncReceiverManager"/>. Manages the state of NetMQ <see cref="NetMQAsyncReceiver"/>s
+    /// NetMQ implementation of <see cref="IReceiverManager"/>. Manages the state of <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQAsyncReceiverManager : IAsyncReceiverManager
+    public class NetMQReceiverManager : IReceiverManager
     {
-        private readonly NetMQAsyncReceiver receiver;
-        private readonly NetMQPoller poller;
+        private readonly INetMQReceiver receiver;
+        private readonly INetMQPoller poller;
 
 
         /// <summary>
@@ -28,12 +28,14 @@ namespace MessageRouter.NetMQ
         /// Initializes a new NetMQAsyncReceiverManager
         /// </summary>
         /// <param name="receiver">NetMQAsyncReceiver that can receive requests from remotes</param>
-        public NetMQAsyncReceiverManager(NetMQAsyncReceiver receiver)
+        /// <param name="poller">NetMQPoller monitors for incoming messages</param>
+        public NetMQReceiverManager(INetMQReceiver receiver, INetMQPoller poller)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
-            this.poller = new NetMQPoller { receiver.PollableSocket };
+            this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
 
             receiver.RequestReceived += OnRequestReceived;
+            poller.Add(receiver.PollableSocket);
         }
 
 
@@ -43,6 +45,7 @@ namespace MessageRouter.NetMQ
         public void Start()
         {
             poller.RunAsync();
+            receiver.Bind();
         }
 
 
@@ -53,6 +56,27 @@ namespace MessageRouter.NetMQ
         {
             poller.StopAsync();
             receiver.UnbindAll();
+        }
+
+
+        /// <summary>
+        /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
+        /// </summary>
+        /// <returns></returns>
+        public RequestTask Receive()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// Synchronously tries receiving a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
+        /// </summary>
+        /// <param name="requestTask">RequestTask</param>
+        /// <returns></returns>
+        public bool TryReceive(out RequestTask requestTask)
+        {
+            throw new NotImplementedException();
         }
 
 

@@ -49,8 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncSocket.cs" />
-    <Compile Include="NetMQAsyncReceiver.cs" />
-    <Compile Include="NetMQAsyncReceiverManager.cs" />
+    <Compile Include="INetMQReceiver.cs" />
+    <Compile Include="NetMQReceiverManager.cs" />
     <Compile Include="NetMQAsyncSender.cs" />
     <Compile Include="NetMQReceiver.cs" />
     <Compile Include="NetMQReceiverFactory.cs" />
