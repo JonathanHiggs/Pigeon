@@ -62,20 +62,5 @@ namespace MessageRouter.Receivers
         /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         void UnbindAll();
-
-
-        /// <summary>
-        /// Synchronously receives a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
-        /// </summary>
-        /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
-        RequestTask Receive();
-
-
-        /// <summary>
-        /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
-        /// </summary>
-        /// <param name="requestTask">Combination of the request <see cref="Message"/> and a response Action</param>
-        /// <returns>Boolean flag indicating whether a request task was retrieved</returns>
-        bool TryReceive(out RequestTask requestTask);
     }
 }
