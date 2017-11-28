@@ -20,7 +20,7 @@ namespace MessageRouter.Sandbox
             var random = new Random();
             var poller = new NetMQPoller();
             var senderFactory = new NetMQSenderFactory(poller);
-            var senderManager = new NetMQSenderManager(senderFactory, poller);
+            var senderManager = new NetMQSenderMonitor(senderFactory, poller);
             var messageFactory = new MessageFactory();
             var client = new MessageClient(senderManager, messageFactory);
 

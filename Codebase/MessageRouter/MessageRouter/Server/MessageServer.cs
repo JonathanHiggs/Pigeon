@@ -15,7 +15,7 @@ namespace MessageRouter.Server
     public class MessageServer : IMessageServer<ServerInfo>
     {
         private readonly IMessageFactory messageFactory;
-        private readonly IReceiverManager receiverManager;
+        private readonly IReceiverMonitor receiverMonitor;
         private readonly IRequestDispatcher requestDispatcher;
         private readonly ServerInfo serverInfo;
         private readonly object runLock = new object();
@@ -32,13 +32,13 @@ namespace MessageRouter.Server
         /// Initializes a new instance of AsyncMessageServer
         /// </summary>
         /// <param name="messageFactory"><see cref="IMessageFactory"/> dependency for constructing <see cref="Message"/>s and extracting request objects</param>
-        /// <param name="receiverManager"><see cref="IReceiverFactory"/> dependency for managing <see cref="IAsyncReceiver"/>s</param>
+        /// <param name="receiverMonitor"><see cref="IReceiverMonitor"/> dependency for managing <see cref="IAsyncReceiver"/>s</param>
         /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> dependency for routing and handling incoming requests</param>
         /// <param name="name">Name identifying the server</param>
-        public MessageServer(IMessageFactory messageFactory, IReceiverManager receiverManager, IRequestDispatcher requestDispatcher, string name)
+        public MessageServer(IMessageFactory messageFactory, IReceiverMonitor receiverMonitor, IRequestDispatcher requestDispatcher, string name)
         {
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
-            this.receiverManager = receiverManager ?? throw new ArgumentNullException(nameof(receiverManager));
+            this.receiverMonitor = receiverMonitor ?? throw new ArgumentNullException(nameof(receiverMonitor));
             this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
 
             serverInfo = new ServerInfo
@@ -48,7 +48,7 @@ namespace MessageRouter.Server
                 StartUpTimeStamp = null
             };
 
-            receiverManager.RequestReceived += HandleAndRespond;
+            receiverMonitor.RequestReceived += HandleAndRespond;
         }
 
 
@@ -65,7 +65,7 @@ namespace MessageRouter.Server
                 running = true;
                 serverInfo.StartUpTimeStamp = DateTime.Now;
 
-                receiverManager.Start();
+                receiverMonitor.Start();
             }
         }
 
@@ -83,7 +83,7 @@ namespace MessageRouter.Server
                 running = false;
                 serverInfo.StartUpTimeStamp = null;
 
-                receiverManager.Stop();
+                receiverMonitor.Stop();
             }
         }
 

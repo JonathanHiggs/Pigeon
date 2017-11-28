@@ -15,11 +15,11 @@ namespace MessageRouter.UnitTests.Server
     public class MessageServerTests
     {
         private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private readonly Mock<IReceiverManager> mockReceiverManager = new Mock<IReceiverManager>();
+        private readonly Mock<IReceiverMonitor> mockReceiverMonitor = new Mock<IReceiverMonitor>();
         private readonly Mock<IRequestDispatcher> mockRequestDispatcher = new Mock<IRequestDispatcher>();
 
         private IMessageFactory messageFactory;
-        private IReceiverManager receiverManager;
+        private IReceiverMonitor receiverMonitor;
         private IRequestDispatcher requestDispatcher;
         private string name = "something";
 
@@ -28,7 +28,7 @@ namespace MessageRouter.UnitTests.Server
         public void Setup()
         {
             messageFactory = mockMessageFactory.Object;
-            receiverManager = mockReceiverManager.Object;
+            receiverMonitor = mockReceiverMonitor.Object;
             requestDispatcher = mockRequestDispatcher.Object;
 
             mockMessageFactory
@@ -49,7 +49,7 @@ namespace MessageRouter.UnitTests.Server
         public void TearDown()
         {
             mockMessageFactory.Reset();
-            mockReceiverManager.Reset();
+            mockReceiverMonitor.Reset();
             mockRequestDispatcher.Reset();
         }
 
@@ -58,7 +58,7 @@ namespace MessageRouter.UnitTests.Server
         public void MessageServer_WithAllDependencies_Initializes()
         {
             // Act
-            var messageServer = new MessageServer(messageFactory, receiverManager, requestDispatcher, name);
+            var messageServer = new MessageServer(messageFactory, receiverMonitor, requestDispatcher, name);
 
             // Assert
             Assert.That(messageServer, Is.Not.Null);
@@ -70,7 +70,7 @@ namespace MessageRouter.UnitTests.Server
         public void MessageServer_WithMissingMessageFactory_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new MessageServer(null, receiverManager, requestDispatcher, name);
+            TestDelegate test = () => new MessageServer(null, receiverMonitor, requestDispatcher, name);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -78,7 +78,7 @@ namespace MessageRouter.UnitTests.Server
 
 
         [Test]
-        public void MessageServer_WithMissingReceiverManager_ThrowsArgumentNullException()
+        public void MessageServer_WithMissingReceiverMonitor_ThrowsArgumentNullException()
         {
             // Act
             TestDelegate test = () => new MessageServer(messageFactory, null, requestDispatcher, name);
@@ -92,7 +92,7 @@ namespace MessageRouter.UnitTests.Server
         public void MessageServer_WithMissingRequestDispatcher_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new MessageServer(messageFactory, receiverManager, null, name);
+            TestDelegate test = () => new MessageServer(messageFactory, receiverMonitor, null, name);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -105,7 +105,7 @@ namespace MessageRouter.UnitTests.Server
         public void CreateResponse_WithValidResponse_CallsMessageFactory()
         {
             // Arrange
-            var messageServer = new MessageServer(messageFactory, receiverManager, requestDispatcher, name);
+            var messageServer = new MessageServer(messageFactory, receiverMonitor, requestDispatcher, name);
             var responseObject = "response";
 
             // Act
@@ -123,7 +123,7 @@ namespace MessageRouter.UnitTests.Server
         public void CreateResponse_WithNullResponse_ThrowsArgumentException()
         {
             // Arrange
-            var messageServer = new MessageServer(messageFactory, receiverManager, requestDispatcher, name);
+            var messageServer = new MessageServer(messageFactory, receiverMonitor, requestDispatcher, name);
             string responseObject = null;
 
             // Act

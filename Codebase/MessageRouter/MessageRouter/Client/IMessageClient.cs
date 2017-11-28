@@ -10,7 +10,7 @@ namespace MessageRouter.Client
     public interface IMessageClient
     {
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
         /// Default timeout of one hour
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
@@ -23,7 +23,7 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <typeparam name="TResponse">Expected response type</typeparam>

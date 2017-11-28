@@ -13,7 +13,7 @@ namespace MessageRouter.Client
     /// </summary>
     public class MessageClient : IMessageClient
     {
-        private readonly ISenderManager senderManager;
+        private readonly ISenderMonitor senderMonitor;
         private readonly IMessageFactory messageFactory;
         private bool running = false;
         private object lockObj = new object();
@@ -28,17 +28,17 @@ namespace MessageRouter.Client
         /// <summary>
         /// Initializes an instance of a MessageClient
         /// </summary>
-        /// <param name="senderManager">Manages sender connections to remotes</param>
+        /// <param name="senderMonitor">Manages sender connections to remotes</param>
         /// <param name="messageFactory">Wraps requests in the message protocol</param>
-        public MessageClient(ISenderManager senderManager, IMessageFactory messageFactory)
+        public MessageClient(ISenderMonitor senderMonitor, IMessageFactory messageFactory)
         {
-            this.senderManager = senderManager ?? throw new ArgumentNullException(nameof(senderManager));
+            this.senderMonitor = senderMonitor ?? throw new ArgumentNullException(nameof(senderMonitor));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
         }
 
 
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
         /// Default timeout of one hour
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
@@ -54,7 +54,7 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderManager"/>
+        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <typeparam name="TResponse">Expected response type</typeparam>
@@ -69,7 +69,7 @@ namespace MessageRouter.Client
                 throw new ArgumentNullException(nameof(request));
 
             var requestMessage = messageFactory.CreateRequest(request);
-            var sender = senderManager.SenderFor<TRequest>();
+            var sender = senderMonitor.SenderFor<TRequest>();
             var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
@@ -86,7 +86,7 @@ namespace MessageRouter.Client
                 if (running)
                     throw new InvalidOperationException($"{GetType().Name} is already running");
 
-                senderManager.Start();
+                senderMonitor.Start();
                 running = true;
             }
         }
@@ -102,7 +102,7 @@ namespace MessageRouter.Client
                 if (!running)
                     throw new InvalidOperationException($"{GetType().Name} is not running");
 
-                senderManager.Stop();
+                senderMonitor.Stop();
                 running = false;
             }
         }

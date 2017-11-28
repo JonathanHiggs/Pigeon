@@ -15,18 +15,18 @@ namespace MessageRouter.UnitTests.Client
     [TestFixture]
     public class MessageClientTests
     {
-        private readonly Mock<ISenderManager> mockSenderManager = new Mock<ISenderManager>();
+        private readonly Mock<ISenderMonitor> mockSenderMonitor = new Mock<ISenderMonitor>();
         private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
         private readonly Mock<ISender> mockSender = new Mock<ISender>();
 
-        private ISenderManager senderManager;
+        private ISenderMonitor senderMonitor;
         private IMessageFactory messageFactory;
         private ISender sender;
 
         [SetUp]
         public void Setup()
         {
-            senderManager = mockSenderManager.Object;
+            senderMonitor = mockSenderMonitor.Object;
             messageFactory = mockMessageFactory.Object;
             sender = mockSender.Object;
         }
@@ -35,7 +35,7 @@ namespace MessageRouter.UnitTests.Client
         [TearDown]
         public void TearDown()
         {
-            mockSenderManager.Reset();
+            mockSenderMonitor.Reset();
             mockMessageFactory.Reset();
             mockSender.Reset();
         }
@@ -51,7 +51,7 @@ namespace MessageRouter.UnitTests.Client
                 .Setup(m => m.ExtractResponse<T>(It.IsAny<Message>()))
                 .Returns<DataMessage<T>>(m => m.Data);
 
-            mockSenderManager
+            mockSenderMonitor
                 .Setup(m => m.SenderFor<T>())
                 .Returns(sender);
             
@@ -66,7 +66,7 @@ namespace MessageRouter.UnitTests.Client
         public void MessageClient_WithDependencies_Initializes()
         {
             // Act
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
 
             // Assert
             Assert.That(messageClient, Is.Not.Null);
@@ -74,7 +74,7 @@ namespace MessageRouter.UnitTests.Client
 
 
         [Test]
-        public void MessageClient_WithMissingSenderManager_ThrowsArugmentNullException()
+        public void MessageClient_WithMissingSenderMonitor_ThrowsArugmentNullException()
         {
             // Act
             TestDelegate test = () => new MessageClient(null, messageFactory);
@@ -88,7 +88,7 @@ namespace MessageRouter.UnitTests.Client
         public void MessageClient_WithMissingMessageFactory_ThrowsArugmentNullException()
         {
             // Act
-            TestDelegate test = () => new MessageClient(senderManager, null);
+            TestDelegate test = () => new MessageClient(senderMonitor, null);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -101,7 +101,7 @@ namespace MessageRouter.UnitTests.Client
         public async Task SendAsync_WithSenderReturnRequestObject_ReceivesSameObject()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(request);
 
@@ -117,7 +117,7 @@ namespace MessageRouter.UnitTests.Client
         public async Task SendAsync_WithRequest_CreatesRequestMessage()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(request);
 
@@ -136,7 +136,7 @@ namespace MessageRouter.UnitTests.Client
         public async Task SendAsync_WithRequest_ResolvesSender()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(request);
 
@@ -144,7 +144,7 @@ namespace MessageRouter.UnitTests.Client
             var response = await messageClient.SendAsync<string, string>(request);
 
             // Assert
-            mockSenderManager
+            mockSenderMonitor
                 .Verify(
                     m => m.SenderFor<object>(),
                     Times.Once);
@@ -155,7 +155,7 @@ namespace MessageRouter.UnitTests.Client
         public async Task SendAsync_WithRequest_SendsMessage()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(request);
 
@@ -174,7 +174,7 @@ namespace MessageRouter.UnitTests.Client
         public async Task SendAsync_WithRequest_ExtractsResponse()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(request);
 
@@ -193,7 +193,7 @@ namespace MessageRouter.UnitTests.Client
         public void SendAsync_WithNullRequestObject_ThrowsArgumentException()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             
             // Act & Assert
             Assert.That(async () => await messageClient.SendAsync<object, object>(null), Throws.ArgumentNullException);
@@ -204,7 +204,7 @@ namespace MessageRouter.UnitTests.Client
         public void SendAsync_WithExceptionResponse_ThrowsException()
         {
             // Arrange
-            var messageClient = new MessageClient(senderManager, messageFactory);
+            var messageClient = new MessageClient(senderMonitor, messageFactory);
             var request = new object();
             var exception = new IOException();
 
@@ -223,16 +223,16 @@ namespace MessageRouter.UnitTests.Client
 
         #region Start
         [Test]
-        public void Start_WithNotStarted_StartsSenderManager()
+        public void Start_WithNotStarted_StartsSenderMonitor()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
 
             // Act
             client.Start();
 
             // Assert
-            mockSenderManager.Verify(m => m.Start(), Times.Once);
+            mockSenderMonitor.Verify(m => m.Start(), Times.Once);
         }
 
 
@@ -240,7 +240,7 @@ namespace MessageRouter.UnitTests.Client
         public void Start_WithAlreadyStarted_ThrowsInvalidOperationException()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
             client.Start();
 
             // Act
@@ -254,17 +254,17 @@ namespace MessageRouter.UnitTests.Client
 
         #region Stop
         [Test]
-        public void Stop_WithRunning_StopsSenderManager()
+        public void Stop_WithRunning_StopsSenderMonitor()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
             client.Start();
 
             // Act
             client.Stop();
 
             // Assert
-            mockSenderManager.Verify(m => m.Stop(), Times.Once);
+            mockSenderMonitor.Verify(m => m.Stop(), Times.Once);
         }
 
 
@@ -272,7 +272,7 @@ namespace MessageRouter.UnitTests.Client
         public void Stop_WithNotRunning_ThrowsInvalidOperationException()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
 
             // Act
             TestDelegate test = () => client.Stop();
@@ -288,7 +288,7 @@ namespace MessageRouter.UnitTests.Client
         public void IsRunning_WhenNotStarted_IsFalse()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
 
             // Act
             var running = client.IsRunning;
@@ -302,7 +302,7 @@ namespace MessageRouter.UnitTests.Client
         public void IsRunning_WhenStarted_IsTrue()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
             client.Start();
 
             // Act
@@ -317,7 +317,7 @@ namespace MessageRouter.UnitTests.Client
         public void IsRunning_WhenStartedAndStopped_IsFalse()
         {
             // Arrange
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderMonitor, messageFactory);
             client.Start();
             client.Stop();
 

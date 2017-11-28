@@ -24,7 +24,7 @@ namespace MessageRouter.Sandbox
             var socket = new RouterSocket();
             var serializer = new BinarySerializer();
             var receiver = new NetMQReceiver(socket, serializer);
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
+            var receiverManager = new NetMQReceiverMonitor(receiver, poller);
             var messageFactory = new MessageFactory();
             var requestDispatcher = new RequestDispatcher();
             var server = new MessageServer(messageFactory, receiverManager, requestDispatcher, "Server");

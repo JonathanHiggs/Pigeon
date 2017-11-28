@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ.UnitTests
 {
     [TestFixture]
-    public class NetMQReceiverManagerTests
+    public class NetMQReceiverMonitorTests
     {
         private readonly Mock<INetMQReceiver> mockReceiver = new Mock<INetMQReceiver>();
         private INetMQReceiver receiver;
@@ -38,10 +38,10 @@ namespace MessageRouter.NetMQ.UnitTests
 
         #region Constructor
         [Test]
-        public void NetMQReceiverManager_WithNullReceiver_ThrowsArgumentNullException()
+        public void NetMQReceiverMonitor_WithNullReceiver_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new NetMQReceiverManager(null, poller);
+            TestDelegate test = () => new NetMQReceiverMonitor(null, poller);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -49,10 +49,10 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void NetMQReceiverManager_WithNullPoller_ThrowsArgumentNullException()
+        public void NetMQReceiverMonitor_WithNullPoller_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new NetMQReceiverManager(receiver, null);
+            TestDelegate test = () => new NetMQReceiverMonitor(receiver, null);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -60,10 +60,10 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void NetMQReceiverManager_WithDependencies_AddsReceiverToPoller()
+        public void NetMQReceiverMonitor_WithDependencies_AddsReceiverToPoller()
         {
             // Act
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
 
             // Assert
             mockPoller.Verify(m => m.Add(It.IsAny<ISocketPollable>()), Times.Once);
@@ -76,10 +76,10 @@ namespace MessageRouter.NetMQ.UnitTests
         public void Start_WhenNotRunning_RunsPoller()
         {
             // Arrange
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
 
             // Act
-            receiverManager.Start();
+            receiverMonitor.Start();
 
             // Assert
             mockPoller.Verify(m => m.RunAsync(), Times.Once);
@@ -90,10 +90,10 @@ namespace MessageRouter.NetMQ.UnitTests
         public void Sart_WhenNotRunning_BindsReceiver()
         {
             // Arrange
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
 
             // Act
-            receiverManager.Start();
+            receiverMonitor.Start();
 
             // Assert
             mockReceiver.Verify(m => m.Bind(), Times.Once);
@@ -106,11 +106,11 @@ namespace MessageRouter.NetMQ.UnitTests
         public void Stop_WhenRunning_StopsPoller()
         {
             // Arrange
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
-            receiverManager.Start();
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
+            receiverMonitor.Start();
 
             // Act
-            receiverManager.Stop();
+            receiverMonitor.Stop();
 
             // Assert
             mockPoller.Verify(m => m.StopAsync(), Times.Once);
@@ -121,11 +121,11 @@ namespace MessageRouter.NetMQ.UnitTests
         public void Stop_WhenRunning_UnbindsReceiver()
         {
             // Arrange
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
-            receiverManager.Start();
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
+            receiverMonitor.Start();
 
             // Act
-            receiverManager.Stop();
+            receiverMonitor.Stop();
 
             // Assert
             mockReceiver.Verify(m => m.UnbindAll(), Times.Once);
@@ -138,9 +138,9 @@ namespace MessageRouter.NetMQ.UnitTests
         public void RequestReceived_WhenReceiverRaises_IsRaised()
         {
             // Arrange
-            var receiverManager = new NetMQReceiverManager(receiver, poller);
+            var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
             var called = false;
-            receiverManager.RequestReceived += (sender, task) => called = true;
+            receiverMonitor.RequestReceived += (sender, task) => called = true;
 
             // Act
             mockReceiver.Raise(r => r.RequestReceived += null, receiver, new RequestTask());

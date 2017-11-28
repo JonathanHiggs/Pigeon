@@ -10,11 +10,11 @@ using MessageRouter.Diagnostics;
 
 namespace MessageRouter.NetMQ.Senders
 {
-    public class NetMQSenderManager : SenderManager
+    public class NetMQSenderMonitor : SenderMonitor
     {
-        private readonly NetMQPoller poller;
+        private readonly INetMQPoller poller;
 
-        public NetMQSenderManager(NetMQSenderFactory senderFactory, NetMQPoller poller)
+        public NetMQSenderMonitor(NetMQSenderFactory senderFactory, INetMQPoller poller)
             : base(senderFactory)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));

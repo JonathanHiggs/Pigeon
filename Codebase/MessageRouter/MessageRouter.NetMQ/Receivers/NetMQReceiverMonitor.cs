@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
-    /// NetMQ implementation of <see cref="IReceiverManager"/>. Manages the state of <see cref="INetMQReceiver"/>s
+    /// NetMQ implementation of <see cref="IReceiverMonitor"/>. Manages the state of <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQReceiverManager : IReceiverManager
+    public class NetMQReceiverMonitor : IReceiverMonitor
     {
         private readonly INetMQReceiver receiver;
         private readonly INetMQPoller poller;
@@ -25,11 +25,11 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Initializes a new NetMQAsyncReceiverManager
+        /// Initializes a new NetMQReceiverMonitor
         /// </summary>
-        /// <param name="receiver">NetMQAsyncReceiver that can receive requests from remotes</param>
+        /// <param name="receiver">NetMQReceiver that can receive requests from remotes</param>
         /// <param name="poller">NetMQPoller monitors for incoming messages</param>
-        public NetMQReceiverManager(INetMQReceiver receiver, INetMQPoller poller)
+        public NetMQReceiverMonitor(INetMQReceiver receiver, INetMQPoller poller)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
