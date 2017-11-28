@@ -21,6 +21,12 @@ namespace MessageRouter.Messages
 
 
         /// <summary>
+        /// Gets the message body
+        /// </summary>
+        public abstract object Body { get; }
+
+
+        /// <summary>
         /// Initializes a new instance of a Message
         /// </summary>
         /// <param name="id">Message indentifier</param>
@@ -28,11 +34,5 @@ namespace MessageRouter.Messages
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
         }
-
-
-        /// <summary>
-        /// Gets the message body
-        /// </summary>
-        public abstract object Body { get; }
     }
 }

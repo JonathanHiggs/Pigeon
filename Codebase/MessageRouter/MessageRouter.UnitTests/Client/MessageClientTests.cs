@@ -106,7 +106,7 @@ namespace MessageRouter.UnitTests.Client
             SetupMirroredResponse<string>(request);
 
             // Act
-            var response = await messageClient.SendAsync<string, string>(request);
+            var response = await messageClient.Send<string, string>(request);
 
             // Assert
             Assert.That(response, Is.SameAs(request));
@@ -122,7 +122,7 @@ namespace MessageRouter.UnitTests.Client
             SetupMirroredResponse<string>(request);
 
             // Act
-            var response = await messageClient.SendAsync<string, string>(request);
+            var response = await messageClient.Send<string, string>(request);
 
             // Assert
             mockMessageFactory
@@ -141,7 +141,7 @@ namespace MessageRouter.UnitTests.Client
             SetupMirroredResponse<string>(request);
 
             // Act
-            var response = await messageClient.SendAsync<string, string>(request);
+            var response = await messageClient.Send<string, string>(request);
 
             // Assert
             mockSenderMonitor
@@ -160,7 +160,7 @@ namespace MessageRouter.UnitTests.Client
             SetupMirroredResponse<string>(request);
 
             // Act
-            var response = await messageClient.SendAsync<string, string>(request);
+            var response = await messageClient.Send<string, string>(request);
 
             // Assert
             mockSender
@@ -179,7 +179,7 @@ namespace MessageRouter.UnitTests.Client
             SetupMirroredResponse<string>(request);
 
             // Act
-            var response = await messageClient.SendAsync<string, string>(request);
+            var response = await messageClient.Send<string, string>(request);
 
             // Assert
             mockMessageFactory
@@ -196,7 +196,7 @@ namespace MessageRouter.UnitTests.Client
             var messageClient = new MessageClient(senderMonitor, messageFactory);
             
             // Act & Assert
-            Assert.That(async () => await messageClient.SendAsync<object, object>(null), Throws.ArgumentNullException);
+            Assert.That(async () => await messageClient.Send<object, object>(null), Throws.ArgumentNullException);
         }
 
 
@@ -213,7 +213,7 @@ namespace MessageRouter.UnitTests.Client
                 .ReturnsAsync(new DataMessage<Exception>(new GuidMessageId(), exception));
 
             // Act
-            TestDelegate test = async () => await messageClient.SendAsync<object, string>(request);
+            TestDelegate test = async () => await messageClient.Send<object, string>(request);
 
             // Assert
             Assert.That(test, Throws.InstanceOf<IOException>());

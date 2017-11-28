@@ -10,6 +10,5 @@ namespace MessageRouter.Addresses
     /// Represents different methods of addressing a remote resource
     /// </summary>
     public interface IAddress : IEquatable<IAddress>
-    {
-    }
+    { }
 }

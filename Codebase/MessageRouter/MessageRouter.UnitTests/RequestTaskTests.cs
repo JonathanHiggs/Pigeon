@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using MessageRouter.Messages;
+using MessageRouter.Receivers;
 
 namespace MessageRouter.UnitTests
 {

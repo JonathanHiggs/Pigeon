@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Client
 {
     /// <summary>
-    /// Basic client to make synchronous calls to a remote
+    /// Basic client implementation
     /// </summary>
     public class MessageClient : IMessageClient
     {
@@ -45,11 +45,11 @@ namespace MessageRouter.Client
         /// <typeparam name="TResponse">Expected response type</typeparam>
         /// <param name="request">Request object</param>
         /// <returns>Response object</returns>
-        public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request)
+        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request)
             where TRequest : class
             where TResponse : class
         {
-            return await SendAsync<TRequest, TResponse>(request, TimeSpan.FromHours(1));
+            return await Send<TRequest, TResponse>(request, TimeSpan.FromHours(1));
         }
 
 
@@ -61,7 +61,7 @@ namespace MessageRouter.Client
         /// <param name="request">Request object</param>
         /// <param name="timeout">Time to wait for a response before throwing an exception</param>
         /// <returns>Response object</returns>
-        public async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, TimeSpan timeout)
+        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request, TimeSpan timeout)
             where TRequest : class
             where TResponse : class
         {

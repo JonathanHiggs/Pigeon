@@ -10,7 +10,7 @@ namespace MessageRouter.Messages
     /// <summary>
     /// Basic <see cref="Message"/> derivative that contains type safe data
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of data payload</typeparam>
     [Serializable]
     [ImmutableObject(true)]
     public class DataMessage<T> : Message

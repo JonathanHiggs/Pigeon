@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 namespace MessageRouter.Messages
 {
     public interface IMessageId : IEquatable<IMessageId>
-    {
-
-    }
+    { }
 }

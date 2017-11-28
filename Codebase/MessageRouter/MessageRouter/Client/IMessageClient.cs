@@ -17,7 +17,7 @@ namespace MessageRouter.Client
         /// <typeparam name="TResponse">Expected response type</typeparam>
         /// <param name="request">Request object</param>
         /// <returns>Response object</returns>
-        Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request)
+        Task<TResponse> Send<TRequest, TResponse>(TRequest request)
             where TRequest : class
             where TResponse : class;
 
@@ -30,7 +30,7 @@ namespace MessageRouter.Client
         /// <param name="request">Request object</param>
         /// <param name="timeout">Time to wait for a response before throwing an exception</param>
         /// <returns>Response object</returns>
-        Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, TimeSpan timeout)
+        Task<TResponse> Send<TRequest, TResponse>(TRequest request, TimeSpan timeout)
             where TRequest : class
             where TResponse : class;
 

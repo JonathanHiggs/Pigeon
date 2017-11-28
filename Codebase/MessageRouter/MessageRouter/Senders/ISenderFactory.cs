@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Senders
 {
     /// <summary>
-    /// Factory for <see cref="ISender"/>s and <see cref="IAsyncSender"/>s
+    /// Factory for <see cref="ISender"/>s
     /// </summary>
     public interface ISenderFactory
     {

@@ -7,6 +7,7 @@ namespace MessageRouter.UnitTests
     [TestFixture]
     public class DataMessageTests
     {
+        #region Constructor
         [Test]
         public void DataMessage_WithRequiredFields_InitializesObject()
         {
@@ -49,6 +50,7 @@ namespace MessageRouter.UnitTests
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
         }
+        #endregion
 
 
         [Test]

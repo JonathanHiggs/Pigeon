@@ -1,4 +1,5 @@
 ﻿using MessageRouter.NetMQ.Receivers;
+using MessageRouter.Receivers;
 using Moq;
 using NetMQ;
 using NUnit.Framework;

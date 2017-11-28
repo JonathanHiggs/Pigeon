@@ -8,7 +8,8 @@ using MessageRouter.Diagnostics;
 
 namespace MessageRouter.Senders
 {
-    public class SenderMonitor : ISenderMonitor
+    // ToDo: This should be MessageRouter
+    public abstract class SenderMonitor : ISenderMonitor
     {
         private readonly ISenderFactory senderFactory;
         private readonly Dictionary<Type, IAddress> routingTable = new Dictionary<Type, IAddress>();
@@ -49,14 +50,10 @@ namespace MessageRouter.Senders
         }
 
 
-        public virtual void Start()
-        {
-        }
+        public abstract void Start();
 
 
-        public virtual void Stop()
-        {
-        }
+        public abstract void Stop();
 
 
         private IAddress GetAddressForRequest(Type requestType)

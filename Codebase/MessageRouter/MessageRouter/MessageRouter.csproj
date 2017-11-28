@@ -59,7 +59,7 @@
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestTask.cs" />
+    <Compile Include="Receivers\RequestTask.cs" />
     <Compile Include="Senders\ISenderFactory.cs" />
     <Compile Include="Senders\ISenderMonitor.cs" />
     <Compile Include="Senders\SenderMonitor.cs" />
