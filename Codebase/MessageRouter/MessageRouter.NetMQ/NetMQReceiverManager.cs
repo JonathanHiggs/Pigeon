@@ -59,27 +59,6 @@ namespace MessageRouter.NetMQ
         }
 
 
-        /// <summary>
-        /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
-        /// </summary>
-        /// <returns></returns>
-        public RequestTask Receive()
-        {
-            throw new NotImplementedException();
-        }
-
-
-        /// <summary>
-        /// Synchronously tries receiving a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
-        /// </summary>
-        /// <param name="requestTask">RequestTask</param>
-        /// <returns></returns>
-        public bool TryReceive(out RequestTask requestTask)
-        {
-            throw new NotImplementedException();
-        }
-
-
         private void OnRequestReceived(object sender, RequestTask requestTask)
         {
             RequestReceived?.Invoke(sender, requestTask);

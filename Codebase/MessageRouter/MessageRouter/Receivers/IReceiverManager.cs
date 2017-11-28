@@ -20,21 +20,6 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Synchronously retrieves a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
-        /// </summary>
-        /// <returns></returns>
-        RequestTask Receive();
-
-
-        /// <summary>
-        /// Synchronously tries receiving a <see cref="RequestTask"/> from a managed <see cref="IReceiver"/>
-        /// </summary>
-        /// <param name="requestTask">RequestTask</param>
-        /// <returns></returns>
-        bool TryReceive(out RequestTask requestTask);
-
-
-        /// <summary>
         /// Starts accepting incoming requests
         /// </summary>
         void Start();
