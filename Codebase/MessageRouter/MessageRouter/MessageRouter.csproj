@@ -62,7 +62,10 @@
     <Compile Include="Receivers\RequestTask.cs" />
     <Compile Include="Senders\ISenderFactory.cs" />
     <Compile Include="Senders\ISenderMonitor.cs" />
-    <Compile Include="Senders\SenderMonitor.cs" />
+    <Compile Include="Senders\ISenderRouter.cs" />
+    <Compile Include="Senders\SenderFactoryBase.cs" />
+    <Compile Include="Senders\SenderMonitorBase.cs" />
+    <Compile Include="Senders\SenderRouter.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Server\MessageServer.cs" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Senders
 {
     /// <summary>
-    /// Factory for <see cref="ISender"/>s
+    /// Factory for <see cref="ISender"/>s and <see cref="ISenderMonitor"/>s
     /// </summary>
     public interface ISenderFactory
     {
@@ -17,6 +17,13 @@ namespace MessageRouter.Senders
         /// </summary>
         /// <param name="address">Address of the remote the sender will connect to</param>
         /// <returns>Sender connected to the remote address</returns>
-        ISender Create(IAddress address);
+        ISender GetSender(IAddress address);
+
+
+        /// <summary>
+        /// Creates a new instance of an <see cref="ISenderMonitor"/>
+        /// </summary>
+        /// <returns></returns>
+        ISenderMonitor GetMonitor();
     }
 }

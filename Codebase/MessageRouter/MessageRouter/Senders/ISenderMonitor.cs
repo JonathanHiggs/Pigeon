@@ -12,20 +12,7 @@ namespace MessageRouter.Senders
     /// </summary>
     public interface ISenderMonitor
     {
-        /// <summary>
-        /// Registers an <see cref="IAddress"/> as the remote destination for the TRequest type
-        /// </summary>
-        /// <typeparam name="TRequest">Type of request object</typeparam>
-        /// <param name="address">Address of remote</param>
-        void AddRequestMapping<TRequest>(IAddress address);
-
-
-        /// <summary>
-        /// Resolves an <see cref="ISender"/> for the type of the request with the configured routing
-        /// </summary>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <returns>Sender for the request type</returns>
-        ISender SenderFor<TRequest>();
+        void Add(ISender sender);
 
 
         /// <summary>

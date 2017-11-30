@@ -13,7 +13,7 @@ namespace MessageRouter.Client
     /// </summary>
     public class MessageClient : IMessageClient
     {
-        private readonly ISenderMonitor senderMonitor;
+        private readonly ISenderRouter senderRouter;
         private readonly IMessageFactory messageFactory;
         private bool running = false;
         private object lockObj = new object();
@@ -28,11 +28,11 @@ namespace MessageRouter.Client
         /// <summary>
         /// Initializes an instance of a MessageClient
         /// </summary>
-        /// <param name="senderMonitor">Manages sender connections to remotes</param>
+        /// <param name="senderRouter">Manages sender connections to remotes</param>
         /// <param name="messageFactory">Wraps requests in the message protocol</param>
-        public MessageClient(ISenderMonitor senderMonitor, IMessageFactory messageFactory)
+        public MessageClient(ISenderRouter senderRouter, IMessageFactory messageFactory)
         {
-            this.senderMonitor = senderMonitor ?? throw new ArgumentNullException(nameof(senderMonitor));
+            this.senderRouter = senderRouter ?? throw new ArgumentNullException(nameof(senderRouter));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
         }
 
@@ -69,7 +69,7 @@ namespace MessageRouter.Client
                 throw new ArgumentNullException(nameof(request));
 
             var requestMessage = messageFactory.CreateRequest(request);
-            var sender = senderMonitor.SenderFor<TRequest>();
+            var sender = senderRouter.SenderFor<TRequest>();
             var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
@@ -86,7 +86,7 @@ namespace MessageRouter.Client
                 if (running)
                     throw new InvalidOperationException($"{GetType().Name} is already running");
 
-                senderMonitor.Start();
+                senderRouter.Start();
                 running = true;
             }
         }
@@ -102,7 +102,7 @@ namespace MessageRouter.Client
                 if (!running)
                     throw new InvalidOperationException($"{GetType().Name} is not running");
 
-                senderMonitor.Stop();
+                senderRouter.Stop();
                 running = false;
             }
         }

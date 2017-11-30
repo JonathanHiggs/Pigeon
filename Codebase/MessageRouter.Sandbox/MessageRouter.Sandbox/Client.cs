@@ -19,15 +19,21 @@ namespace MessageRouter.Sandbox
         {
             var random = new Random();
             var poller = new NetMQPoller();
-            var senderFactory = new NetMQSenderFactory(poller);
-            var senderManager = new NetMQSenderMonitor(senderFactory, poller);
+            var senderMonitor = new NetMQSenderMonitor(poller);
+            var senderFactory = new NetMQSenderFactory(senderMonitor);
+            var senderRouter = new SenderRouter();
             var messageFactory = new MessageFactory();
-            var client = new MessageClient(senderManager, messageFactory);
+            var client = new MessageClient(senderRouter, messageFactory);
 
             Console.WriteLine("Enter server name: ");
             var serverName = Console.ReadLine();
+            var address = TcpAddress.FromNameAndPort(serverName, 5555);
 
-            senderManager.AddRequestMapping<TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555));
+            senderRouter
+                .AddFactory<NetMQSender>(senderFactory)
+                .AddSender<NetMQSender>(address)
+                .AddRequestMapping<TestMessage>(address);
+            
             client.Start();
             
             Console.WriteLine("Press return to send message");
