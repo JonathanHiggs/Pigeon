@@ -59,7 +59,7 @@
     <Compile Include="Messages\GuidMessageIdTests.cs" />
     <Compile Include="Messages\MessageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestTaskTests.cs" />
+    <Compile Include="Receivers\RequestTaskTests.cs" />
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Server\MessageServerTests.cs" />
   </ItemGroup>

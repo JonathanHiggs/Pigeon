@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MessageRouter.Messages;
 using MessageRouter.Receivers;
 
-namespace MessageRouter.UnitTests
+namespace MessageRouter.UnitTests.Receivers
 {
     [TestFixture]
     public class RequestTaskTests
