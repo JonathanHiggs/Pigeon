@@ -8,6 +8,8 @@ namespace MessageRouter.Senders
 {
     public interface ISenderCache
     {
+        IReadOnlyCollection<ISenderFactory> Factories { get; }
+
         ISender SenderFor<TRequest>();
     }
 }

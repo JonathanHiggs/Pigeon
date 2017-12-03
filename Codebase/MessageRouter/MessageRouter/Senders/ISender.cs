@@ -26,19 +26,17 @@ namespace MessageRouter.Senders
         /// </summary>
         Type SerializerType { get; }
 
+        
+        void AddAddress(IAddress address);
 
-        /// <summary>
-        /// Initializes a connection to a remote for the given <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address for a remote</param>
-        void Connect(IAddress address);
+        
+        void RemoveAddress(IAddress address);
 
 
-        /// <summary>
-        /// Disconects the sender from the remote for the given <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address for a remote</param>
-        void Disconnect(IAddress address);
+        void ConnectAll();
+
+
+        void DisconnectAll();
 
 
         /// <summary>

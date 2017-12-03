@@ -16,27 +16,25 @@ namespace MessageRouter.NetMQ.Senders
     /// </summary>
     public class NetMQSenderFactory : SenderFactoryBase<NetMQSender>
     {
-        private readonly ISerializer<byte[]> binarySerializer = new BinarySerializer();
-        private NetMQSenderMonitor monitor;
+        private ISerializer<byte[]> serializer;
 
 
-        public NetMQSenderFactory(NetMQSenderMonitor monitor)
+        public NetMQSenderFactory(NetMQSenderMonitor monitor, ISerializer<byte[]> serializer)
+            : base(monitor)
         {
-            this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        public override SenderMonitorBase<NetMQSender> CreateMonitor()
-        {
-            return monitor;
-        }
 
-        public override NetMQSender CreateSender(IAddress address)
+        public override NetMQSender Create(IAddress address)
         {
             var dealerSocket = new DealerSocket();
             var asyncSocket = new AsyncSocket(dealerSocket);
-            var sender = new NetMQSender(asyncSocket, binarySerializer);
-            
-            sender.Connect(address);
+            var sender = new NetMQSender(asyncSocket, serializer);
+
+            sender.AddAddress(address);
+
+            SenderMonitor.AddSender(sender);
 
             return sender;
         }

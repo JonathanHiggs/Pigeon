@@ -16,7 +16,7 @@ namespace MessageRouter.NetMQ.Senders
     /// NetMQ implementation of <see cref="IAsyncSender"/> that wraps a <see cref="DealerSocket"/> that connects to remotes
     /// and sends <see cref="Message"/> both synchronously and asynchronously
     /// </summary>
-    public class NetMQSender : ISender, INetMQSender
+    public class NetMQSender : INetMQSender
     {
         private readonly List<IAddress> addresses = new List<IAddress>();
         private readonly ISerializer<byte[]> binarySerializer;
@@ -52,32 +52,32 @@ namespace MessageRouter.NetMQ.Senders
             this.binarySerializer = binarySerializer ?? throw new ArgumentNullException(nameof(binarySerializer));
         }
 
-
-        /// <summary>
-        /// Initializes a connection to a remote for the given <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address for a remote</param>
-        public void Connect(IAddress address)
+        
+        public void AddAddress(IAddress address)
         {
             if (!addresses.Contains(address))
-            {
-                socket.Connect(address);
                 addresses.Add(address);
-            }
+        }
+
+        
+        public void RemoveAddress(IAddress address)
+        {
+            if (addresses.Contains(address))
+                addresses.Remove(address);
         }
 
 
-        /// <summary>
-        /// Disconects the sender from the remote for the given <see cref="IAddress"/>
-        /// </summary>
-        /// <param name="address">Address for a remote</param>
-        public void Disconnect(IAddress address)
+        public void ConnectAll()
         {
-            if (addresses.Contains(address))
-            {
+            foreach (var address in addresses)
+                socket.Connect(address);
+        }
+
+
+        public void DisconnectAll()
+        {
+            foreach (var address in addresses)
                 socket.Disconnect(address);
-                addresses.Remove(address);
-            }
         }
 
 

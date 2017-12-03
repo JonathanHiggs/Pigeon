@@ -113,20 +113,6 @@ namespace MessageRouter.UnitTests.Messages
             // Assert
             Assert.AreSame(request, extractedRequest);
         }
-
-
-        [Test]
-        public void ExtractRequest_WithMessage_ReturnsMessage()
-        {
-            // Arrange
-            var message = new DataMessage<object>(new GuidMessageId(), new object());
-
-            // Act
-            var extractedRequest = factory.ExtractRequest(message);
-
-            // Assert
-            Assert.AreSame(message, extractedRequest);
-        }
         #endregion
 
 

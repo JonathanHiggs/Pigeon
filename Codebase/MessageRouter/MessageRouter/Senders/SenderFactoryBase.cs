@@ -7,10 +7,13 @@ using MessageRouter.Addresses;
 
 namespace MessageRouter.Senders
 {
-    public abstract class SenderFactoryBase<TSender> : ISenderFactory
+    public abstract class SenderFactoryBase<TSender> : ISenderFactory<TSender>
         where TSender : ISender
     {
         private readonly ISenderMonitor<TSender> senderMonitor;
+
+
+        public ISenderMonitor<TSender> SenderMonitor => senderMonitor;
 
 
         public SenderFactoryBase(ISenderMonitor<TSender> senderMonitor)

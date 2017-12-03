@@ -86,7 +86,7 @@ namespace MessageRouter.Client
             lock (lockObj)
             {
                 if (running)
-                    throw new InvalidOperationException($"{GetType().Name} is already running");
+                    return;
 
                 monitorCache.StartAllMonitors();
                 running = true;
@@ -102,7 +102,7 @@ namespace MessageRouter.Client
             lock (lockObj)
             {
                 if (!running)
-                    throw new InvalidOperationException($"{GetType().Name} is not running");
+                    return;
 
                 monitorCache.StopAllMonitors();
                 running = false;

@@ -10,9 +10,12 @@ using MessageRouter.Diagnostics;
 
 namespace MessageRouter.NetMQ.Senders
 {
-    public class NetMQSenderMonitor : SenderMonitorBase<NetMQSender>
+    public class NetMQSenderMonitor : ISenderMonitor<NetMQSender>
     {
         private readonly INetMQPoller poller;
+        private readonly HashSet<NetMQSender> senders = new HashSet<NetMQSender>();
+        private bool isRunning = false;
+        private readonly object lockObj = new object();
 
 
         public NetMQSenderMonitor(INetMQPoller poller)
@@ -21,21 +24,50 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
-        public override void AddSender(NetMQSender sender)
+        public void AddSender(NetMQSender sender)
         {
             poller.Add(sender.PollableSocket);
+            senders.Add(sender);
+
+            lock (lockObj)
+            {
+                if (isRunning)
+                    sender.ConnectAll();
+            }
         }
 
 
-        public override void Start()
+        public void StartSenders()
         {
-            poller.RunAsync();
+            lock (lockObj)
+            {
+                if (isRunning)
+                    return;
+
+                foreach (var sender in senders)
+                    sender.ConnectAll();
+
+                poller.StopAsync();
+
+                isRunning = true;
+            }
         }
 
 
-        public override void Stop()
+        public void StopSenders()
         {
-            poller.StopAsync();
+            lock (lockObj)
+            {
+                if (!isRunning)
+                    return;
+
+                foreach (var sender in senders)
+                    sender.DisconnectAll();
+
+                poller.Stop();
+
+                isRunning = false;
+            }
         }
     }
 }

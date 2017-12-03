@@ -14,6 +14,9 @@ namespace MessageRouter.Senders
         private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
 
 
+        public IReadOnlyCollection<ISenderFactory> Factories => senderFactories.Values;
+
+
         public SenderCache(IMessageRouter messageRouter)
         {
             this.messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
@@ -38,7 +41,7 @@ namespace MessageRouter.Senders
         }
 
 
-        public void AddFactory<TSender>(SenderFactoryBase<TSender> senderFactory)
+        public void AddFactory<TSender>(ISenderFactory<TSender> senderFactory)
             where TSender : ISender
         {
             var senderType = typeof(TSender);
