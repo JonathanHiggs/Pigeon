@@ -17,13 +17,6 @@ namespace MessageRouter.Senders
         /// </summary>
         /// <param name="address">Address of the remote the sender will connect to</param>
         /// <returns>Sender connected to the remote address</returns>
-        ISender GetSender(IAddress address);
-
-
-        /// <summary>
-        /// Creates a new instance of an <see cref="ISenderMonitor"/>
-        /// </summary>
-        /// <returns></returns>
-        ISenderMonitor GetMonitor();
+        ISender CreateSender(IAddress address);
     }
 }

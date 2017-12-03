@@ -36,13 +36,13 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Starts the <see cref="Client"/> running
+        /// Starts the client running
         /// </summary>
         void Start();
 
 
         /// <summary>
-        /// Stops the <see cref="Client"/> running and disconnects <see cref="ISender"/>
+        /// Stops the client running and disconnects <see cref="ISender"/>
         /// </summary>
         void Stop();
     }

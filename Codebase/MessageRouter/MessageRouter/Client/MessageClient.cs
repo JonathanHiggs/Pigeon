@@ -13,7 +13,8 @@ namespace MessageRouter.Client
     /// </summary>
     public class MessageClient : IMessageClient
     {
-        private readonly ISenderRouter senderRouter;
+        private readonly ISenderCache senderCache;
+        private readonly IMonitorCache monitorCache;
         private readonly IMessageFactory messageFactory;
         private bool running = false;
         private object lockObj = new object();
@@ -28,11 +29,12 @@ namespace MessageRouter.Client
         /// <summary>
         /// Initializes an instance of a MessageClient
         /// </summary>
-        /// <param name="senderRouter">Manages sender connections to remotes</param>
+        /// <param name="senderCache">Manages sender connections to remotes</param>
         /// <param name="messageFactory">Wraps requests in the message protocol</param>
-        public MessageClient(ISenderRouter senderRouter, IMessageFactory messageFactory)
+        public MessageClient(ISenderCache senderCache, IMonitorCache monitorCache, IMessageFactory messageFactory)
         {
-            this.senderRouter = senderRouter ?? throw new ArgumentNullException(nameof(senderRouter));
+            this.senderCache = senderCache ?? throw new ArgumentNullException(nameof(senderCache));
+            this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
         }
 
@@ -68,8 +70,8 @@ namespace MessageRouter.Client
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
 
+            var sender = senderCache.SenderFor<TRequest>();
             var requestMessage = messageFactory.CreateRequest(request);
-            var sender = senderRouter.SenderFor<TRequest>();
             var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
             var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
             return response;
@@ -86,7 +88,7 @@ namespace MessageRouter.Client
                 if (running)
                     throw new InvalidOperationException($"{GetType().Name} is already running");
 
-                senderRouter.Start();
+                monitorCache.StartAllMonitors();
                 running = true;
             }
         }
@@ -102,7 +104,7 @@ namespace MessageRouter.Client
                 if (!running)
                     throw new InvalidOperationException($"{GetType().Name} is not running");
 
-                senderRouter.Stop();
+                monitorCache.StopAllMonitors();
                 running = false;
             }
         }

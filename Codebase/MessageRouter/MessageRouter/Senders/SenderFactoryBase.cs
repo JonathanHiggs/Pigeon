@@ -10,15 +10,29 @@ namespace MessageRouter.Senders
     public abstract class SenderFactoryBase<TSender> : ISenderFactory
         where TSender : ISender
     {
-        public ISender GetSender(IAddress address) => CreateSender(address);
+        private readonly ISenderMonitor<TSender> senderMonitor;
 
 
-        public ISenderMonitor GetMonitor() => CreateMonitor();
+        public SenderFactoryBase(ISenderMonitor<TSender> senderMonitor)
+        {
+            this.senderMonitor = senderMonitor ?? throw new ArgumentNullException(nameof(senderMonitor));
+        }
 
 
-        public abstract TSender CreateSender(IAddress address);
+        public ISender CreateSender(IAddress address)
+        {
+            return CreateAndAddToMonitor(address);
+        }
 
 
-        public abstract SenderMonitorBase<TSender> CreateMonitor();
+        private TSender CreateAndAddToMonitor(IAddress address)
+        {
+            var sender = Create(address);
+            senderMonitor.AddSender(sender);
+            return sender;
+        }
+
+
+        public abstract TSender Create(IAddress address);
     }
 }
