@@ -20,7 +20,7 @@ namespace MessageRouter.NetMQ.Senders
     {
         private readonly List<IAddress> addresses = new List<IAddress>();
         private readonly ISerializer<byte[]> binarySerializer;
-        private readonly AsyncSocket socket;
+        private readonly IAsyncSocket asyncSocket;
 
 
         /// <summary>
@@ -38,17 +38,17 @@ namespace MessageRouter.NetMQ.Senders
         /// <summary>
         /// Gets the inner pollable socket
         /// </summary>
-        public ISocketPollable PollableSocket => socket.PollableSocket;
+        public ISocketPollable PollableSocket => asyncSocket.PollableSocket;
 
 
         /// <summary>
         /// Initializes a new instance of a NetMQAsyncSender
         /// </summary>
-        /// <param name="socket">Inner socket</param>
+        /// <param name="asyncSocket">Inner socket</param>
         /// <param name="binarySerializer">Binary serializer</param>
-        public NetMQSender(AsyncSocket socket, ISerializer<byte[]> binarySerializer)
+        public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> binarySerializer)
         {
-            this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            this.asyncSocket = asyncSocket ?? throw new ArgumentNullException(nameof(asyncSocket));
             this.binarySerializer = binarySerializer ?? throw new ArgumentNullException(nameof(binarySerializer));
         }
 
@@ -70,14 +70,14 @@ namespace MessageRouter.NetMQ.Senders
         public void ConnectAll()
         {
             foreach (var address in addresses)
-                socket.Connect(address);
+                asyncSocket.Connect(address);
         }
 
 
         public void DisconnectAll()
         {
             foreach (var address in addresses)
-                socket.Disconnect(address);
+                asyncSocket.Disconnect(address);
         }
 
 
@@ -102,9 +102,9 @@ namespace MessageRouter.NetMQ.Senders
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();
-            message.Append(binarySerializer.Serialize<Message>(request));
+            message.Append(binarySerializer.Serialize(request));
 
-            var responseMessage = await socket.SendAndReceive(message, timeout.TotalMilliseconds);
+            var responseMessage = await asyncSocket.SendAndReceive(message, timeout.TotalMilliseconds);
 
             return binarySerializer.Deserialize<Message>(responseMessage[1].ToByteArray());
         }

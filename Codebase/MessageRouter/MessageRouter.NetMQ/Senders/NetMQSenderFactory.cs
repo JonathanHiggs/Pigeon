@@ -12,29 +12,27 @@ using System.Threading.Tasks;
 namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
-    /// Factory for NetMQ <see cref="ISender"/>s and <see cref="IAsyncSender"/>s
+    /// Factory for creating <see cref="INetMQSender"/>s
     /// </summary>
-    public class NetMQSenderFactory : SenderFactoryBase<NetMQSender>
+    public class NetMQSenderFactory : SenderFactoryBase<INetMQSender>
     {
         private ISerializer<byte[]> serializer;
 
 
-        public NetMQSenderFactory(NetMQSenderMonitor monitor, ISerializer<byte[]> serializer)
+        public NetMQSenderFactory(INetMQSenderMonitor monitor, ISerializer<byte[]> serializer)
             : base(monitor)
         {
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
 
-        public override NetMQSender Create(IAddress address)
+        protected override INetMQSender Create(IAddress address)
         {
             var dealerSocket = new DealerSocket();
             var asyncSocket = new AsyncSocket(dealerSocket);
             var sender = new NetMQSender(asyncSocket, serializer);
 
             sender.AddAddress(address);
-
-            SenderMonitor.AddSender(sender);
 
             return sender;
         }

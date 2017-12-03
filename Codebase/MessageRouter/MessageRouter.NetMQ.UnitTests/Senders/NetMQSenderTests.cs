@@ -1,0 +1,262 @@
+﻿using MessageRouter.Addresses;
+using MessageRouter.Messages;
+using MessageRouter.NetMQ.Senders;
+using MessageRouter.Serialization;
+using Moq;
+using NetMQ;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MessageRouter.NetMQ.UnitTests.Senders
+{
+    [TestFixture]
+    public class NetMQSenderTests
+    {
+        private readonly Mock<IAsyncSocket> mockAsyncSocket = new Mock<IAsyncSocket>();
+        private IAsyncSocket asyncSocket;
+
+        private readonly Mock<ISerializer<byte[]>> mockSerializer = new Mock<ISerializer<byte[]>>();
+        private ISerializer<byte[]> serializer;
+        
+        private IAddress address = TcpAddress.Wildcard(5555);
+        
+
+        [SetUp]
+        public void Setup()
+        {
+            asyncSocket = mockAsyncSocket.Object;
+            serializer = mockSerializer.Object;
+
+            mockSerializer
+                .Setup(m => m.Serialize(It.IsAny<NetMQMessage>()))
+                .Returns(new byte[0]);
+
+            mockSerializer
+                .Setup(m => m.Deserialize<Message>(It.IsAny<byte[]>()))
+                .Returns(new DataMessage<string>(new GuidMessageId(), "Something"));
+
+            mockAsyncSocket
+                .Setup(m => m.SendAndReceive(It.IsAny<NetMQMessage>(), It.IsAny<double>()))
+                .Returns(Task.FromResult(new NetMQMessage(new List<byte[]> { new byte[0], new byte[0] })));
+        }
+
+
+        [TearDown]
+        public void TearDown()
+        {
+            mockAsyncSocket.Reset();
+            mockSerializer.Reset();
+        }
+
+
+        #region Constructor
+        [Test]
+        public void NetMQSender_WithMissingSocket_ThrowsArugmentNullException()
+        {
+            // Act
+            TestDelegate construct = () => new NetMQSender(null, serializer);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void NetMQSender_WithMissingSerializer_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => new NetMQSender(asyncSocket, null);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+        #endregion
+
+
+        #region AddAddress
+        [Test]
+        public void AddAddress_WithNewAddress_IsInAddressList()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+
+            // Act
+            sender.AddAddress(address);
+
+            // Assert
+            Assert.That(sender.Addresses, Has.Count.EqualTo(1));
+            Assert.That(sender.Addresses, Has.Exactly(1).EqualTo(address));
+        }
+
+
+        [Test]
+        public void AddAddress_WithAlreadyAddedAddress_DoesNothing()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            sender.AddAddress(address);
+
+            // Act
+            sender.AddAddress(address);
+
+            // Assert
+            Assert.That(sender.Addresses, Has.Count.EqualTo(1));
+            Assert.That(sender.Addresses, Has.Exactly(1).EqualTo(address));
+        }
+        #endregion
+
+
+        #region RemoveAddress
+        [Test]
+        public void RemoveAddress_WithAddedAddress_RemovesFromAddressList()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            sender.AddAddress(address);
+
+            // Act
+            sender.RemoveAddress(address);
+
+            // Assert
+            CollectionAssert.IsEmpty(sender.Addresses);
+        }
+
+
+        [Test]
+        public void RemoveAddress_WithNoAddresses_DoesNothing()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+
+            // Act
+            TestDelegate remove = () => sender.RemoveAddress(address);
+
+            // Assert
+            Assert.That(remove, Throws.Nothing);
+        }
+        #endregion
+
+
+        #region ConnectAll
+        [Test]
+        public void ConnectAll_WithNoAddresses_DoesNothing()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+
+            // Act
+            sender.ConnectAll();
+
+            // Assert
+            mockAsyncSocket.Verify(m => m.Connect(It.IsAny<IAddress>()), Times.Never);
+        }
+
+
+        [Test]
+        public void ConnectAll_WithAddedAddress_CallsSocketConnect()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            sender.AddAddress(address);
+
+            // Act
+            sender.ConnectAll();
+
+            // Assert
+            mockAsyncSocket.Verify(m => m.Connect(It.IsIn(address)), Times.Once);
+            mockAsyncSocket.Verify(m => m.Connect(It.IsNotIn(address)), Times.Never);
+        }
+        #endregion
+
+
+        #region DisconnectAll
+        [Test]
+        public void DisconnectAll_WithNoAddresses_DoesNothing()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+
+            // Act
+            sender.DisconnectAll();
+
+            // Assert
+            mockAsyncSocket.Verify(m => m.Disconnect(It.IsAny<IAddress>()), Times.Never);
+        }
+
+
+        [Test]
+        public void DisconnectAll_WithAddedAddress_CallsSocketDisconnect()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            sender.AddAddress(address);
+
+            // Act
+            sender.DisconnectAll();
+
+            // Assert
+            mockAsyncSocket.Verify(m => m.Disconnect(It.IsIn(address)), Times.Once);
+            mockAsyncSocket.Verify(m => m.Disconnect(It.IsNotIn(address)), Times.Never);
+        }
+        #endregion
+
+
+        #region SendAndReceive
+        [Test]
+        public async Task SendAndReceive_WithTimeout_Serializes()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var timeout = TimeSpan.FromMinutes(1);
+
+            // Act
+            var response = await sender.SendAndReceive(message, timeout);
+
+            // Assert
+            mockSerializer.Verify(m => m.Serialize<Message>(It.IsIn(message)), Times.Once);
+        }
+
+
+        [Test]
+        public async Task SendAndReceive_WithTimeout_CallsSocketSendAndReceive()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var timeout = TimeSpan.FromMinutes(1);
+
+            // Act
+            var response = await sender.SendAndReceive(message, timeout);
+
+            // Assert
+            mockAsyncSocket
+                .Verify(
+                    m => m.SendAndReceive(
+                        It.IsAny<NetMQMessage>(),
+                        It.Is<double>(d => d == timeout.TotalMilliseconds)
+                ), Times.Once);
+        }
+
+
+        [Test]
+        public async Task SendAndReceive_WithReturnMessage_Deserializes()
+        {
+            // Arrange
+            var sender = new NetMQSender(asyncSocket, serializer);
+            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var timeout = TimeSpan.FromMinutes(1);
+
+            // Act
+            var response = await sender.SendAndReceive(message, timeout);
+
+            // Assert
+            mockSerializer.Verify(m => m.Deserialize<Message>(It.IsAny<byte[]>()), Times.Once);
+        }
+        #endregion
+    }
+}

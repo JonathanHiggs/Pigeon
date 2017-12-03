@@ -13,7 +13,7 @@ namespace MessageRouter.NetMQ.Senders
     /// <summary>
     /// Wraps a NetMQ DealerSocket to provide an asynchronous socket interface 
     /// </summary>
-    public class AsyncSocket
+    public class AsyncSocket : IAsyncSocket
     {
         private readonly DealerSocket socket;
         private readonly Dictionary<int, NetMQTask> requests = new Dictionary<int, NetMQTask>();

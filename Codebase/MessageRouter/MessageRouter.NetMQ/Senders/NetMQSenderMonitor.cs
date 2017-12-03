@@ -10,10 +10,10 @@ using MessageRouter.Diagnostics;
 
 namespace MessageRouter.NetMQ.Senders
 {
-    public class NetMQSenderMonitor : ISenderMonitor<NetMQSender>
+    public class NetMQSenderMonitor : INetMQSenderMonitor
     {
         private readonly INetMQPoller poller;
-        private readonly HashSet<NetMQSender> senders = new HashSet<NetMQSender>();
+        private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
         private bool isRunning = false;
         private readonly object lockObj = new object();
 
@@ -24,8 +24,11 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
-        public void AddSender(NetMQSender sender)
+        public void AddSender(INetMQSender sender)
         {
+            if (null == sender)
+                throw new ArgumentNullException("Sender cannot be null");
+
             poller.Add(sender.PollableSocket);
             senders.Add(sender);
 
@@ -47,7 +50,7 @@ namespace MessageRouter.NetMQ.Senders
                 foreach (var sender in senders)
                     sender.ConnectAll();
 
-                poller.StopAsync();
+                poller.RunAsync();
 
                 isRunning = true;
             }
@@ -64,7 +67,7 @@ namespace MessageRouter.NetMQ.Senders
                 foreach (var sender in senders)
                     sender.DisconnectAll();
 
-                poller.Stop();
+                poller.StopAsync();
 
                 isRunning = false;
             }

@@ -7,13 +7,10 @@ using MessageRouter.Addresses;
 
 namespace MessageRouter.Senders
 {
-    public abstract class SenderFactoryBase<TSender> : ISenderFactory<TSender>
+    public abstract class SenderFactoryBase<TSender> : ISenderFactory
         where TSender : ISender
     {
         private readonly ISenderMonitor<TSender> senderMonitor;
-
-
-        public ISenderMonitor<TSender> SenderMonitor => senderMonitor;
 
 
         public SenderFactoryBase(ISenderMonitor<TSender> senderMonitor)
@@ -24,6 +21,9 @@ namespace MessageRouter.Senders
 
         public ISender CreateSender(IAddress address)
         {
+            if (null == address)
+                throw new ArgumentNullException($"Non-null address needed to create a sender");
+
             return CreateAndAddToMonitor(address);
         }
 
@@ -36,6 +36,6 @@ namespace MessageRouter.Senders
         }
 
 
-        public abstract TSender Create(IAddress address);
+        protected abstract TSender Create(IAddress address);
     }
 }

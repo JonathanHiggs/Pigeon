@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.NetMQ.UnitTests
+namespace MessageRouter.NetMQ.UnitTests.Receivers
 {
     [TestFixture]
     public class NetMQReceiverMonitorTests
