@@ -45,8 +45,8 @@
     <Compile Include="Routing\IRouter.cs" />
     <Compile Include="Client\MessageClient.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
-    <Compile Include="Diagnostics\RequestAlreadyMappedException.cs" />
-    <Compile Include="Diagnostics\RequestNotMappedException.cs" />
+    <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
+    <Compile Include="Server\RequestHandlerNotFoundException.cs" />
     <Compile Include="Messages\DataMessage.cs" />
     <Compile Include="Messages\GuidMessageId.cs" />
     <Compile Include="Addresses\IAddress.cs" />

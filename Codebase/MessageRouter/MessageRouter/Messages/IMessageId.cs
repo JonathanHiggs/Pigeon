@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Messages
 {
+    /// <summary>
+    /// Interface for indentifying a message
+    /// </summary>
     public interface IMessageId : IEquatable<IMessageId>
     { }
 }

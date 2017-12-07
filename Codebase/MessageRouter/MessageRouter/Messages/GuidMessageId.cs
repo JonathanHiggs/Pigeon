@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Messages
 {
+    /// <summary>
+    /// Message identifier
+    /// </summary>
     [Serializable]
     public class GuidMessageId : IMessageId
     {
@@ -31,6 +34,11 @@ namespace MessageRouter.Messages
         }
 
 
+        /// <summary>
+        /// Indicates whether the current object is equal to another <see cref="IMessageId"/>
+        /// </summary>
+        /// <param name="other">An object to compare with this</param>
+        /// <returns>true if the current object is equal to the other <see cref="IMessage"/>; otherwise, false</returns>
         public bool Equals(IMessageId other)
         {
             var guidMessageId = other as GuidMessageId;

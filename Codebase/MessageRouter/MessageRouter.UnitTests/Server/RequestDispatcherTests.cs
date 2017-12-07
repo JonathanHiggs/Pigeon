@@ -11,19 +11,8 @@ namespace MessageRouter.UnitTests.Server
     [TestFixture]
     public class RequestDispatcherTests
     {
-        #region Request Classes
-        #pragma warning disable CS0169 
-        class Request
-        {
-            int Field1;
-        }
-
-        class Request2 : Request
-        {
-            int Field2;
-        }
-        #pragma warning restore CS0169
-        #endregion
+        class Request { }
+        class RequestSubClass : Request { }
 
 
         #region Handle
@@ -42,7 +31,7 @@ namespace MessageRouter.UnitTests.Server
 
 
         [Test]
-        public void Handle_WithNoRegisteredHandler_ThrowsInvalidOperationException()
+        public void Handle_WithNoRegisteredHandler_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
@@ -51,7 +40,7 @@ namespace MessageRouter.UnitTests.Server
             TestDelegate handleUnregistered = () => dispatcher.Handle(DateTime.Now);
 
             // Assert
-            Assert.That(handleUnregistered, Throws.TypeOf<InvalidOperationException>());
+            Assert.That(handleUnregistered, Throws.TypeOf<RequestHandlerNotFoundException>());
         }
 
 
@@ -72,17 +61,17 @@ namespace MessageRouter.UnitTests.Server
 
 
         [Test]
-        public void Handle_WithBaseClassRegisterHandled_ThrowsInvalidOperationException()
+        public void Handle_WithBaseClassRegisterHandled_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
             dispatcher.Register<Request, Request>(r => r);
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(new Request2());
+            TestDelegate handle = () => dispatcher.Handle(new RequestSubClass());
 
             // Assert
-            Assert.That(handle, Throws.TypeOf<InvalidOperationException>());
+            Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
         }
         #endregion
     }

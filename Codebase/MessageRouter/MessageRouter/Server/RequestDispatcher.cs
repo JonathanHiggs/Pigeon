@@ -26,7 +26,7 @@ namespace MessageRouter.Server
 
             var requestType = requestObject.GetType();
             if (!requestHandlers.ContainsKey(requestType))
-                throw new InvalidOperationException($"No handler registered for request type {requestType.Name}");
+                throw new RequestHandlerNotFoundException(requestType);
 
             return requestHandlers[requestType](requestObject);
         }

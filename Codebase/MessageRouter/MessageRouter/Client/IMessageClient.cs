@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Client
 {
+    /// <summary>
+    /// Interface for sending request messages to a remote
+    /// </summary>
     public interface IMessageClient
     {
         /// <summary>

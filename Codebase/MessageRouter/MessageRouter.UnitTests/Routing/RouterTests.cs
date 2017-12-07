@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.UnitTests.Routing
 {
     [TestFixture]
-    public class MessageRouterTests
+    public class RouterTests
     {
         class Request { }
         class RequestSubClass : Request { }
@@ -32,7 +32,7 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
-        public void AddSenderRouting_WithExistingRouting_ThrowsInvalidOperationException()
+        public void AddSenderRouting_WithExistingRouting_ThrowsRoutingAlreadyRegisteredException()
         {
             // Arrange
             var router = new Router();
@@ -42,7 +42,7 @@ namespace MessageRouter.UnitTests.Routing
             TestDelegate addRouting = () => router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5556));
 
             // Assert
-            Assert.That(addRouting, Throws.TypeOf<InvalidOperationException>());
+            Assert.That(addRouting, Throws.TypeOf<RoutingAlreadyRegisteredException>());
         }
 
 

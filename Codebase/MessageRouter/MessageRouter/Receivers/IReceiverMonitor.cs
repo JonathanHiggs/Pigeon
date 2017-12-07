@@ -16,7 +16,7 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        event RequestTaskDelegate RequestReceived;
+        event RequestTaskHandler RequestReceived;
 
 
         /// <summary>

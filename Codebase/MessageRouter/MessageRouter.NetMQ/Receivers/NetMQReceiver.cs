@@ -46,7 +46,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        public event RequestTaskDelegate RequestReceived;
+        public event RequestTaskHandler RequestReceived;
 
 
         /// <summary>

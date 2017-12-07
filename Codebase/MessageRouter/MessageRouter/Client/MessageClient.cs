@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Client
 {
     /// <summary>
-    /// Basic client implementation
+    /// Sends request messages to remotes
     /// </summary>
     public class MessageClient : IMessageClient
     {

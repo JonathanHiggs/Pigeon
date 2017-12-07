@@ -36,10 +36,12 @@ namespace MessageRouter.Routing
                 throw new ArgumentNullException(nameof(address));
 
             var requestType = typeof(TRequest);
-            if (routingTable.ContainsKey(requestType))
-                throw new InvalidOperationException($"Router already contains a routing for {requestType.Name}");
+            var newRouting = SenderRouting.For<TSender>(address);
 
-            routingTable.Add(requestType, SenderRouting.For<TSender>(address));
+            if (routingTable.ContainsKey(requestType))
+                throw new RoutingAlreadyRegisteredException(newRouting, routingTable[requestType]);
+
+            routingTable.Add(requestType, newRouting);
         }
 
 
@@ -48,7 +50,7 @@ namespace MessageRouter.Routing
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <param name="senderMapping">Matching <see cref="SenderRouting"/></param>
-        /// <returns>Bool indicating whether a <see cref="SenderRouting"/> was found for the request type</returns>
+        /// <returns>true if the <see cref="IRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
         public bool RoutingFor<TRequest>(out SenderRouting senderMapping)
         {
             return routingTable.TryGetValue(typeof(TRequest), out senderMapping);

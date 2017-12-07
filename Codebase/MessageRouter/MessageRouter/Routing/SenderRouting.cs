@@ -48,5 +48,15 @@ namespace MessageRouter.Routing
         {
             return new SenderRouting(typeof(TSender), address);
         }
+
+
+        /// <summary>
+        /// Converts the <see cref="SenderRouting"/> to a string representation
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{SenderType.Name} -> {Address.ToString()}";
+        }
     }
 }
