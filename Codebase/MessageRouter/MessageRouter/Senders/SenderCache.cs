@@ -9,7 +9,7 @@ namespace MessageRouter.Senders
 {
     public class SenderCache : ISenderCache
     {
-        private readonly IMessageRouter messageRouter;
+        private readonly IRouter messageRouter;
         private readonly Dictionary<SenderRouting, ISender> senderCache = new Dictionary<SenderRouting, ISender>();
         private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
 
@@ -17,7 +17,7 @@ namespace MessageRouter.Senders
         public IReadOnlyCollection<ISenderFactory> Factories => senderFactories.Values;
 
 
-        public SenderCache(IMessageRouter messageRouter)
+        public SenderCache(IRouter messageRouter)
         {
             this.messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
         }

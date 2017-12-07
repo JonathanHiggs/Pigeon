@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\IMessageClient.cs" />
-    <Compile Include="Routing\IMessageRouter.cs" />
+    <Compile Include="Routing\IRouter.cs" />
     <Compile Include="Client\MessageClient.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
     <Compile Include="Diagnostics\RequestAlreadyMappedException.cs" />
@@ -56,7 +56,7 @@
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverMonitor.cs" />
     <Compile Include="Receivers\RequestTaskDelegate.cs" />
-    <Compile Include="Routing\MessageRouter.cs" />
+    <Compile Include="Routing\Router.cs" />
     <Compile Include="Routing\SenderRouting.cs" />
     <Compile Include="Senders\IMonitorFactory.cs" />
     <Compile Include="Senders\IMonitorCache.cs" />

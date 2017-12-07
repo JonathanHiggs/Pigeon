@@ -15,7 +15,17 @@ namespace MessageRouter.NetMQ.Receivers
     /// </summary>
     public class NetMQReceiverFactory : IReceiverFactory
     {
-        private readonly ISerializer<byte[]> binarySerializer = new BinarySerializer();
+        private readonly ISerializer<byte[]> serializer = new BinarySerializer();
+
+
+        /// <summary>
+        /// Initializes a new instance of a NetMQReceiverFactory
+        /// </summary>
+        /// <param name="serializer"></param>
+        public NetMQReceiverFactory(ISerializer<byte[]> serializer)
+        {
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+        }
 
 
         /// <summary>
@@ -26,7 +36,7 @@ namespace MessageRouter.NetMQ.Receivers
         public IReceiver Create(IAddress address)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, binarySerializer);
+            var receiver = new NetMQReceiver(socket, serializer);
 
             receiver.Add(address);
 

@@ -14,8 +14,8 @@ namespace MessageRouter.UnitTests.Senders
     [TestFixture]
     public class SenderCacheTests
     {
-        private readonly Mock<IMessageRouter> mockMessageRouter = new Mock<IMessageRouter>();
-        private IMessageRouter messageRouter;
+        private readonly Mock<IRouter> mockMessageRouter = new Mock<IRouter>();
+        private IRouter messageRouter;
 
         private readonly Mock<ISenderFactory<ISender>> mockSenderFactory = new Mock<ISenderFactory<ISender>>();
         private ISenderFactory<ISender> senderFactory;

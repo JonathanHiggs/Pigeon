@@ -60,10 +60,12 @@
     <Compile Include="Messages\MessageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Receivers\RequestTaskTests.cs" />
+    <Compile Include="Routing\MessageRouterTests.cs" />
     <Compile Include="Senders\MonitorCacheTests.cs" />
     <Compile Include="Senders\SenderCacheTests.cs" />
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Server\MessageServerTests.cs" />
+    <Compile Include="Server\RequestDispatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
