@@ -11,6 +11,7 @@ namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
     /// NetMQ implementation of <see cref="IReceiverMonitor"/>. Manages the state of <see cref="INetMQReceiver"/>s
+    /// and attaches them to a <see cref="NetMQPoller"/>
     /// </summary>
     public class NetMQReceiverMonitor : IReceiverMonitor
     {
@@ -42,7 +43,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Asynchronously starts the receiver manager running
         /// </summary>
-        public void Start()
+        public void StartReceivers()
         {
             poller.RunAsync();
             receiver.Bind();
@@ -52,16 +53,16 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Stops the asynchronous receiver manager
         /// </summary>
-        public void Stop()
+        public void StopReceivers()
         {
             poller.StopAsync();
             receiver.UnbindAll();
         }
 
 
-        private void OnRequestReceived(object sender, RequestTask requestTask)
+        private void OnRequestReceived(IReceiver receiver, RequestTask requestTask)
         {
-            RequestReceived?.Invoke(sender, requestTask);
+            RequestReceived?.Invoke(receiver, requestTask);
         }
     }
 }

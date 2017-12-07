@@ -55,7 +55,7 @@
     <Compile Include="Receivers\IReceiver.cs" />
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverMonitor.cs" />
-    <Compile Include="Receivers\RequestTaskDelegate.cs" />
+    <Compile Include="Receivers\RequestTaskHandler.cs" />
     <Compile Include="Routing\Router.cs" />
     <Compile Include="Routing\SenderRouting.cs" />
     <Compile Include="Senders\IMonitorFactory.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Senders\ISenderMonitor.cs" />
     <Compile Include="Senders\MonitorCache.cs" />
     <Compile Include="Senders\SenderCache.cs" />
-    <Compile Include="Senders\SenderFactoryBase.cs" />
+    <Compile Include="Senders\SenderFactory.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Server\MessageServer.cs" />

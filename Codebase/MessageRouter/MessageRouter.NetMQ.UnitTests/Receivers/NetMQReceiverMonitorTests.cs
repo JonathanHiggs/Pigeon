@@ -80,7 +80,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
 
             // Act
-            receiverMonitor.Start();
+            receiverMonitor.StartReceivers();
 
             // Assert
             mockPoller.Verify(m => m.RunAsync(), Times.Once);
@@ -94,7 +94,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
 
             // Act
-            receiverMonitor.Start();
+            receiverMonitor.StartReceivers();
 
             // Assert
             mockReceiver.Verify(m => m.Bind(), Times.Once);
@@ -108,10 +108,10 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
-            receiverMonitor.Start();
+            receiverMonitor.StartReceivers();
 
             // Act
-            receiverMonitor.Stop();
+            receiverMonitor.StopReceivers();
 
             // Assert
             mockPoller.Verify(m => m.StopAsync(), Times.Once);
@@ -123,10 +123,10 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var receiverMonitor = new NetMQReceiverMonitor(receiver, poller);
-            receiverMonitor.Start();
+            receiverMonitor.StartReceivers();
 
             // Act
-            receiverMonitor.Stop();
+            receiverMonitor.StopReceivers();
 
             // Assert
             mockReceiver.Verify(m => m.UnbindAll(), Times.Once);

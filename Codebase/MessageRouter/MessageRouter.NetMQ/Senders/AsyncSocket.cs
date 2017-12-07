@@ -36,12 +36,14 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Sends a message and returns a task that completes when a response is returned
+        /// Dispatches a <see cref="NetMQMessage"/> over the transport to a remote <see cref="IReceiver"/> and
+        /// returns a task that will complete when a response is returned from the remote or when the
+        /// timeout elapses
         /// </summary>
-        /// <param name="message">Outgoing message</param>
-        /// <param name="timeout">Response timeout</param>
-        /// <returns>Task for receiving a response message</returns>
-        public Task<NetMQMessage> SendAndReceive(NetMQMessage message, double timeout = 0.0)
+        /// <param name="message"><see cref="NetMQMessage"/> to send to the remote</param>
+        /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{NetMQMessage}"/> will throw an error if no response has been received</param>
+        /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
+        public Task<NetMQMessage> SendAndReceive(NetMQMessage message, TimeSpan timeout)
         {
             var requestMessage = new NetMQMessage(message);
 
@@ -75,7 +77,7 @@ namespace MessageRouter.NetMQ.Senders
         /// <summary>
         /// Connects the socket to a remote at the <see cref="IAddress"/> endpoint
         /// </summary>
-        /// <param name="address">Address of the remote</param>
+        /// <param name="address">Address of the remote to connect to</param>
         public void Connect(IAddress address) => socket.Connect(address.ToString());
 
 
@@ -92,9 +94,8 @@ namespace MessageRouter.NetMQ.Senders
             {
                 if (requests.TryGetValue(requestId, out var netMQTask))
                 {
-                    netMQTask.TimeoutTimer.Stop();
                     requests.Remove(requestId);
-                    netMQTask.TaskCompletionSource.TrySetException(new TimeoutException($"RequestId {requestId} timedout"));
+                    netMQTask.ThrowTimeoutException(new TimeoutException($"RequestId {requestId} timed out"));
                 }
             };
         }
@@ -109,9 +110,8 @@ namespace MessageRouter.NetMQ.Senders
 
             if (requests.TryGetValue(requestId, out var netMQTask))
             {
-                netMQTask.TimeoutTimer.Stop();
                 requests.Remove(requestId);
-                netMQTask.TaskCompletionSource.SetResult(message);
+                netMQTask.CompleteWithReponse(message);
             }
         }
     }

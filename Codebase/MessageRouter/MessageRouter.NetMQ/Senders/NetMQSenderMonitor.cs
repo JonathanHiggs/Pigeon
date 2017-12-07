@@ -10,6 +10,10 @@ using MessageRouter.Diagnostics;
 
 namespace MessageRouter.NetMQ.Senders
 {
+    /// <summary>
+    /// Performs active management for <see cref="INetMQSender"/>s by attaching them to a <see cref="INetMQPoller"/>
+    /// that polls for response <see cref="NetMQMessage"/> returning asynchronously
+    /// </summary>
     public class NetMQSenderMonitor : INetMQSenderMonitor
     {
         private readonly INetMQPoller poller;
@@ -18,12 +22,20 @@ namespace MessageRouter.NetMQ.Senders
         private readonly object lockObj = new object();
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQSenderMonitor"/>
+        /// </summary>
+        /// <param name="poller"><see cref="INetMQPoller"/> that actively polls for response <see cref="NetMQMessage"/> returning asynchronously</param>
         public NetMQSenderMonitor(INetMQPoller poller)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
         }
 
 
+        /// <summary>
+        /// Adds a <see cref="INetMQSender"/> to the internal cache of monitored senders
+        /// </summary>
+        /// <param name="sender"><see cref="INetMQSender"/> to add to the monitored cache of senders</param>
         public void AddSender(INetMQSender sender)
         {
             if (null == sender)
@@ -40,6 +52,9 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
+        /// <summary>
+        /// Starts active polling <see cref="INetMQSender"/>s transports
+        /// </summary>
         public void StartSenders()
         {
             lock (lockObj)
@@ -57,6 +72,9 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
+        /// <summary>
+        /// Stops active polling <see cref="INetMQSender"/>s transports
+        /// </summary>
         public void StopSenders()
         {
             lock (lockObj)

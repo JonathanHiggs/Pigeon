@@ -21,7 +21,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Initializes a new instance of a NetMQReceiverFactory
         /// </summary>
-        /// <param name="serializer"></param>
+        /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
         public NetMQReceiverFactory(ISerializer<byte[]> serializer)
         {
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));

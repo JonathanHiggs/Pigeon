@@ -65,7 +65,7 @@ namespace MessageRouter.Server
                 running = true;
                 serverInfo.StartUpTimeStamp = DateTime.Now;
 
-                receiverMonitor.Start();
+                receiverMonitor.StartReceivers();
             }
         }
 
@@ -83,7 +83,7 @@ namespace MessageRouter.Server
                 running = false;
                 serverInfo.StartUpTimeStamp = null;
 
-                receiverMonitor.Stop();
+                receiverMonitor.StopReceivers();
             }
         }
 

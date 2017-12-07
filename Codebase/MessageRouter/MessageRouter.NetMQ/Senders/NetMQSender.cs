@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Senders;
+using MessageRouter.NetMQ.Receivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,13 @@ using NetMQ.Sockets;
 namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
-    /// NetMQ implementation of <see cref="IAsyncSender"/> that wraps a <see cref="DealerSocket"/> that connects to remotes
-    /// and sends <see cref="Message"/> both synchronously and asynchronously
+    /// NetMQ implementation of <see cref="ISender"/> that wraps a <see cref="DealerSocket"/> that connects to 
+    /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Message"/>es
     /// </summary>
     public class NetMQSender : INetMQSender
     {
         private readonly List<IAddress> addresses = new List<IAddress>();
-        private readonly ISerializer<byte[]> binarySerializer;
+        private readonly ISerializer<byte[]> serializer;
         private readonly IAsyncSocket asyncSocket;
 
 
@@ -42,24 +43,32 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Initializes a new instance of a NetMQAsyncSender
+        /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
-        /// <param name="asyncSocket">Inner socket</param>
-        /// <param name="binarySerializer">Binary serializer</param>
-        public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> binarySerializer)
+        /// <param name="asyncSocket">Inner socket that transports <see cref="Message"/>s</param>
+        /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
+        public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> serializer)
         {
             this.asyncSocket = asyncSocket ?? throw new ArgumentNullException(nameof(asyncSocket));
-            this.binarySerializer = binarySerializer ?? throw new ArgumentNullException(nameof(binarySerializer));
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        
+
+        /// <summary>
+        /// Adds an address to the collection of endpoints the <see cref="NetMQSender"/> connects to
+        /// </summary>
+        /// <param name="address">Address of the remote</param>
         public void AddAddress(IAddress address)
         {
             if (!addresses.Contains(address))
                 addresses.Add(address);
         }
 
-        
+
+        /// <summary>
+        /// Removes an address from the collection of endpoints the <see cref="NetMQSender"/> connects to
+        /// </summary>
+        /// <param name="address"></param>
         public void RemoveAddress(IAddress address)
         {
             if (addresses.Contains(address))
@@ -67,6 +76,9 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
+        /// <summary>
+        /// Initializes the connection to all added addresses
+        /// </summary>
         public void ConnectAll()
         {
             foreach (var address in addresses)
@@ -74,6 +86,9 @@ namespace MessageRouter.NetMQ.Senders
         }
 
 
+        /// <summary>
+        /// Terminates the connection to all added addresses
+        /// </summary>
         public void DisconnectAll()
         {
             foreach (var address in addresses)
@@ -82,11 +97,12 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
-        /// Default 1 hour timeout
+        /// Asynchronously dispatches a <see cref="Message"/> along the transport to the connected remote 
+        /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
+        /// remote or when the one hour default timeout elapses
         /// </summary>
-        /// <param name="message">Request message</param>
-        /// <returns>Response message</returns>
+        /// <param name="message"><see cref="Message"/> to send to the remote</param>
+        /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
         public async Task<Message> SendAndReceive(Message request)
         {
             return await SendAndReceive(request, TimeSpan.FromHours(1));
@@ -94,19 +110,22 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Asynchronously sends a <see cref="Message"/> to the connected remote <see cref="IReceiver"/> and returns the reponse <see cref="Message"/>
+        /// Asynchronously dispatches a <see cref="Message"/> along the transport to the connected remote 
+        /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
+        /// remote or when the timeout elapses
         /// </summary>
-        /// <param name="message">Request message</param>
-        /// <returns>Response message</returns>
+        /// <param name="message"><see cref="Message"/> to send to the remote</param>
+        /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
+        /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
         public async Task<Message> SendAndReceive(Message request, TimeSpan timeout)
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();
-            message.Append(binarySerializer.Serialize(request));
+            message.Append(serializer.Serialize(request));
 
-            var responseMessage = await asyncSocket.SendAndReceive(message, timeout.TotalMilliseconds);
+            var responseMessage = await asyncSocket.SendAndReceive(message, timeout);
 
-            return binarySerializer.Deserialize<Message>(responseMessage[1].ToByteArray());
+            return serializer.Deserialize<Message>(responseMessage[1].ToByteArray());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         public void NetMQTask_WithNullTaskCompletionSource_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQTask(null, 1.0, (s, e) => { });
+            TestDelegate construct = () => new NetMQTask(null, TimeSpan.FromMilliseconds(1.0), (s, e) => { });
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -31,7 +31,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             var taskCompletionSource = new TaskCompletionSource<NetMQMessage>();
 
             // Act
-            TestDelegate construct = () => new NetMQTask(taskCompletionSource, -1.0, (s, e) => { });
+            TestDelegate construct = () => new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(-1.0), (s, e) => { });
 
             // Assert
             Assert.That(construct, Throws.ArgumentException);
@@ -45,7 +45,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             var taskCompletionSource = new TaskCompletionSource<NetMQMessage>();
 
             // Act
-            TestDelegate construct = () => new NetMQTask(taskCompletionSource, 1.0, null);
+            TestDelegate construct = () => new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(1.0), null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -58,7 +58,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             // Arrange
             var called = false;
             var taskCompletionSource = new TaskCompletionSource<NetMQMessage>();
-            var task = new NetMQTask(taskCompletionSource, 1.0, (s, e) => { called = true; });
+            var task = new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(1.0), (s, e) => { called = true; });
 
             // Act
             Thread.Sleep(10);

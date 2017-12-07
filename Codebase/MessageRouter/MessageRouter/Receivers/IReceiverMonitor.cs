@@ -20,14 +20,14 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Starts accepting incoming requests
+        /// Starts active monitoring of <see cref="IReceiver"/> transports to accept incoming requests
         /// </summary>
-        void Start();
+        void StartReceivers();
 
 
         /// <summary>
-        /// Stops accepting incoming requests
+        /// Stops active monitoring ot <see cref="IReceiver"/> transports
         /// </summary>
-        void Stop();
+        void StopReceivers();
     }
 }

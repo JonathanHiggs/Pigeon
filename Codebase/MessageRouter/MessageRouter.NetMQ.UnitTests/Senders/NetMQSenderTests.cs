@@ -40,7 +40,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
                 .Returns(new DataMessage<string>(new GuidMessageId(), "Something"));
 
             mockAsyncSocket
-                .Setup(m => m.SendAndReceive(It.IsAny<NetMQMessage>(), It.IsAny<double>()))
+                .Setup(m => m.SendAndReceive(It.IsAny<NetMQMessage>(), It.IsAny<TimeSpan>()))
                 .Returns(Task.FromResult(new NetMQMessage(new List<byte[]> { new byte[0], new byte[0] })));
         }
 
@@ -238,7 +238,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
                 .Verify(
                     m => m.SendAndReceive(
                         It.IsAny<NetMQMessage>(),
-                        It.Is<double>(d => d == timeout.TotalMilliseconds)
+                        It.Is<TimeSpan>(d => d == timeout)
                 ), Times.Once);
         }
 

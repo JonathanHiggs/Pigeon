@@ -14,14 +14,14 @@ namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
     /// Implementation of <see cref="IReceiver"/> that wraps a NetMQ <see cref="RouterSocket"/>. Encapsulates a connection
-    /// that is able to bind to an <see cref="IAddress"/> to receive and synchronously reply to incoming messages from
-    /// connected remote <see cref="ISender"/>s
+    /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Message"/>es from
+    /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
     public class NetMQReceiver : INetMQReceiver
     {
         private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
         protected readonly RouterSocket routerSocket;
-        private readonly ISerializer<byte[]> binarySerializer;
+        private readonly ISerializer<byte[]> serializer;
         private bool isBound = false;
 
 
@@ -53,11 +53,11 @@ namespace MessageRouter.NetMQ.Receivers
         /// Initializes a new instance of a NetMQReceiver
         /// </summary>
         /// <param name="routerSocket">Inner NetMQ RouterSocket</param>
-        /// <param name="binarySerializer">Binary serializer</param>
-        public NetMQReceiver(RouterSocket routerSocket, ISerializer<byte[]> binarySerializer)
+        /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
+        public NetMQReceiver(RouterSocket routerSocket, ISerializer<byte[]> serializer)
         {
             this.routerSocket = routerSocket ?? throw new ArgumentNullException(nameof(routerSocket));
-            this.binarySerializer = binarySerializer ?? throw new ArgumentNullException(nameof(routerSocket));
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(routerSocket));
 
             routerSocket.ReceiveReady += OnRequestReceived;
         }
@@ -229,10 +229,10 @@ namespace MessageRouter.NetMQ.Receivers
         {
             if (message.FrameCount == 3 || message.FrameCount == 4)
                 // Synchronous messages have request in slot 2
-                return binarySerializer.Deserialize<Message>(message[2].ToByteArray());
+                return serializer.Deserialize<Message>(message[2].ToByteArray());
             else if (message.FrameCount == 5 || message.FrameCount == 6)
                 // Asynchronous messages have request in slot 4
-                return binarySerializer.Deserialize<Message>(message[4].ToByteArray());
+                return serializer.Deserialize<Message>(message[4].ToByteArray());
             else
                 throw new InvalidOperationException("Request message has unexpected format");
         }
@@ -240,7 +240,7 @@ namespace MessageRouter.NetMQ.Receivers
 
         private NetMQMessage AddResponse(NetMQMessage responseMessage, Message response)
         {
-            var data = binarySerializer.Serialize<Message>(response);
+            var data = serializer.Serialize<Message>(response);
             responseMessage.Append(data);
             return responseMessage;
         }

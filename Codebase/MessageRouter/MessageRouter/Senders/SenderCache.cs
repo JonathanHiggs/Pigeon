@@ -7,25 +7,40 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Senders
 {
+    /// <summary>
+    /// Manages the resolution and lifecycle of <see cref="ISender"/>s
+    /// </summary>
     public class SenderCache : ISenderCache
     {
-        private readonly IRouter messageRouter;
+        private readonly IRouter router;
         private readonly Dictionary<SenderRouting, ISender> senderCache = new Dictionary<SenderRouting, ISender>();
         private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
 
 
+        /// <summary>
+        /// Gets a readonly collection of <see cref="ISenderFactory"/>s
+        /// </summary>
         public IReadOnlyCollection<ISenderFactory> Factories => senderFactories.Values;
 
 
-        public SenderCache(IRouter messageRouter)
+        /// <summary>
+        /// Initializes a new instance of a <see cref="SenderCache"/>
+        /// </summary>
+        /// <param name="router">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
+        public SenderCache(IRouter router)
         {
-            this.messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
+            this.router = router ?? throw new ArgumentNullException(nameof(router));
         }
 
 
+        /// <summary>
+        /// Retrieves a <see cref="ISender"/> for the request type depending on registered routing
+        /// </summary>
+        /// <typeparam name="TRequest">Request type</typeparam>
+        /// <returns>Matching <see cref="ISender"/> for the given request type</returns>
         public ISender SenderFor<TRequest>()
         {
-            if (!messageRouter.RoutingFor<TRequest>(out var senderMapping))
+            if (!router.RoutingFor<TRequest>(out var senderMapping))
                 throw new KeyNotFoundException($"No mapping found for {typeof(TRequest).Name}");
 
             if (!senderCache.TryGetValue(senderMapping, out var sender))
@@ -41,6 +56,11 @@ namespace MessageRouter.Senders
         }
 
 
+        /// <summary>
+        /// Adds a <see cref="ISenderFactory{TSender}"/> to the registered factories
+        /// </summary>
+        /// <typeparam name="TSender"></typeparam>
+        /// <param name="senderFactory"></param>
         public void AddFactory<TSender>(ISenderFactory<TSender> senderFactory)
             where TSender : ISender
         {
