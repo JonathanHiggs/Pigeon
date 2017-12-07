@@ -3,7 +3,9 @@ using MessageRouter.Client;
 using MessageRouter.Messages;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Senders;
+using MessageRouter.Routing;
 using MessageRouter.Senders;
+using MessageRouter.Serialization;
 using NetMQ;
 using System;
 using System.Collections.Generic;
@@ -17,27 +19,34 @@ namespace MessageRouter.Sandbox
     {
         public static void Run()
         {
-            var random = new Random();
-            var poller = new NetMQPoller();
-            var senderMonitor = new NetMQSenderMonitor(poller);
-            var senderFactory = new NetMQSenderFactory(senderMonitor);
-            var senderRouter = new SenderRouter();
-            var messageFactory = new MessageFactory();
-            var client = new MessageClient(senderRouter, messageFactory);
-
-            Console.WriteLine("Enter server name: ");
+            Console.Write("Enter server name: ");
             var serverName = Console.ReadLine();
             var address = TcpAddress.FromNameAndPort(serverName, 5555);
 
-            senderRouter
-                .AddFactory<NetMQSender>(senderFactory)
-                .AddSender<NetMQSender>(address)
-                .AddRequestMapping<TestMessage>(address);
-            
+            var monitorCache = new MonitorCache();
+
+            var router = new Router();
+            var senderCache = new SenderCache(router, monitorCache);
+
+
+            var serializer = new BinarySerializer();
+            var poller = new NetMQPoller();
+            var senderMonitor = new NetMQSenderMonitor(poller);
+            var senderFactory = new NetMQSenderFactory(senderMonitor, serializer);
+            var messageFactory = new MessageFactory();
+
+            var client = new MessageClient(senderCache, monitorCache, messageFactory);
+
+
+            router.AddSenderRouting<TestMessage, INetMQSender>(address);
+            senderCache.AddFactory(senderFactory);
+                        
             client.Start();
             
             Console.WriteLine("Press return to send message");
             Console.WriteLine("Enter 'stop' to end");
+
+            var random = new Random();
 
             do
             {

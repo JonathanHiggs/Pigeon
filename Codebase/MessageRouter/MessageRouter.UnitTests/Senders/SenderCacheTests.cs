@@ -14,12 +14,18 @@ namespace MessageRouter.UnitTests.Senders
     [TestFixture]
     public class SenderCacheTests
     {
-        private readonly Mock<IRouter> mockMessageRouter = new Mock<IRouter>();
-        private IRouter messageRouter;
+        private readonly Mock<IRouter> mockRouter = new Mock<IRouter>();
+        private IRouter router;
 
+        private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
+        private IMonitorCache monitorCache;
+        
         private readonly Mock<ISenderFactory<ISender>> mockSenderFactory = new Mock<ISenderFactory<ISender>>();
         private ISenderFactory<ISender> senderFactory;
 
+        private readonly Mock<ISenderMonitor<ISender>> mockSenderMonitor = new Mock<ISenderMonitor<ISender>>();
+        private ISenderMonitor<ISender> senderMonitor;
+        
         private readonly Mock<ISender> mockSender = new Mock<ISender>();
         private ISender sender;
 
@@ -30,8 +36,10 @@ namespace MessageRouter.UnitTests.Senders
         [SetUp]
         public void Setup()
         {
-            messageRouter = mockMessageRouter.Object;
+            router = mockRouter.Object;
+            monitorCache = mockMonitorCache.Object;
             senderFactory = mockSenderFactory.Object;
+            senderMonitor = mockSenderMonitor.Object;
             sender = mockSender.Object;
             address = mockAddress.Object;
         }
@@ -40,17 +48,32 @@ namespace MessageRouter.UnitTests.Senders
         [TearDown]
         public void TearDown()
         {
-            mockMessageRouter.Reset();
+            mockRouter.Reset();
+            mockMonitorCache.Reset();
             mockSenderFactory.Reset();
+            mockSenderMonitor.Reset();
+            mockSender.Reset();
+            mockAddress.Reset();
         }
 
 
         #region Constructor
         [Test]
-        public void SenderCache_WithMissingMessageRouter_ThrowsArgumentNullException()
+        public void SenderCache_WithNullMessageRouter_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SenderCache(null);
+            TestDelegate construct = () => new SenderCache(null, monitorCache);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void SenderCache_WithNullMonitorCache_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => new SenderCache(router, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -63,7 +86,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithFactory_AddsToFactoryList()
         {
             // Arrange
-            var senderCache = new SenderCache(messageRouter);
+            var senderCache = new SenderCache(router, monitorCache);
 
             // Act
             senderCache.AddFactory(senderFactory);
@@ -77,7 +100,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithFactoryAlreadyRegistered_ThrowsInvalidOperationException()
         {
             // Arrange
-            var senderCache = new SenderCache(messageRouter);
+            var senderCache = new SenderCache(router, monitorCache);
             senderCache.AddFactory(senderFactory);
 
             // Act
@@ -94,7 +117,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithNoRouting_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var senderCache = new SenderCache(messageRouter);
+            var senderCache = new SenderCache(router, monitorCache);
 
             // Act
             TestDelegate senderFor = () => senderCache.SenderFor<object>();
@@ -108,10 +131,10 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithNoFactory_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var senderCache = new SenderCache(messageRouter);
+            var senderCache = new SenderCache(router, monitorCache);
             var senderRouting = SenderRouting.For<ISender>(address);
 
-            mockMessageRouter
+            mockRouter
                 .Setup(m => m.RoutingFor<object>(out senderRouting))
                 .Returns(true);
 
@@ -127,10 +150,10 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithRoutingAndFactory_ReturnsSender()
         {
             // Arrange
-            var senderCache = new SenderCache(messageRouter);
+            var senderCache = new SenderCache(router, monitorCache);
             var senderRouting = SenderRouting.For<ISender>(address);
 
-            mockMessageRouter
+            mockRouter
                 .Setup(m => m.RoutingFor<object>(out senderRouting))
                 .Returns(true);
 
@@ -145,6 +168,35 @@ namespace MessageRouter.UnitTests.Senders
 
             // Assert
             Assert.That(resolvedSender, Is.EqualTo(sender));
+        }
+
+
+        [Test]
+        public void SenderFor_WithNoPreresolvedSender_AddsMonitorToMonitorCache()
+        {
+            // Arrange
+            var senderCache = new SenderCache(router, monitorCache);
+            var senderRouting = SenderRouting.For<ISender>(address);
+
+            mockRouter
+                .Setup(m => m.RoutingFor<object>(out senderRouting))
+                .Returns(true);
+
+            mockSenderFactory
+                .Setup(m => m.CreateSender(It.IsAny<IAddress>()))
+                .Returns(sender);
+
+            mockSenderFactory
+                .SetupGet(m => m.SenderMonitor)
+                .Returns(senderMonitor);
+
+            senderCache.AddFactory(senderFactory);
+
+            // Act
+            var resolvedSender = senderCache.SenderFor<object>();
+
+            // Assert
+            mockMonitorCache.Verify(m => m.AddMonitor(It.IsIn(senderMonitor)), Times.Once);
         }
         #endregion
     }

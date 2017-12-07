@@ -13,6 +13,12 @@ namespace MessageRouter.Senders
     public interface ISenderFactory
     {
         /// <summary>
+        /// Gets the <see cref="ISenderMonitor"/> associated with the factories <see cref="ISender"/>s
+        /// </summary>
+        ISenderMonitor SenderMonitor { get; }
+
+
+        /// <summary>
         /// Constructs a new instance of an <see cref="ISender"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of the remote the sender will connect to</param>

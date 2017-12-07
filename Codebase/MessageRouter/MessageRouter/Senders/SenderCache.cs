@@ -13,6 +13,7 @@ namespace MessageRouter.Senders
     public class SenderCache : ISenderCache
     {
         private readonly IRouter router;
+        private readonly IMonitorCache monitorCache;
         private readonly Dictionary<SenderRouting, ISender> senderCache = new Dictionary<SenderRouting, ISender>();
         private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
 
@@ -27,9 +28,10 @@ namespace MessageRouter.Senders
         /// Initializes a new instance of a <see cref="SenderCache"/>
         /// </summary>
         /// <param name="router">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
-        public SenderCache(IRouter router)
+        public SenderCache(IRouter router, IMonitorCache monitorCache)
         {
             this.router = router ?? throw new ArgumentNullException(nameof(router));
+            this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
         }
 
 
@@ -50,6 +52,8 @@ namespace MessageRouter.Senders
 
                 sender = factory.CreateSender(senderMapping.Address);
                 senderCache.Add(senderMapping, sender);
+
+                monitorCache.AddMonitor(factory.SenderMonitor);
             }
 
             return sender;

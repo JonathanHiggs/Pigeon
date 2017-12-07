@@ -13,6 +13,8 @@ namespace MessageRouter.Senders
     public class MonitorCache : IMonitorCache
     {
         private readonly HashSet<ISenderMonitor> monitors = new HashSet<ISenderMonitor>();
+        private bool running = false;
+        private object lockObj = new object();
 
 
         /// <summary>
@@ -20,8 +22,16 @@ namespace MessageRouter.Senders
         /// </summary>
         public void StartAllMonitors()
         {
-            foreach (var monitor in monitors)
-                monitor.StartSenders();
+            lock (lockObj)
+            {
+                if (running)
+                    return;
+
+                foreach (var monitor in monitors)
+                    monitor.StartSenders();
+
+                running = true;
+            }
         }
 
 
@@ -30,18 +40,32 @@ namespace MessageRouter.Senders
         /// </summary>
         public void StopAllMonitors()
         {
-            foreach (var monitor in monitors)
-                monitor.StopSenders();
+            lock (lockObj)
+            {
+                if (!running)
+                    return;
+
+                foreach (var monitor in monitors)
+                    monitor.StopSenders();
+
+                running = false;
+            }
         }
 
 
         /// <summary>
         /// Adds a new <see cref="ISenderMonitor"/> to the cache
         /// </summary>
-        /// <param name="monitor"></param>
+        /// <param name="monitor"><see cref="ISenderMonitor"/> to add to cache</param>
         public void AddMonitor(ISenderMonitor monitor)
         {
-            monitors.Add(monitor);
+            lock (lockObj)
+            {
+                monitors.Add(monitor);
+
+                if (running)
+                    monitor.StartSenders();
+            }
         }
     }
 }

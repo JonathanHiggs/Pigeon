@@ -11,7 +11,7 @@ namespace MessageRouter.Senders
     /// Abstract <see cref="ISenderFactory"/> base class that has methods common to all transports already implemented
     /// </summary>
     /// <typeparam name="TSender">The type of <see cref="ISender"/> that this factory constructs</typeparam>
-    public abstract class SenderFactory<TSender> : ISenderFactory
+    public abstract class SenderFactory<TSender> : ISenderFactory<TSender>
         where TSender : ISender
     {
         private readonly ISenderMonitor<TSender> senderMonitor;
@@ -26,7 +26,13 @@ namespace MessageRouter.Senders
             this.senderMonitor = senderMonitor ?? throw new ArgumentNullException(nameof(senderMonitor));
         }
 
-        
+
+        /// <summary>
+        /// Gets the <see cref="ISenderMonitor"/> associated with <see cref="TSender"/>s
+        /// </summary>
+        public ISenderMonitor SenderMonitor => senderMonitor;
+
+
         /// <summary>
         /// Creates a new instance of an <see cref="ISender"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>

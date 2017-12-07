@@ -22,5 +22,12 @@ namespace MessageRouter.Senders
         /// Stops all monitors
         /// </summary>
         void StopAllMonitors();
+
+
+        /// <summary>
+        /// Adds a new <see cref="ISenderMonitor"/> to the cache
+        /// </summary>
+        /// <param name="monitor"><see cref="ISenderMonitor"/> to add to cache</param>
+        void AddMonitor(ISenderMonitor monitor);
     }
 }
