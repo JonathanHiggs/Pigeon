@@ -29,12 +29,13 @@ namespace MessageRouter.NetMQ.Senders
 
             timeoutTimer = new Timer
             {
-                Interval = timeout.TotalMilliseconds,
+                Interval = Math.Max(timeout.TotalMilliseconds, 5.0), // Min timeout of 5ms
                 AutoReset = false,
-                Enabled = true,
+                Enabled = false
             };
 
             timeoutTimer.Elapsed += timeoutHandler ?? throw new ArgumentNullException(nameof(timeoutHandler));
+            timeoutTimer.Enabled = true;
         }
 
 

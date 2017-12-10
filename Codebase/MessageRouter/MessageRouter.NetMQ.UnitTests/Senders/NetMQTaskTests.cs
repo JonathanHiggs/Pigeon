@@ -58,10 +58,10 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             // Arrange
             var called = false;
             var taskCompletionSource = new TaskCompletionSource<NetMQMessage>();
-            var task = new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(1.0), (s, e) => { called = true; });
+            var task = new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(5.0), (s, e) => { called = true; });
 
             // Act
-            Thread.Sleep(10);
+            Thread.Sleep(20);
 
             // Assert
             Assert.That(called, Is.True);

@@ -36,6 +36,7 @@ namespace MessageRouter.UnitTests.Senders
         }
 
 
+        #region Constructor
         [Test]
         public void MonitorCache_WithNoDependencies_Constructs()
         {
@@ -45,6 +46,38 @@ namespace MessageRouter.UnitTests.Senders
             // Assert
             Assert.That(test, Throws.Nothing);
         }
+        #endregion
+
+
+        #region AddMonitor
+        [Test]
+        public void AddMonitor_BeforeStarted_DoesNothing()
+        {
+            // Arrange
+            var monitorCache = new MonitorCache();
+
+            // Act
+            monitorCache.AddMonitor(senderMonitor);
+
+            // Assert
+            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Never);
+        }
+
+
+        [Test]
+        public void AddMonitor_AfterStarted_StartsSenderMonitor()
+        {
+            // Arrange
+            var monitorCache = new MonitorCache();
+            monitorCache.StartAllMonitors();
+
+            // Act
+            monitorCache.AddMonitor(senderMonitor);
+
+            // Assert
+            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Once);
+        }
+        #endregion
 
 
         #region StartAllMonitors
@@ -77,6 +110,23 @@ namespace MessageRouter.UnitTests.Senders
             mockSenderMonitor.Verify(m => m.StartSenders(), Times.Once);
             mockSenderMonitor2.Verify(m => m.StartSenders(), Times.Once);
         }
+
+
+        [Test]
+        public void StartAllMonitors_WhenAlreadyStarted_DoesNothing()
+        {
+            // Arrange
+            var monitorCache = new MonitorCache();
+            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.StartAllMonitors();
+            mockSenderMonitor.ResetCalls();
+
+            // Act
+            monitorCache.StartAllMonitors();
+
+            // Assert
+            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Never);
+        }
         #endregion
 
 
@@ -96,12 +146,13 @@ namespace MessageRouter.UnitTests.Senders
 
 
         [Test]
-        public void StopAllMonitors_WithMonitorsAdded_StopsTheMonitors()
+        public void StopAllMonitors_WhenStarted_StopsTheMonitors()
         {
             // Arrange
             var monitorCache = new MonitorCache();
             monitorCache.AddMonitor(senderMonitor);
             monitorCache.AddMonitor(senderMonitor2);
+            monitorCache.StartAllMonitors();
 
             // Act
             monitorCache.StopAllMonitors();
@@ -109,6 +160,39 @@ namespace MessageRouter.UnitTests.Senders
             // Assert
             mockSenderMonitor.Verify(m => m.StopSenders(), Times.Once);
             mockSenderMonitor2.Verify(m => m.StopSenders(), Times.Once);
+        }
+
+
+        [Test]
+        public void StopAllMonitors_BeforeStarted_DoesNothing()
+        {
+            // Arrange
+            var monitorCache = new MonitorCache();
+            monitorCache.AddMonitor(senderMonitor);
+
+            // Act
+            monitorCache.StopAllMonitors();
+
+            // Assert
+            mockSenderMonitor.Verify(m => m.StopSenders(), Times.Never);
+        }
+
+
+        [Test]
+        public void StopAllMonitors_AfterStopped_DoesNothing()
+        {
+            // Arrange
+            var monitorCache = new MonitorCache();
+            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.StartAllMonitors();
+            monitorCache.StopAllMonitors();
+            mockSenderMonitor.ResetCalls();
+
+            // Act
+            monitorCache.StopAllMonitors();
+
+            // Assert
+            mockSenderMonitor.Verify(m => m.StopSenders(), Times.Never);
         }
         #endregion
     }
