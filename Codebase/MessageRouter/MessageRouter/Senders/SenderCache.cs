@@ -12,7 +12,7 @@ namespace MessageRouter.Senders
     /// </summary>
     public class SenderCache : ISenderCache
     {
-        private readonly IRouter router;
+        private readonly IRequestRouter requestRouter;
         private readonly IMonitorCache monitorCache;
         private readonly Dictionary<SenderRouting, ISender> senderCache = new Dictionary<SenderRouting, ISender>();
         private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
@@ -27,10 +27,10 @@ namespace MessageRouter.Senders
         /// <summary>
         /// Initializes a new instance of a <see cref="SenderCache"/>
         /// </summary>
-        /// <param name="router">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
-        public SenderCache(IRouter router, IMonitorCache monitorCache)
+        /// <param name="requestRouter">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
+        public SenderCache(IRequestRouter requestRouter, IMonitorCache monitorCache)
         {
-            this.router = router ?? throw new ArgumentNullException(nameof(router));
+            this.requestRouter = requestRouter ?? throw new ArgumentNullException(nameof(requestRouter));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
         }
 
@@ -42,7 +42,7 @@ namespace MessageRouter.Senders
         /// <returns>Matching <see cref="ISender"/> for the given request type</returns>
         public ISender SenderFor<TRequest>()
         {
-            if (!router.RoutingFor<TRequest>(out var senderMapping))
+            if (!requestRouter.RoutingFor<TRequest>(out var senderMapping))
                 throw new KeyNotFoundException($"No mapping found for {typeof(TRequest).Name}");
 
             if (!senderCache.TryGetValue(senderMapping, out var sender))

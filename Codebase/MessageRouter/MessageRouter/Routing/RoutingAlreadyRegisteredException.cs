@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Routing
 {
     /// <summary>
-    /// Exception that is thrown when a duplicate <see cref="SenderRouting"/> is added to a <see cref="Router"/>
+    /// Exception that is thrown when a duplicate <see cref="SenderRouting"/> is added to a <see cref="RequestRouter"/>
     /// </summary>
     [Serializable]
     public class RoutingAlreadyRegisteredException : MessageRouterException

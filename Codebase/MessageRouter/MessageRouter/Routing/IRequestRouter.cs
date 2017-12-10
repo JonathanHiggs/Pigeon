@@ -10,7 +10,7 @@ namespace MessageRouter.Routing
     /// <summary>
     /// Maps request types to a <see cref="SenderRouting"/>
     /// </summary>
-    public interface IRouter
+    public interface IRequestRouter
     {
         /// <summary>
         /// Gets the routing table
@@ -23,7 +23,7 @@ namespace MessageRouter.Routing
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <param name="senderMapping">Matching <see cref="SenderRouting"/></param>
-        /// <returns>true if the <see cref="IRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
+        /// <returns>true if the <see cref="IRequestRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
         bool RoutingFor<TRequest>(out SenderRouting senderMapping);
     }
 }

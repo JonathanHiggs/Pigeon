@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.UnitTests.Routing
 {
     [TestFixture]
-    public class RouterTests
+    public class RequestRouterTests
     {
         class Request { }
         class RequestSubClass : Request { }
@@ -21,7 +21,7 @@ namespace MessageRouter.UnitTests.Routing
         public void AddSenderRouting_WhenNotAlreadyAdded_AddsToRoutingTable()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
 
             // Act
             router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
@@ -35,7 +35,7 @@ namespace MessageRouter.UnitTests.Routing
         public void AddSenderRouting_WithExistingRouting_ThrowsRoutingAlreadyRegisteredException()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
             router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
 
             // Act
@@ -50,7 +50,7 @@ namespace MessageRouter.UnitTests.Routing
         public void AddSenderRouting_WithNullAddress_ThrowsArgumentNullException()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
 
             // Act
             TestDelegate addRouting = () => router.AddSenderRouting<Request, ISender>(null);
@@ -64,7 +64,7 @@ namespace MessageRouter.UnitTests.Routing
         public void RoutingFor_WithNoRouting_ReturnsFalse()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
 
             // Act
             var hasRouting = router.RoutingFor<Request>(out var mapping);
@@ -78,7 +78,7 @@ namespace MessageRouter.UnitTests.Routing
         public void RoutingFor_WithRoutingAdded_ReturnsTrue()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
             router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
 
             // Act
@@ -94,7 +94,7 @@ namespace MessageRouter.UnitTests.Routing
         {
             // Arrange
             var address = TcpAddress.Wildcard(5555);
-            var router = new Router();
+            var router = new RequestRouter();
             router.AddSenderRouting<Request, ISender>(address);
 
             // Act
@@ -109,7 +109,7 @@ namespace MessageRouter.UnitTests.Routing
         public void RoutingFor_WithSubClassRegistered_ReturnsFalse()
         {
             // Arrange
-            var router = new Router();
+            var router = new RequestRouter();
             router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
 
             // Act

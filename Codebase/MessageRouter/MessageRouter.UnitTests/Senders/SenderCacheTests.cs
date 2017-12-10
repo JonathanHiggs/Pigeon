@@ -14,8 +14,8 @@ namespace MessageRouter.UnitTests.Senders
     [TestFixture]
     public class SenderCacheTests
     {
-        private readonly Mock<IRouter> mockRouter = new Mock<IRouter>();
-        private IRouter router;
+        private readonly Mock<IRequestRouter> mockRouter = new Mock<IRequestRouter>();
+        private IRequestRouter router;
 
         private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
         private IMonitorCache monitorCache;

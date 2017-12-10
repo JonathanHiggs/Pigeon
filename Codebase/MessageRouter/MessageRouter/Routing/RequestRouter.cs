@@ -11,7 +11,7 @@ namespace MessageRouter.Routing
     /// <summary>
     /// Maps request types to a <see cref="SenderRouting"/>
     /// </summary>
-    public class Router : IRouter
+    public class RequestRouter : IRequestRouter
     {
         private readonly Dictionary<Type, SenderRouting> routingTable = new Dictionary<Type, SenderRouting>();
 
@@ -50,7 +50,7 @@ namespace MessageRouter.Routing
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <param name="senderMapping">Matching <see cref="SenderRouting"/></param>
-        /// <returns>true if the <see cref="IRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
+        /// <returns>true if the <see cref="IRequestRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
         public bool RoutingFor<TRequest>(out SenderRouting senderMapping)
         {
             return routingTable.TryGetValue(typeof(TRequest), out senderMapping);

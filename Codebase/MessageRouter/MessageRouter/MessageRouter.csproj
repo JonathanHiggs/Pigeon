@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\IMessageClient.cs" />
-    <Compile Include="Routing\IRouter.cs" />
-    <Compile Include="Client\MessageClient.cs" />
+    <Compile Include="IRouter.cs" />
+    <Compile Include="IRouterInfo.cs" />
+    <Compile Include="Router.cs" />
+    <Compile Include="RouterInfo.cs" />
+    <Compile Include="Routing\IRequestRouter.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
     <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
     <Compile Include="Server\RequestHandlerNotFoundException.cs" />
@@ -56,7 +58,7 @@
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverMonitor.cs" />
     <Compile Include="Receivers\RequestTaskHandler.cs" />
-    <Compile Include="Routing\Router.cs" />
+    <Compile Include="Routing\RequestRouter.cs" />
     <Compile Include="Routing\SenderRouting.cs" />
     <Compile Include="Senders\IMonitorFactory.cs" />
     <Compile Include="Senders\IMonitorCache.cs" />
@@ -73,15 +75,11 @@
     <Compile Include="Senders\SenderFactory.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
-    <Compile Include="Server\MessageServer.cs" />
-    <Compile Include="Server\IMessageServer.cs" />
     <Compile Include="Server\IRequestDispatcher.cs" />
     <Compile Include="Server\IRequestHandler.cs" />
-    <Compile Include="Server\IServerInfo.cs" />
     <Compile Include="Server\RequestDispatcher.cs" />
     <Compile Include="Server\RequestHandlerDelegate.cs" />
     <Compile Include="Server\RequestHandlerFunction.cs" />
-    <Compile Include="Server\ServerInfo.cs" />
     <Compile Include="Addresses\TcpAddress.cs" />
   </ItemGroup>
   <ItemGroup />

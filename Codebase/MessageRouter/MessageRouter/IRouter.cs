@@ -1,20 +1,29 @@
-﻿using MessageRouter.Senders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Receivers;
+using MessageRouter.Senders;
 
-namespace MessageRouter.Client
+namespace MessageRouter
 {
     /// <summary>
-    /// Interface for sending request messages to a remote
+    /// <see cref="IRouter{TRouterInfo}"/> represents a complete abstraction of the transport layer to all other
+    /// parts of the architecture
     /// </summary>
-    public interface IMessageClient
+    /// <typeparam name="TRouterInfo"></typeparam>
+    public interface IRouter<TRouterInfo> where TRouterInfo : IRouterInfo
     {
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
-        /// Default timeout of one hour
+        /// Gets a <see cref="TRouterInfo"/> to access state information of the <see cref="IRouter{TRouterInfo}"/>
+        /// </summary>
+        TRouterInfo Info { get; }
+
+
+        /// <summary>
+        /// Dispatches a request asynchronously through an internally resolved <see cref="ISender"/> to a remote
+        /// <see cref="IReceiver"/> with a default timeout of one hour
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <typeparam name="TResponse">Expected response type</typeparam>
@@ -26,7 +35,8 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Dispatches a request asynchronously to a remote routed by the <see cref="ISenderMonitor"/>
+        /// Dispatches a request asynchronously through an internally resolved <see cref="ISender"/> to a remote
+        /// <see cref="IReceiver"/>
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <typeparam name="TResponse">Expected response type</typeparam>
@@ -39,13 +49,13 @@ namespace MessageRouter.Client
 
 
         /// <summary>
-        /// Starts the client running
+        /// Starts all internal active transports running
         /// </summary>
         void Start();
 
 
         /// <summary>
-        /// Stops the client running and disconnects <see cref="ISender"/>
+        /// Stops all internal active transports running
         /// </summary>
         void Stop();
     }
