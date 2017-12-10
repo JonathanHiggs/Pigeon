@@ -23,15 +23,11 @@ namespace MessageRouter.UnitTests
         private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
         private IMonitorCache monitorCache;
 
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<IReceiverCache> mockReceiverCache = new Mock<IReceiverCache>();
+        private IReceiverCache receiverCache;
 
-        private readonly Mock<IReceiverMonitor> mockReceiverMonitor = new Mock<IReceiverMonitor>();
-        private IReceiverMonitor receiverMonitor;
 
-        private readonly Mock<IRequestDispatcher> mockRequestDispatcher = new Mock<IRequestDispatcher>();
-        private IRequestDispatcher requestDispatcher;
-        
+
         private readonly string name = "some name";
 
 
@@ -40,9 +36,7 @@ namespace MessageRouter.UnitTests
         {
             senderCache = mockSenderCache.Object;
             monitorCache = mockMonitorCache.Object;
-            messageFactory = mockMessageFactory.Object;
-            receiverMonitor = mockReceiverMonitor.Object;
-            requestDispatcher = mockRequestDispatcher.Object;
+            receiverCache = mockReceiverCache.Object;
         }
 
 
@@ -51,25 +45,7 @@ namespace MessageRouter.UnitTests
         {
             mockSenderCache.Reset();
             mockMonitorCache.Reset();
-            mockMessageFactory.Reset();
-            mockReceiverMonitor.Reset();
-            mockRequestDispatcher.Reset();
-        }
-        
-
-        public void SetupMirroredHandle<T>() where T : class
-        {
-            mockMessageFactory
-                .Setup(m => m.ExtractRequest(It.IsAny<DataMessage<T>>()))
-                .Returns<DataMessage<T>>(m => m.Body);
-
-            mockMessageFactory
-                .Setup(m => m.CreateResponse<T>(It.IsAny<T>()))
-                .Returns<T>(t => new DataMessage<T>(new GuidMessageId(), t));
-
-            mockRequestDispatcher
-                .Setup(m => m.Handle(It.IsAny<object>()))
-                .Returns<object>(o => o);
+            mockReceiverCache.Reset();
         }
 
 
@@ -78,7 +54,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullName_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(null, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            TestDelegate construct = () => new Router(null, senderCache, monitorCache, receiverCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -89,7 +65,7 @@ namespace MessageRouter.UnitTests
         public void Router_WitNullSenderCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, null, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            TestDelegate construct = () => new Router(name, null, monitorCache, receiverCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -100,7 +76,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, senderCache, null, messageFactory, receiverMonitor, requestDispatcher);
+            TestDelegate construct = () => new Router(name, senderCache, null, receiverCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -111,29 +87,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullMessageFactory_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, senderCache, monitorCache, null, receiverMonitor, requestDispatcher);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void Router_WithNullReceiverMonitor_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new Router(name, senderCache, monitorCache, messageFactory, null, requestDispatcher);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void Router_WithNullRequestDispatcher_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, null);
+            TestDelegate construct = () => new Router(name, senderCache, monitorCache, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -146,7 +100,7 @@ namespace MessageRouter.UnitTests
         public void Info_WithName_RetunsSameName()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             var infoName = router.Info.Name;
@@ -160,7 +114,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_HasNoStartTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             var startTimestamp = router.Info.StartedTimestamp.HasValue;
@@ -174,7 +128,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_HasNoStopTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             var stopTimestamp = router.Info.StoppedTimestamp.HasValue;
@@ -188,7 +142,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_IsNotRunning()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             var running = router.Info.Running;
@@ -204,7 +158,7 @@ namespace MessageRouter.UnitTests
         public async Task Send_WithNoTimeout_CallsSenderCache()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             mockSenderCache
                 .Setup(m => m.Send<string, string>(It.IsAny<string>()))
                 .ReturnsAsync("something");
@@ -224,7 +178,7 @@ namespace MessageRouter.UnitTests
         public async Task Send_WithTimeout_CallsSenderCache()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             mockSenderCache
                 .Setup(m => m.Send<string, string>(It.IsAny<string>()))
                 .ReturnsAsync("something");
@@ -246,14 +200,13 @@ namespace MessageRouter.UnitTests
         public void Start_BeforeStarted_StartsMonitors()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             router.Start();
 
             // Assert
             mockMonitorCache.Verify(m => m.StartAllMonitors(), Times.Once);
-            mockReceiverMonitor.Verify(m => m.StartReceivers(), Times.Once);
         }
 
 
@@ -261,17 +214,15 @@ namespace MessageRouter.UnitTests
         public void Start_WhenAlreadyStarted_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             router.Start();
             mockMonitorCache.ResetCalls();
-            mockReceiverMonitor.ResetCalls();
 
             // Act
             router.Start();
 
             // Assert
             mockMonitorCache.Verify(m => m.StartAllMonitors(), Times.Never);
-            mockReceiverMonitor.Verify(m => m.StartReceivers(), Times.Never);
         }
 
 
@@ -279,7 +230,7 @@ namespace MessageRouter.UnitTests
         public void Start_BeforeStarted_SetsStartedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             router.Start();
@@ -293,7 +244,7 @@ namespace MessageRouter.UnitTests
         public void Start_WhenAlreadyStarted_DoesNotChangeStartedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             router.Start();
             var startedTimestamp = router.Info.StartedTimestamp.Value;
 
@@ -311,14 +262,13 @@ namespace MessageRouter.UnitTests
         public void Stop_BeforeStarted_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             router.Stop();
 
             // Assert
             mockMonitorCache.Verify(m => m.StopAllMonitors(), Times.Never);
-            mockReceiverMonitor.Verify(m => m.StopReceivers(), Times.Never);
         }
 
 
@@ -326,7 +276,7 @@ namespace MessageRouter.UnitTests
         public void Stop_WhenRunning_StopsMonitors()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             router.Start();
 
             // Act
@@ -334,7 +284,6 @@ namespace MessageRouter.UnitTests
 
             // Assert
             mockMonitorCache.Verify(m => m.StopAllMonitors(), Times.Once);
-            mockReceiverMonitor.Verify(m => m.StopReceivers(), Times.Once);
         }
 
 
@@ -342,18 +291,16 @@ namespace MessageRouter.UnitTests
         public void Stop_AfterAlreadyStopped_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             router.Start();
             router.Stop();
             mockMonitorCache.ResetCalls();
-            mockReceiverMonitor.ResetCalls();
 
             // Act
             router.Stop();
 
             // Assert
             mockMonitorCache.Verify(m => m.StopAllMonitors(), Times.Never);
-            mockReceiverMonitor.Verify(m => m.StopReceivers(), Times.Never);
         }
 
 
@@ -361,7 +308,7 @@ namespace MessageRouter.UnitTests
         public void Stop_BeforeStarted_DoesNotSetStopTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
 
             // Act
             router.Stop();
@@ -375,7 +322,7 @@ namespace MessageRouter.UnitTests
         public void Stop_AfterRunning_SetsStoppedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             router.Start();
 
             // Act
@@ -392,7 +339,7 @@ namespace MessageRouter.UnitTests
         public void CreateResponse_WithValidResponse_CallsMessageFactory()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             var responseObject = "response";
 
             // Act
@@ -410,7 +357,7 @@ namespace MessageRouter.UnitTests
         public void CreateResponse_WithNullResponse_ThrowsArgumentException()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             string responseObject = null;
 
             // Act
@@ -427,7 +374,7 @@ namespace MessageRouter.UnitTests
         public void RequestHandler_WithHandler_ExtractsRequest()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             var message = new DataMessage<string>(new GuidMessageId(), "something");
             var requestTask = new RequestTask(message, m => { });
             SetupMirroredHandle<string>();
@@ -444,7 +391,7 @@ namespace MessageRouter.UnitTests
         public void RequestHandler_WithHandledRequest_CallsRequestDispatcher()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             var message = new DataMessage<string>(new GuidMessageId(), "something");
             var requestTask = new RequestTask(message, m => { });
             SetupMirroredHandle<string>();
@@ -461,7 +408,7 @@ namespace MessageRouter.UnitTests
         public void RequestHandler_WithHandledRequest_CreateResponseMessage()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             var message = new DataMessage<string>(new GuidMessageId(), "something");
             var requestTask = new RequestTask(message, m => { });
             SetupMirroredHandle<string>();
@@ -478,7 +425,7 @@ namespace MessageRouter.UnitTests
         public void RequestHandler_WithHandledRequest_CallsResponseHandler()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
             var message = new DataMessage<string>(new GuidMessageId(), "something");
             var responseHandlerCalled = false;
             var requestTask = new RequestTask(message, m => { responseHandlerCalled = true; });

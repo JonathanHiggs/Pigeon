@@ -20,36 +20,19 @@ namespace MessageRouter.Sandbox
     {
         public static void Run()
         {
-            var poller = new NetMQPoller();
-            var socket = new RouterSocket();
-            var serializer = new BinarySerializer();
-            var receiver = new NetMQReceiver(socket, serializer);
-            var receiverManager = new NetMQReceiverMonitor(receiver, poller);
-            var messageFactory = new MessageFactory();
-            var requestDispatcher = new RequestDispatcher();
-            var server = new MessageServer(messageFactory, receiverManager, requestDispatcher, "Server");
+            var router = Router.Builder()
+                .WithTransport(new NetMQTransport())
+                .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
+                .WithHandler<TestMessage, TestMessage>(Handler)
+                .WithName("TestServer")
+                .Build();
 
-            requestDispatcher.Register<TestMessage, TestMessage>(Handler);
-            receiver.Add(TcpAddress.Wildcard(5555));
-            server.Start();
+            router.Start();
             
             Console.WriteLine("Press enter to stop server");
             Console.ReadLine();
 
-            server.Stop();
-        }
-
-
-        private static void RunServer(MessageServer server, CancellationToken token)
-        {
-            try
-            {
-                server.Start();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            router.Stop();
         }
 
 

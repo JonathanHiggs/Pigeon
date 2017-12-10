@@ -67,7 +67,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
-        public void Add(IAddress address)
+        public void AddAddress(IAddress address)
         {
             if (boundStatusByAddress.ContainsKey(address))
                 return;
@@ -113,7 +113,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
         /// </summary>
-        public void Bind()
+        public void BindAll()
         {
             if (isBound)
                 return;

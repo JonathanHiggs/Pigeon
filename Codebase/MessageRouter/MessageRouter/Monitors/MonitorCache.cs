@@ -29,7 +29,7 @@ namespace MessageRouter.Monitors
                     return;
 
                 foreach (var monitor in monitors)
-                    monitor.StartSenders();
+                    monitor.StartMonitoring();
 
                 running = true;
             }
@@ -47,7 +47,7 @@ namespace MessageRouter.Monitors
                     return;
 
                 foreach (var monitor in monitors)
-                    monitor.StopSenders();
+                    monitor.StopMonitoring();
 
                 running = false;
             }
@@ -65,7 +65,7 @@ namespace MessageRouter.Monitors
                 monitors.Add(monitor);
 
                 if (running)
-                    monitor.StartSenders();
+                    monitor.StartMonitoring();
             }
         }
     }

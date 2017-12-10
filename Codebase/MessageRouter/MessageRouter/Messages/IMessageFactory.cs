@@ -30,6 +30,14 @@ namespace MessageRouter.Messages
 
 
         /// <summary>
+        /// Wraps the supplied request object in a <see cref="Message"/>
+        /// </summary>
+        /// <param name="response">Response object</param>
+        /// <returns>Serializable Message wrapping the response object</returns>
+        Message CreateResponse(object response);
+
+
+        /// <summary>
         /// Extracts a request object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
         /// </summary>
         /// <param name="requestMessage">Request Message wrapper</param>

@@ -97,7 +97,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             receiverMonitor.StartReceivers();
 
             // Assert
-            mockReceiver.Verify(m => m.Bind(), Times.Once);
+            mockReceiver.Verify(m => m.BindAll(), Times.Once);
         }
         #endregion
 

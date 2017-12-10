@@ -14,12 +14,12 @@ namespace MessageRouter.Monitors
         /// <summary>
         /// Starts active monitoring of transports
         /// </summary>
-        void StartSenders();
+        void StartMonitoring();
 
 
         /// <summary>
         /// Stops active monitoring of transports
         /// </summary>
-        void StopSenders();
+        void StopMonitoring();
     }
 }

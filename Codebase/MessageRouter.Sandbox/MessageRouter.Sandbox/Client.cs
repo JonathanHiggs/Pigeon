@@ -1,17 +1,9 @@
-﻿using MessageRouter.Addresses;
-using MessageRouter.Client;
-using MessageRouter.Messages;
+﻿using System;
+using System.Threading.Tasks;
+
+using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Senders;
-using MessageRouter.Routing;
-using MessageRouter.Senders;
-using MessageRouter.Serialization;
-using NetMQ;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MessageRouter.Sandbox
 {
@@ -21,27 +13,14 @@ namespace MessageRouter.Sandbox
         {
             Console.Write("Enter server name: ");
             var serverName = Console.ReadLine();
-            var address = TcpAddress.FromNameAndPort(serverName, 5555);
 
-            var monitorCache = new MonitorCache();
-
-            var router = new Router();
-            var senderCache = new SenderCache(router, monitorCache);
-
-
-            var serializer = new BinarySerializer();
-            var poller = new NetMQPoller();
-            var senderMonitor = new NetMQSenderMonitor(poller);
-            var senderFactory = new NetMQSenderFactory(senderMonitor, serializer);
-            var messageFactory = new MessageFactory();
-
-            var client = new MessageClient(senderCache, monitorCache, messageFactory);
-
-
-            router.AddSenderRouting<TestMessage, INetMQSender>(address);
-            senderCache.AddFactory(senderFactory);
-                        
-            client.Start();
+            var router = Router.Builder()
+                .WithTransport(new NetMQTransport())
+                .WithSenderRouting<INetMQSender, TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555))
+                .WithName("TestClient")
+                .Build();
+            
+            router.Start();
             
             Console.WriteLine("Press return to send message");
             Console.WriteLine("Enter 'stop' to end");
@@ -61,7 +40,7 @@ namespace MessageRouter.Sandbox
                         var request = new TestMessage { Num = random.Next(100) };
                         Console.WriteLine($"Sending: {request.Num}");
 
-                        var response = await client.Send<TestMessage, TestMessage>(request);
+                        var response = await router.Send<TestMessage, TestMessage>(request);
                         Console.WriteLine($"Received: {response.Num}");
                     }
                     catch (Exception ex)
@@ -72,7 +51,7 @@ namespace MessageRouter.Sandbox
             }
             while (true);
 
-            client.Stop();
+            router.Stop();
         }
     }
 }

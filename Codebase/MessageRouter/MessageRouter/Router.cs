@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Fluent;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
 using MessageRouter.Receivers;
@@ -21,9 +22,7 @@ namespace MessageRouter
     {
         private readonly ISenderCache senderCache;
         private readonly IMonitorCache monitorCache;
-        private readonly IMessageFactory messageFactory;
-        private readonly IReceiverMonitor receiverMonitor;
-        private readonly IRequestDispatcher requestDispatcher;
+        private readonly IReceiverCache receiverCache;
 
         private readonly RouterInfo routerInfo;
         private bool running = false;
@@ -49,18 +48,14 @@ namespace MessageRouter
             string name,
             ISenderCache senderCache,
             IMonitorCache monitorCache,
-            IMessageFactory messageFactory,
-            IReceiverMonitor receiverMonitor,
-            IRequestDispatcher requestDispatcher)
+            IReceiverCache receiverCache)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
             this.senderCache = senderCache ?? throw new ArgumentNullException(nameof(senderCache));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
-            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
-            this.receiverMonitor = receiverMonitor ?? throw new ArgumentNullException(nameof(receiverMonitor));
-            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
+            this.receiverCache = receiverCache ?? throw new ArgumentNullException(nameof(receiverCache));
 
             routerInfo = new RouterInfo
             {
@@ -69,8 +64,6 @@ namespace MessageRouter
                 StartedTimestamp = null,
                 StoppedTimestamp = null
             };
-
-            receiverMonitor.RequestReceived += (s, r) => Task.Run(() => { RequestHandler(r); });
         }
 
 
@@ -118,7 +111,6 @@ namespace MessageRouter
                     return;
 
                 monitorCache.StartAllMonitors();
-                receiverMonitor.StartReceivers();
 
                 routerInfo.Running = true;
                 routerInfo.StartedTimestamp = DateTime.Now;
@@ -140,7 +132,6 @@ namespace MessageRouter
                     return;
 
                 monitorCache.StopAllMonitors();
-                receiverMonitor.StopReceivers();
 
                 routerInfo.Running = false;
                 routerInfo.StoppedTimestamp = DateTime.Now;
@@ -149,35 +140,10 @@ namespace MessageRouter
             }
         }
 
-        
-        public void RequestHandler(RequestTask requestTask)
+
+        public static RouterBuilder Builder()
         {
-            var requestObject = messageFactory.ExtractRequest(requestTask.Request);
-            var responseObject = requestDispatcher.Handle(requestObject);
-            var responseMessage = CreateResponse(responseObject);
-            requestTask.ResponseHandler(responseMessage);
-        }
-
-
-        /// <summary>
-        /// Wraps a response object in a <see cref="Message"/> for returning to remote source
-        /// </summary>
-        /// <param name="responseObject">Response object</param>
-        /// <returns>Response <see cref="Message"/></returns>
-        public Message CreateResponse(object responseObject)
-        {
-            // ToDo: move this into message factory
-
-            if (null == responseObject)
-                throw new ArgumentNullException(nameof(responseObject));
-
-            var createResponse = typeof(IMessageFactory)
-                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                .Single(m => m.Name == "CreateResponse");
-
-            var genericMethod = createResponse.MakeGenericMethod(responseObject.GetType());
-
-            return (Message)genericMethod.Invoke(messageFactory, new object[] { responseObject });
+            return new RouterBuilder();
         }
     }
 }

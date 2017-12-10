@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,17 @@ namespace MessageRouter.Messages
     /// </summary>
     public class MessageFactory : IMessageFactory
     {
+        private readonly MethodInfo unboundCreateResponse;
+
+
+        public MessageFactory()
+        {
+            unboundCreateResponse = GetType()
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Single(m => m.Name == nameof(CreateResponse) && m.IsGenericMethod);
+        }
+
+
         /// <summary>
         /// Wraps the supplied request object in a <see cref="Message"/>
         /// </summary>
@@ -33,6 +45,18 @@ namespace MessageRouter.Messages
         public Message CreateResponse<TResponse>(TResponse response) where TResponse : class
         {
             return Create(response);
+        }
+
+
+        /// <summary>
+        /// Wraps the supplied request object in a <see cref="Message"/>
+        /// </summary>
+        /// <param name="response">Response object</param>
+        /// <returns>Serializable Message wrapping the response object</returns>
+        public Message CreateResponse(object response)
+        {
+            var method = unboundCreateResponse.MakeGenericMethod(response.GetType());
+            return (Message)method.Invoke(this, new object[] { response });
         }
 
 
@@ -72,8 +96,10 @@ namespace MessageRouter.Messages
         private Message Create<T>(T data)
             where T : class
         {
-            if (typeof(Message).IsAssignableFrom(data.GetType()))
+            if (data is Message)
                 return data as Message;
+            else if (data is Exception)
+                return new ExceptionMessage(new GuidMessageId(), data as Exception);
             return new DataMessage<T>(new GuidMessageId(), data);
         }
     }

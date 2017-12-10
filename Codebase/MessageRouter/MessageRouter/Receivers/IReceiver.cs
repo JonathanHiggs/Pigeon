@@ -30,7 +30,7 @@ namespace MessageRouter.Receivers
         /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
-        void Add(IAddress address);
+        void AddAddress(IAddress address);
 
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
         /// </summary>
-        void Bind();
+        void BindAll();
 
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var monitor = new NetMQSenderMonitor(poller);
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Act
             monitor.AddSender(sender);
@@ -107,8 +107,8 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var monitor = new NetMQSenderMonitor(poller);
-            monitor.StartSenders();
-            monitor.StopSenders();
+            monitor.StartMonitoring();
+            monitor.StopMonitoring();
 
             // Act
             monitor.AddSender(sender);
@@ -141,7 +141,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             var monitor = new NetMQSenderMonitor(poller);
 
             // Act
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Assert
             mockPoller.Verify(m => m.RunAsync(), Times.Once);
@@ -153,11 +153,11 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var monitor = new NetMQSenderMonitor(poller);
-            monitor.StartSenders();
+            monitor.StartMonitoring();
             mockPoller.ResetCalls();
 
             // Act
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Assert
             mockPoller.Verify(m => m.RunAsync(), Times.Never);
@@ -172,7 +172,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             monitor.AddSender(sender);
 
             // Act
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Assert
             mockSender.Verify(m => m.ConnectAll(), Times.Once);
@@ -189,7 +189,7 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             monitor.AddSender(sender);
 
             // Act
-            monitor.StopSenders();
+            monitor.StopMonitoring();
 
             // Assert
             mockPoller.Verify(m => m.StopAsync(), Times.Never);
@@ -202,10 +202,10 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var monitor = new NetMQSenderMonitor(poller);
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Act
-            monitor.StopSenders();
+            monitor.StopMonitoring();
 
             // Assert
             mockPoller.Verify(m => m.StopAsync(), Times.Once);
@@ -218,10 +218,10 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             // Arrange
             var monitor = new NetMQSenderMonitor(poller);
             monitor.AddSender(sender);
-            monitor.StartSenders();
+            monitor.StartMonitoring();
 
             // Act
-            monitor.StopSenders();
+            monitor.StopMonitoring();
 
             // Assert
             mockSender.Verify(m => m.DisconnectAll(), Times.Once);

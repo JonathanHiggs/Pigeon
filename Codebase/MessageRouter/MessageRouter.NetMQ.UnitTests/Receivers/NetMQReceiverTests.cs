@@ -73,7 +73,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.Bind();
+            receiver.BindAll();
 
             // Act
             var isBound = receiver.IsBound;
@@ -89,7 +89,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.Bind();
+            receiver.BindAll();
             receiver.UnbindAll();
 
             // Act
@@ -128,7 +128,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var address = TcpAddress.Wildcard(5555);
 
             // Act
-            receiver.Add(address);
+            receiver.AddAddress(address);
 
             // Assert
             CollectionAssert.Contains(receiver.Addresses, address);
@@ -142,10 +142,10 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
             var address = TcpAddress.Wildcard(5555);
-            receiver.Add(address);
+            receiver.AddAddress(address);
 
             // Act
-            receiver.Add(address);
+            receiver.AddAddress(address);
 
             // Assert
             Assert.That(receiver.Addresses, Has.Count.EqualTo(1));
@@ -160,7 +160,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.Add(TcpAddress.Wildcard(5555));
+            receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
             receiver.RemoveAll();
@@ -176,7 +176,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.Bind();
+            receiver.BindAll();
 
             // Act
             receiver.RemoveAll();
@@ -195,7 +195,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
             var address = TcpAddress.Wildcard(5555);
-            receiver.Add(address);
+            receiver.AddAddress(address);
 
             // Act
             receiver.Remove(address);
@@ -230,7 +230,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            TestDelegate test = () => receiver.Bind();
+            TestDelegate test = () => receiver.BindAll();
 
             // Assert
             Assert.That(test, Throws.Nothing);
@@ -245,7 +245,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            receiver.Bind();
+            receiver.BindAll();
 
             // Assert
             Assert.That(receiver.IsBound, Is.True);

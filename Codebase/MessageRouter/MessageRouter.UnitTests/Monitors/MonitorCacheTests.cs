@@ -60,7 +60,7 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.AddMonitor(monitor);
 
             // Assert
-            mockMonitor.Verify(m => m.StartSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StartMonitoring(), Times.Never);
         }
 
 
@@ -75,7 +75,7 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.AddMonitor(monitor);
 
             // Assert
-            mockMonitor.Verify(m => m.StartSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StartMonitoring(), Times.Once);
         }
         #endregion
 
@@ -107,8 +107,8 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.StartAllMonitors();
 
             // Assert
-            mockMonitor.Verify(m => m.StartSenders(), Times.Once);
-            mockMonitor2.Verify(m => m.StartSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StartMonitoring(), Times.Once);
+            mockMonitor2.Verify(m => m.StartMonitoring(), Times.Once);
         }
 
 
@@ -125,7 +125,7 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.StartAllMonitors();
 
             // Assert
-            mockMonitor.Verify(m => m.StartSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StartMonitoring(), Times.Never);
         }
         #endregion
 
@@ -158,8 +158,8 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockMonitor.Verify(m => m.StopSenders(), Times.Once);
-            mockMonitor2.Verify(m => m.StopSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StopMonitoring(), Times.Once);
+            mockMonitor2.Verify(m => m.StopMonitoring(), Times.Once);
         }
 
 
@@ -174,7 +174,7 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockMonitor.Verify(m => m.StopSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StopMonitoring(), Times.Never);
         }
 
 
@@ -192,7 +192,7 @@ namespace MessageRouter.UnitTests.Monitors
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockMonitor.Verify(m => m.StopSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StopMonitoring(), Times.Never);
         }
         #endregion
     }

@@ -49,7 +49,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var factory = new NetMQReceiverFactory(serializer);
 
             // Act
-            TestDelegate create = () => factory.Create(null);
+            TestDelegate create = () => factory.CreateReceiver(null);
 
             // Assert
             Assert.That(create, Throws.ArgumentNullException);
