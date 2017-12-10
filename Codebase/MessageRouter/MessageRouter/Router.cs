@@ -141,9 +141,9 @@ namespace MessageRouter
         }
 
 
-        public static RouterBuilder Builder()
+        public static RouterBuilder Builder(string name)
         {
-            return new RouterBuilder();
+            return new RouterBuilder(name);
         }
     }
 }

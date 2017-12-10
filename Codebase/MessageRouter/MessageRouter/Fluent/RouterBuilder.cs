@@ -26,8 +26,9 @@ namespace MessageRouter.Fluent
         private readonly MonitorCache monitorCache;
 
 
-        public RouterBuilder()
+        public RouterBuilder(string name)
         {
+            this.name = name;
             requestRouter = new RequestRouter();
             messageFactory = new MessageFactory();
             requestDispatcher = new RequestDispatcher();
@@ -38,21 +39,17 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithName(string name)
-        {
-            this.name = name;
-            return this;
-        }
-
-
-        public RouterBuilder WithTransport<TSender, TReceiver>(ITransport<TSender, TReceiver> transport)
+        public RouterBuilder WithTransport<TTransport, TSender, TReceiver>()
+            where TTransport : ITransport<TSender, TReceiver>
             where TSender : ISender
             where TReceiver : IReceiver
         {
+            var transport = Activator.CreateInstance<TTransport>();
             senderCache.AddFactory(transport.SenderFactory);
             receiverCache.AddFactory(transport.ReceiverFactory);
             return this;
         }
+
 
         public RouterBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
             where TSender : ISender
@@ -89,9 +86,11 @@ namespace MessageRouter.Fluent
         }
 
 
-        public Router Build()
+        public Router BuildAndStart()
         {
-            return new Router(name, senderCache, monitorCache, receiverCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache);
+            router.Start();
+            return router;
         }
     }
 }
