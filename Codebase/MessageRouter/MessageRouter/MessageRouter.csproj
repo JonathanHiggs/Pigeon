@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IEndPoint.cs" />
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
     <Compile Include="Messages\ExceptionMessage.cs" />
+    <Compile Include="Monitors\IMonitor.cs" />
     <Compile Include="Router.cs" />
     <Compile Include="RouterInfo.cs" />
     <Compile Include="Routing\IRequestRouter.cs" />
@@ -62,8 +64,7 @@
     <Compile Include="Receivers\RequestTaskHandler.cs" />
     <Compile Include="Routing\RequestRouter.cs" />
     <Compile Include="Routing\SenderRouting.cs" />
-    <Compile Include="Senders\IMonitorFactory.cs" />
-    <Compile Include="Senders\IMonitorCache.cs" />
+    <Compile Include="Monitors\IMonitorCache.cs" />
     <Compile Include="Senders\ISender.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageFactory.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Senders\ISenderCache.cs" />
     <Compile Include="Senders\ISenderFactory.cs" />
     <Compile Include="Senders\ISenderMonitor.cs" />
-    <Compile Include="Senders\MonitorCache.cs" />
+    <Compile Include="Monitors\MonitorCache.cs" />
     <Compile Include="Senders\SenderCache.cs" />
     <Compile Include="Senders\SenderFactory.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />

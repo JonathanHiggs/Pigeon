@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace MessageRouter.NetMQ.UnitTests.Senders
 {
@@ -57,11 +58,17 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var called = false;
+            var resetEvent = new ManualResetEvent(false);
             var taskCompletionSource = new TaskCompletionSource<NetMQMessage>();
-            var task = new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(5.0), (s, e) => { called = true; });
+            ElapsedEventHandler handler = (s, e) =>
+            {
+                called = true;
+                resetEvent.Set();
+            };
 
             // Act
-            Thread.Sleep(20);
+            var task = new NetMQTask(taskCompletionSource, TimeSpan.FromMilliseconds(5.0), handler);
+            resetEvent.WaitOne(TimeSpan.FromMilliseconds(1000));
 
             // Assert
             Assert.That(called, Is.True);

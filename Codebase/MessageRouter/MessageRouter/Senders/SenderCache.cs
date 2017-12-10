@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MessageRouter.Messages;
+using MessageRouter.Monitors;
 using MessageRouter.Routing;
 
 namespace MessageRouter.Senders

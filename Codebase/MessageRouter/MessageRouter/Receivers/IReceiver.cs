@@ -12,14 +12,8 @@ namespace MessageRouter.Receivers
     /// Interface encapsulates a connection that is able to bind to <see cref="IAddress"/>es to receive and reply 
     /// to incoming messages from remote <see cref="ISender"/>
     /// </summary>
-    public interface IReceiver
+    public interface IReceiver : IEndPoint
     {
-        /// <summary>
-        /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
-        /// </summary>
-        IEnumerable<IAddress> Addresses { get; }
-
-
         /// <summary>
         /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
         /// </summary>

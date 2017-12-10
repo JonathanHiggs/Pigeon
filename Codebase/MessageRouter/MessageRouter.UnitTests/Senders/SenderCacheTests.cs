@@ -1,5 +1,6 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Messages;
+using MessageRouter.Monitors;
 using MessageRouter.Routing;
 using MessageRouter.Senders;
 using Moq;

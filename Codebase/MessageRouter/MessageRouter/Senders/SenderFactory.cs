@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
+using MessageRouter.Monitors;
 
 namespace MessageRouter.Senders
 {
@@ -30,7 +31,7 @@ namespace MessageRouter.Senders
         /// <summary>
         /// Gets the <see cref="ISenderMonitor"/> associated with <see cref="TSender"/>s
         /// </summary>
-        public ISenderMonitor SenderMonitor => senderMonitor;
+        public IMonitor SenderMonitor => senderMonitor;
 
 
         /// <summary>

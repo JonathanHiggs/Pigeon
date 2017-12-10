@@ -61,7 +61,7 @@
     <Compile Include="Receivers\RequestTaskTests.cs" />
     <Compile Include="RouterTests.cs" />
     <Compile Include="Routing\RequestRouterTests.cs" />
-    <Compile Include="Senders\MonitorCacheTests.cs" />
+    <Compile Include="Monitors\MonitorCacheTests.cs" />
     <Compile Include="Senders\SenderCacheTests.cs" />
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Server\RequestDispatcherTests.cs" />

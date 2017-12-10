@@ -13,14 +13,8 @@ namespace MessageRouter.Senders
     /// <summary>
     /// Interface encapsulates a connection to a remote that is able to be sent and receive <see cref="Message"/>s
     /// </summary>
-    public interface ISender
+    public interface ISender : IEndPoint
     {
-        /// <summary>
-        /// Gets an eumerable of the <see cref="IAddress"/> for remotes that the sender is connected to
-        /// </summary>
-        IEnumerable<IAddress> Addresses { get; }
-
-
         /// <summary>
         /// Gets the type of the message <see cref="ISerializer<>"/> the sender uses
         /// </summary>

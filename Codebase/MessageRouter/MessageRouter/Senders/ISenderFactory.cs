@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.Monitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MessageRouter.Senders
         /// <summary>
         /// Gets the <see cref="ISenderMonitor"/> associated with the factories <see cref="ISender"/>s
         /// </summary>
-        ISenderMonitor SenderMonitor { get; }
+        IMonitor SenderMonitor { get; }
 
 
         /// <summary>

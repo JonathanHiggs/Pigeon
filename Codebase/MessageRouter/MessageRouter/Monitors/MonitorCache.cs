@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Senders;
 
-namespace MessageRouter.Senders
+namespace MessageRouter.Monitors
 {
     /// <summary>
     /// A runtime cache of <see cref="ISenderMonitor"/>s that different transport providers require to maintain
@@ -12,7 +13,7 @@ namespace MessageRouter.Senders
     /// </summary>
     public class MonitorCache : IMonitorCache
     {
-        private readonly HashSet<ISenderMonitor> monitors = new HashSet<ISenderMonitor>();
+        private readonly HashSet<IMonitor> monitors = new HashSet<IMonitor>();
         private bool running = false;
         private object lockObj = new object();
 
@@ -57,7 +58,7 @@ namespace MessageRouter.Senders
         /// Adds a new <see cref="ISenderMonitor"/> to the cache
         /// </summary>
         /// <param name="monitor"><see cref="ISenderMonitor"/> to add to cache</param>
-        public void AddMonitor(ISenderMonitor monitor)
+        public void AddMonitor(IMonitor monitor)
         {
             lock (lockObj)
             {

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Senders;
 
-namespace MessageRouter.Senders
+namespace MessageRouter.Monitors
 {
     /// <summary>
-    /// A runtime cache of <see cref="ISenderMonitor"/>s that different transport providers require to maintain
+    /// A runtime cache of <see cref="IMonitor"/>s that different transport providers require to maintain
     /// <see cref="ISender"/>s
     /// </summary>
     public interface IMonitorCache
@@ -25,9 +26,9 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Adds a new <see cref="ISenderMonitor"/> to the cache
+        /// Adds a new <see cref="IMonitor"/> to the cache
         /// </summary>
-        /// <param name="monitor"><see cref="ISenderMonitor"/> to add to cache</param>
-        void AddMonitor(ISenderMonitor monitor);
+        /// <param name="monitor"><see cref="IMonitor"/> to add to cache</param>
+        void AddMonitor(IMonitor monitor);
     }
 }

@@ -1,4 +1,5 @@
-﻿using MessageRouter.Senders;
+﻿using MessageRouter.Monitors;
+using MessageRouter.Senders;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -7,32 +8,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.UnitTests.Senders
+namespace MessageRouter.UnitTests.Monitors
 {
     [TestFixture]
     public class MonitorCacheTests
     {
-        private readonly Mock<ISenderMonitor> mockSenderMonitor = new Mock<ISenderMonitor>();
-        private ISenderMonitor senderMonitor;
-
-
-        private readonly Mock<ISenderMonitor> mockSenderMonitor2 = new Mock<ISenderMonitor>();
-        private ISenderMonitor senderMonitor2;
+        private readonly Mock<IMonitor> mockMonitor = new Mock<IMonitor>();
+        private IMonitor monitor;
+        
+        private readonly Mock<IMonitor> mockMonitor2 = new Mock<IMonitor>();
+        private IMonitor monitor2;
 
 
         [SetUp]
         public void Setup()
         {
-            senderMonitor = mockSenderMonitor.Object;
-            senderMonitor2 = mockSenderMonitor2.Object;
+            monitor = mockMonitor.Object;
+            monitor2 = mockMonitor2.Object;
         }
 
 
         [TearDown]
         public void TearDown()
         {
-            mockSenderMonitor.Reset();
-            mockSenderMonitor2.Reset();
+            mockMonitor.Reset();
+            mockMonitor2.Reset();
         }
 
 
@@ -57,10 +57,10 @@ namespace MessageRouter.UnitTests.Senders
             var monitorCache = new MonitorCache();
 
             // Act
-            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.AddMonitor(monitor);
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StartSenders(), Times.Never);
         }
 
 
@@ -72,10 +72,10 @@ namespace MessageRouter.UnitTests.Senders
             monitorCache.StartAllMonitors();
 
             // Act
-            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.AddMonitor(monitor);
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StartSenders(), Times.Once);
         }
         #endregion
 
@@ -100,15 +100,15 @@ namespace MessageRouter.UnitTests.Senders
         {
             // Arrange
             var monitorCache = new MonitorCache();
-            monitorCache.AddMonitor(senderMonitor);
-            monitorCache.AddMonitor(senderMonitor2);
+            monitorCache.AddMonitor(monitor);
+            monitorCache.AddMonitor(monitor2);
 
             // Act
             monitorCache.StartAllMonitors();
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Once);
-            mockSenderMonitor2.Verify(m => m.StartSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StartSenders(), Times.Once);
+            mockMonitor2.Verify(m => m.StartSenders(), Times.Once);
         }
 
 
@@ -117,15 +117,15 @@ namespace MessageRouter.UnitTests.Senders
         {
             // Arrange
             var monitorCache = new MonitorCache();
-            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.AddMonitor(monitor);
             monitorCache.StartAllMonitors();
-            mockSenderMonitor.ResetCalls();
+            mockMonitor.ResetCalls();
 
             // Act
             monitorCache.StartAllMonitors();
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StartSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StartSenders(), Times.Never);
         }
         #endregion
 
@@ -150,16 +150,16 @@ namespace MessageRouter.UnitTests.Senders
         {
             // Arrange
             var monitorCache = new MonitorCache();
-            monitorCache.AddMonitor(senderMonitor);
-            monitorCache.AddMonitor(senderMonitor2);
+            monitorCache.AddMonitor(monitor);
+            monitorCache.AddMonitor(monitor2);
             monitorCache.StartAllMonitors();
 
             // Act
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StopSenders(), Times.Once);
-            mockSenderMonitor2.Verify(m => m.StopSenders(), Times.Once);
+            mockMonitor.Verify(m => m.StopSenders(), Times.Once);
+            mockMonitor2.Verify(m => m.StopSenders(), Times.Once);
         }
 
 
@@ -168,13 +168,13 @@ namespace MessageRouter.UnitTests.Senders
         {
             // Arrange
             var monitorCache = new MonitorCache();
-            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.AddMonitor(monitor);
 
             // Act
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StopSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StopSenders(), Times.Never);
         }
 
 
@@ -183,16 +183,16 @@ namespace MessageRouter.UnitTests.Senders
         {
             // Arrange
             var monitorCache = new MonitorCache();
-            monitorCache.AddMonitor(senderMonitor);
+            monitorCache.AddMonitor(monitor);
             monitorCache.StartAllMonitors();
             monitorCache.StopAllMonitors();
-            mockSenderMonitor.ResetCalls();
+            mockMonitor.ResetCalls();
 
             // Act
             monitorCache.StopAllMonitors();
 
             // Assert
-            mockSenderMonitor.Verify(m => m.StopSenders(), Times.Never);
+            mockMonitor.Verify(m => m.StopSenders(), Times.Never);
         }
         #endregion
     }
