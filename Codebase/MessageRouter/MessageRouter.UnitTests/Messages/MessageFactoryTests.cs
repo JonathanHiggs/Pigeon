@@ -153,10 +153,24 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<String>(new GuidMessageId(), String.Empty);
 
             // Act
-            TestDelegate test = () => factory.ExtractResponse<List<String>>(message);
+            TestDelegate extract = () => factory.ExtractResponse<List<String>>(message);
 
             // Assert
-            Assert.That(test, Throws.InstanceOf<InvalidCastException>());
+            Assert.That(extract, Throws.InstanceOf<InvalidCastException>());
+        }
+
+
+        [Test]
+        public void ExtractResponse_WithExceptionMessage_RethrowsException()
+        {
+            // Arrange
+            var message = new ExceptionMessage(new GuidMessageId(), new Exception());
+
+            // Act
+            TestDelegate extract = () => factory.ExtractResponse<List<String>>(message);
+
+            // Assert
+            Assert.That(extract, Throws.Exception);
         }
         #endregion
     }

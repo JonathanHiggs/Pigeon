@@ -25,6 +25,9 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="timeoutHandler">Handler that is called when the timeout elapses without a response message having been returned</param>
         public NetMQTask(TaskCompletionSource<NetMQMessage> taskCompletionSource, TimeSpan timeout, ElapsedEventHandler timeoutHandler)
         {
+            if (timeout.TotalMilliseconds < 0.0)
+                throw new ArgumentException("Timeout requires a positive TimeSpan");
+
             this.taskCompletionSource = taskCompletionSource ?? throw new ArgumentNullException(nameof(taskCompletionSource));
 
             timeoutTimer = new Timer

@@ -85,7 +85,7 @@ namespace MessageRouter
             where TRequest : class
             where TResponse : class
         {
-            return await Send<TRequest, TResponse>(request, TimeSpan.FromHours(1));
+            return await senderCache.Send<TRequest, TResponse>(request);
         }
 
 
@@ -102,14 +102,7 @@ namespace MessageRouter
             where TRequest : class
             where TResponse : class
         {
-            if (null == request)
-                throw new ArgumentNullException(nameof(request));
-
-            var sender = senderCache.SenderFor<TRequest>();
-            var requestMessage = messageFactory.CreateRequest(request);
-            var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
-            var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
-            return response;
+            return await senderCache.Send<TRequest, TResponse>(request, timeout);
         }
 
 
@@ -155,17 +148,7 @@ namespace MessageRouter
             }
         }
 
-
-        /// <summary>
-        /// Extracts and responds to requests
-        /// </summary>
-        /// <param name="requestTask">Incoming request task</param>
-        public void HandleAndRespond(object sender, RequestTask requestTask)
-        {
-            Task.Run(() => { RequestHandler(requestTask); });
-        }
-
-
+        
         public void RequestHandler(RequestTask requestTask)
         {
             var requestObject = messageFactory.ExtractRequest(requestTask.Request);

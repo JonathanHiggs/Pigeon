@@ -30,10 +30,7 @@ namespace MessageRouter.UnitTests
 
         private readonly Mock<IRequestDispatcher> mockRequestDispatcher = new Mock<IRequestDispatcher>();
         private IRequestDispatcher requestDispatcher;
-
-        private readonly Mock<ISender> mockSender = new Mock<ISender>();
-        private ISender sender;
-
+        
         private readonly string name = "some name";
 
 
@@ -45,7 +42,6 @@ namespace MessageRouter.UnitTests
             messageFactory = mockMessageFactory.Object;
             receiverMonitor = mockReceiverMonitor.Object;
             requestDispatcher = mockRequestDispatcher.Object;
-            sender = mockSender.Object;
         }
 
 
@@ -57,29 +53,8 @@ namespace MessageRouter.UnitTests
             mockMessageFactory.Reset();
             mockReceiverMonitor.Reset();
             mockRequestDispatcher.Reset();
-            mockSender.Reset();
         }
-
-
-        public void SetupMirroredResponse<T>(T val) where T : class
-        {
-            mockMessageFactory
-                .Setup(m => m.CreateRequest<T>(It.IsAny<T>()))
-                .Returns<T>(t => new DataMessage<T>(new GuidMessageId(), t));
-
-            mockMessageFactory
-                .Setup(m => m.ExtractResponse<T>(It.IsAny<Message>()))
-                .Returns<DataMessage<T>>(m => m.Data);
-
-            mockSenderCache
-                .Setup(m => m.SenderFor<T>())
-                .Returns(sender);
-
-            mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
-                .ReturnsAsync(new DataMessage<T>(new GuidMessageId(), val));
-        }
-
+        
 
         public void SetupMirroredHandle<T>() where T : class
         {
@@ -221,129 +196,46 @@ namespace MessageRouter.UnitTests
             Assert.That(running, Is.False);
         }
         #endregion
-        
+
 
         #region Send
         [Test]
-        public async Task Send_WithSenderReturnRequestObject_ReceivesSameObject()
+        public async Task Send_WithNoTimeout_CallsSenderCache()
         {
             // Arrange
             var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
+            mockSenderCache
+                .Setup(m => m.Send<string, string>(It.IsAny<string>()))
+                .ReturnsAsync("something");
+            
             // Act
-            var response = await router.Send<string, string>(request);
-
-            // Assert
-            Assert.That(response, Is.SameAs(request));
-        }
-
-
-        [Test]
-        public async Task Send_WithRequest_CreatesRequestMessage()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = await router.Send<string, string>(request);
-
-            // Assert
-            mockMessageFactory
-                .Verify(
-                    m => m.CreateRequest<object>(It.IsAny<object>()),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public async Task Send_WithRequest_ResolvesSender()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = await router.Send<string, string>(request);
+            var response = await router.Send<string, string>("something");
 
             // Assert
             mockSenderCache
                 .Verify(
-                    m => m.SenderFor<object>(),
+                    m => m.Send<string, string>(It.IsAny<string>()), 
                     Times.Once);
         }
 
 
         [Test]
-        public async Task Send_WithRequest_SendsMessage()
+        public async Task Send_WithTimeout_CallsSenderCache()
         {
             // Arrange
             var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
+            mockSenderCache
+                .Setup(m => m.Send<string, string>(It.IsAny<string>()))
+                .ReturnsAsync("something");
+            
             // Act
-            var response = await router.Send<string, string>(request);
+            var response = await router.Send<string, string>("something", TimeSpan.FromMilliseconds(10));
 
             // Assert
-            mockSender
+            mockSenderCache
                 .Verify(
-                    m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()),
+                    m => m.Send<string, string>(It.IsAny<string>(), It.IsAny<TimeSpan>()), 
                     Times.Once);
-        }
-
-
-        [Test]
-        public async Task Send_WithRequest_ExtractsResponse()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = "Hello";
-            SetupMirroredResponse<string>(request);
-
-            // Act
-            var response = await router.Send<string, string>(request);
-
-            // Assert
-            mockMessageFactory
-                .Verify(
-                    m => m.ExtractResponse<string>(It.IsAny<Message>()),
-                    Times.Once);
-        }
-
-
-        [Test]
-        public void Send_WithNullRequestObject_ThrowsArgumentException()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-
-            // Act & Assert
-            Assert.That(async () => await router.Send<object, object>(null), Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void Send_WithExceptionResponse_ThrowsException()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, messageFactory, receiverMonitor, requestDispatcher);
-            var request = new object();
-            var exception = new IOException();
-
-            mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
-                .ReturnsAsync(new DataMessage<Exception>(new GuidMessageId(), exception));
-
-            // Act
-            TestDelegate send = async () => await router.Send<object, string>(request);
-
-            // Assert
-            Assert.That(send, Throws.InstanceOf<IOException>());
         }
         #endregion
 

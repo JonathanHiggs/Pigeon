@@ -43,11 +43,13 @@
   <ItemGroup>
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
+    <Compile Include="Messages\ExceptionMessage.cs" />
     <Compile Include="Router.cs" />
     <Compile Include="RouterInfo.cs" />
     <Compile Include="Routing\IRequestRouter.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
     <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
+    <Compile Include="Senders\ISend.cs" />
     <Compile Include="Server\RequestHandlerNotFoundException.cs" />
     <Compile Include="Messages\DataMessage.cs" />
     <Compile Include="Messages\GuidMessageId.cs" />

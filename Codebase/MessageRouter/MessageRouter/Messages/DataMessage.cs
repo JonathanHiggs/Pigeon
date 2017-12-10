@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Messages
 {
     /// <summary>
-    /// Basic <see cref="Message"/> derivative that contains type safe data
+    /// <see cref="Message"/> derivative for returning response data
     /// </summary>
     /// <typeparam name="T">Type of data payload</typeparam>
     [Serializable]
@@ -23,13 +23,7 @@ namespace MessageRouter.Messages
 
 
         /// <summary>
-        /// Gets the message body
-        /// </summary>
-        public override object Body => Data;
-
-
-        /// <summary>
-        /// Initializes an instance of DataMessage
+        /// Initializes an instance of <see cref="DataMessage{T}"/>
         /// </summary>
         /// <param name="id">Message indentifer</param>
         /// <param name="data">Message body and data</param>
@@ -38,5 +32,11 @@ namespace MessageRouter.Messages
         {
             Data = data ?? throw new ArgumentNullException(nameof(data));
         }
+
+
+        /// <summary>
+        /// Gets the message body
+        /// </summary>
+        public override object Body => Data;
     }
 }

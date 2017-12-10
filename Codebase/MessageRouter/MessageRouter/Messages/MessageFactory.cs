@@ -20,7 +20,7 @@ namespace MessageRouter.Messages
         /// <returns>Serializable Message wrapping the request object</returns>
         public Message CreateRequest<TRequest>(TRequest request) where TRequest : class
         {
-            return Create<TRequest>(request);
+            return Create(request);
         }
 
 
@@ -32,7 +32,7 @@ namespace MessageRouter.Messages
         /// <returns>Serializable Message wrapping the response object</returns>
         public Message CreateResponse<TResponse>(TResponse response) where TResponse : class
         {
-            return Create<TResponse>(response);
+            return Create(response);
         }
 
 
@@ -57,8 +57,13 @@ namespace MessageRouter.Messages
         {
             if (typeof(TResponse).IsAssignableFrom(responseMessage.GetType()) && typeof(TResponse) != typeof(object))
                 return responseMessage as TResponse;
+
             else if (responseMessage is DataMessage<TResponse>)
                 return (responseMessage as DataMessage<TResponse>).Data;
+
+            else if (responseMessage is ExceptionMessage)
+                throw (responseMessage as ExceptionMessage).Exception;
+
             else
                 throw new InvalidCastException($"Unable to extract type {typeof(TResponse).Name} from message");
         }

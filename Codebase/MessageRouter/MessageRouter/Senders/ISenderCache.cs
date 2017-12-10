@@ -9,8 +9,10 @@ namespace MessageRouter.Senders
     /// <summary>
     /// Manages the resolution and lifecycle of <see cref="ISender"/>s
     /// </summary>
-    public interface ISenderCache
+    public interface ISenderCache : ISend
     {
+
+
         /// <summary>
         /// Gets a readonly collection of <see cref="ISenderFactory"/>s
         /// </summary>
