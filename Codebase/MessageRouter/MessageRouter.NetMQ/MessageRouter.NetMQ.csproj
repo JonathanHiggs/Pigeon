@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITransport.cs" />
     <Compile Include="NetMQMonitor.cs" />
     <Compile Include="NetMQFactory.cs" />
     <Compile Include="NetMQTransport.cs" />
