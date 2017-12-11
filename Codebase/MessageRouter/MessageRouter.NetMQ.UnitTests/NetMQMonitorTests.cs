@@ -70,7 +70,7 @@ namespace MessageRouter.NetMQ.UnitTests
 
         #region AddReceiver
         [Test]
-        public void AddReceiver_WithNullReceiver_ThrowsArgumentNullException()
+        public void AddReceiver_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
             var monitor = new NetMQMonitor(poller);
@@ -79,7 +79,7 @@ namespace MessageRouter.NetMQ.UnitTests
             TestDelegate add = () => monitor.AddReceiver(null);
 
             // Assert
-            Assert.That(add, Throws.ArgumentNullException);
+            Assert.That(add, Throws.Nothing);
         }
 
 
@@ -145,7 +145,7 @@ namespace MessageRouter.NetMQ.UnitTests
 
         #region AddSender
         [Test]
-        public void AddSender_WithNullReceiver_ThrowsArgumentNullException()
+        public void AddSender_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
             var monitor = new NetMQMonitor(poller);
@@ -154,7 +154,7 @@ namespace MessageRouter.NetMQ.UnitTests
             TestDelegate add = () => monitor.AddSender(null);
 
             // Assert
-            Assert.That(add, Throws.ArgumentNullException);
+            Assert.That(add, Throws.Nothing);
         }
 
 
@@ -187,7 +187,7 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void AddSender_AfterStarted_BindsReceiver()
+        public void AddSender_AfterStarted_ConnectsSender()
         {
             // Arrange
             var monitor = new NetMQMonitor(poller);
@@ -197,7 +197,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSender(sender);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Once);
+            mockSender.Verify(m => m.ConnectAll(), Times.Once);
         }
 
 

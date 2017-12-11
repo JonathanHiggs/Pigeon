@@ -37,6 +37,9 @@ namespace MessageRouter.NetMQ
         /// </summary>
         public void AddReceiver(INetMQReceiver receiver)
         {
+            if (null == receiver)
+                return;
+
             poller.Add(receiver.PollableSocket);
             receivers.Add(receiver);
 
@@ -53,6 +56,9 @@ namespace MessageRouter.NetMQ
         /// </summary>
         public void AddSender(INetMQSender sender)
         {
+            if (null == sender)
+                return;
+
             poller.Add(sender.PollableSocket);
             senders.Add(sender);
 
