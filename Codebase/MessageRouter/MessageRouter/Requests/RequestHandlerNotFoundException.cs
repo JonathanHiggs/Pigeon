@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Server
+namespace MessageRouter.Requests
 {
     /// <summary>
     /// Exception that is throw when a <see cref="IRequestDispatcher"/> is unable to resolve a handler for the request type

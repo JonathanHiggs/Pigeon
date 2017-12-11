@@ -8,7 +8,6 @@ using MessageRouter.Messages;
 using MessageRouter.Monitors;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
-using MessageRouter.Server;
 using Moq;
 using NUnit.Framework;
 

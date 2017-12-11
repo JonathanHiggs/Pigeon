@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Server
+namespace MessageRouter.Requests
 {
     /// <summary>
     /// Interface for defining the handling of the specified request type that

@@ -58,7 +58,7 @@
     <Compile Include="Diagnostics\MessageRouterException.cs" />
     <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
     <Compile Include="Senders\ISend.cs" />
-    <Compile Include="Server\RequestHandlerNotFoundException.cs" />
+    <Compile Include="Requests\RequestHandlerNotFoundException.cs" />
     <Compile Include="Messages\DataMessage.cs" />
     <Compile Include="Messages\GuidMessageId.cs" />
     <Compile Include="Addresses\IAddress.cs" />
@@ -83,11 +83,11 @@
     <Compile Include="Senders\SenderCache.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
-    <Compile Include="Server\IRequestDispatcher.cs" />
-    <Compile Include="Server\IRequestHandler.cs" />
-    <Compile Include="Server\RequestDispatcher.cs" />
-    <Compile Include="Server\RequestHandlerDelegate.cs" />
-    <Compile Include="Server\RequestHandlerFunction.cs" />
+    <Compile Include="Requests\IRequestDispatcher.cs" />
+    <Compile Include="Requests\IRequestHandler.cs" />
+    <Compile Include="Requests\RequestDispatcher.cs" />
+    <Compile Include="Requests\RequestHandlerDelegate.cs" />
+    <Compile Include="Requests\RequestHandlerFunction.cs" />
     <Compile Include="Addresses\TcpAddress.cs" />
   </ItemGroup>
   <ItemGroup />

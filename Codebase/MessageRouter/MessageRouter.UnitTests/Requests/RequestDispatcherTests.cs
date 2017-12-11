@@ -1,12 +1,10 @@
-﻿using MessageRouter.Server;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace MessageRouter.UnitTests.Server
+using MessageRouter.Requests;
+
+using NUnit.Framework;
+
+namespace MessageRouter.UnitTests.Requests
 {
     [TestFixture]
     public class RequestDispatcherTests

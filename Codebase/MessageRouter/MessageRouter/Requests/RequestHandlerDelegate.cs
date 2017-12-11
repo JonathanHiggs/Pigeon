@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Server
+namespace MessageRouter.Requests
 {
     /// <summary>
     /// Type safe delegaste for handling responses to requests

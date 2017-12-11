@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Server
+namespace MessageRouter.Requests
 {
     /// <summary>
     /// Prepares responses to requests by routing to a registered handler
     /// </summary>
     public class RequestDispatcher : IRequestDispatcher
     {
-        private readonly Dictionary<Type, RequestHandlerFunction> requestHandlers = new Dictionary<Type, Server.RequestHandlerFunction>();
+        private readonly Dictionary<Type, RequestHandlerFunction> requestHandlers = new Dictionary<Type, RequestHandlerFunction>();
 
 
         /// <summary>
