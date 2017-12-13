@@ -49,16 +49,16 @@ namespace MessageRouter.Senders
         /// <returns>Matching <see cref="ISender"/> for the given request type</returns>
         public ISender SenderFor<TRequest>()
         {
-            if (!requestRouter.RoutingFor<TRequest>(out var senderMapping))
+            if (!requestRouter.RoutingFor<TRequest>(out var senderRouting))
                 throw new KeyNotFoundException($"No mapping found for {typeof(TRequest).Name}");
 
-            if (!senderCache.TryGetValue(senderMapping, out var sender))
+            if (!senderCache.TryGetValue(senderRouting, out var sender))
             {
-                if (!senderFactories.TryGetValue(senderMapping.SenderType, out var factory))
-                    throw new KeyNotFoundException($"No SenderFactory found for {senderMapping.SenderType} needed for request type {typeof(TRequest).Name}");
+                if (!senderFactories.TryGetValue(senderRouting.SenderType, out var factory))
+                    throw new KeyNotFoundException($"No SenderFactory found for {senderRouting.SenderType} needed for request type {typeof(TRequest).Name}");
 
-                sender = factory.CreateSender(senderMapping.Address);
-                senderCache.Add(senderMapping, sender);
+                sender = factory.CreateSender(senderRouting.Address);  // SenderRouting.Address is not-null
+                senderCache.Add(senderRouting, sender);
             }
 
             return sender;
