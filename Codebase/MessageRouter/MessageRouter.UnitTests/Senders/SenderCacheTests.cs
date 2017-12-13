@@ -49,6 +49,14 @@ namespace MessageRouter.UnitTests.Senders
             sender = mockSender.Object;
             address = mockAddress.Object;
             messageFactory = mockMessageFactory.Object;
+
+            mockSenderFactory
+                .SetupGet(m => m.SenderType)
+                .Returns(typeof(ISender));
+
+            mockSenderFactory
+                .SetupGet(m => m.SenderMonitor)
+                .Returns(senderMonitor);
         }
 
 
@@ -129,7 +137,21 @@ namespace MessageRouter.UnitTests.Senders
 
         #region AddFactory
         [Test]
-        public void AddFactory_WithFactory_AddsToFactoryList()
+        public void AddFactory_WithNullFactory_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+
+            // Act
+            TestDelegate addFactory = () => cache.AddFactory<ISender>(null);
+
+            // Assert
+            Assert.That(addFactory, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void AddFactory_WithFactory_AddsToFactory()
         {
             // Arrange
             var senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
@@ -143,17 +165,32 @@ namespace MessageRouter.UnitTests.Senders
 
 
         [Test]
-        public void AddFactory_WithFactoryAlreadyRegistered_ThrowsInvalidOperationException()
+        public void AddFactory_WithFactory_AddsSenderMonitorToMonitorCache()
+        {
+            // Arrange
+            var senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
+
+            // Act
+            senderCache.AddFactory(senderFactory);
+
+            // Assert
+            mockMonitorCache.Verify(m => m.AddMonitor(It.IsIn(senderMonitor)), Times.Once);
+        }
+
+
+        [Test]
+        public void AddFactory_WithFactoryAlreadyRegistered_DoesNothing()
         {
             // Arrange
             var senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
             senderCache.AddFactory(senderFactory);
 
             // Act
-            TestDelegate addFactory = () => senderCache.AddFactory(senderFactory);
+            senderCache.AddFactory(senderFactory);
 
             // Assert
-            Assert.That(addFactory, Throws.InvalidOperationException);
+            Assert.That(senderCache.Factories.Count, Is.EqualTo(1));
+            mockMonitorCache.Verify(m => m.AddMonitor(It.IsIn(senderMonitor)), Times.Once);
         }
         #endregion
 

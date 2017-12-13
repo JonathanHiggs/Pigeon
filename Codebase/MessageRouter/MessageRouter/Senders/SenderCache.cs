@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
+using MessageRouter.Receivers;
 using MessageRouter.Routing;
 
 namespace MessageRouter.Senders
@@ -21,7 +23,7 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Gets a readonly collection of <see cref="ISenderFactory"/>s
+        /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
         /// </summary>
         public IReadOnlyCollection<ISenderFactory> Factories => senderFactories.Values;
 
@@ -30,8 +32,8 @@ namespace MessageRouter.Senders
         /// Initializes a new instance of a <see cref="SenderCache"/>
         /// </summary>
         /// <param name="requestRouter">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
-        /// <param name="monitorCache"></param>
-        /// <param name="messageFactory"></param>
+        /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="ISender"/></param>
+        /// <param name="messageFactory">Creates and extracts <see cref="Message"/>s that are sent over the wire</param>
         public SenderCache(IRequestRouter requestRouter, IMonitorCache monitorCache, IMessageFactory messageFactory)
         {
             this.requestRouter = requestRouter ?? throw new ArgumentNullException(nameof(requestRouter));
@@ -41,7 +43,7 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Retrieves a <see cref="ISender"/> for the request type depending on registered routing
+        /// Retrieves a <see cref="ISender"/> for the request type to connected to a remote <see cref="IAddress"/> registered in the <see cref="IRequestRouter"/>
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <returns>Matching <see cref="ISender"/> for the given request type</returns>
@@ -57,8 +59,6 @@ namespace MessageRouter.Senders
 
                 sender = factory.CreateSender(senderMapping.Address);
                 senderCache.Add(senderMapping, sender);
-
-                monitorCache.AddMonitor(factory.SenderMonitor);
             }
 
             return sender;
@@ -68,17 +68,19 @@ namespace MessageRouter.Senders
         /// <summary>
         /// Adds a <see cref="ISenderFactory{TSender}"/> to the registered factories
         /// </summary>
-        /// <typeparam name="TSender"></typeparam>
-        /// <param name="senderFactory"></param>
-        public void AddFactory<TSender>(ISenderFactory<TSender> senderFactory)
+        /// <typeparam name="TSender">Transport specific implementation of <see cref="ISender"/></typeparam>
+        /// <param name="factory">Factory used to create <see cref="ISender"/>s at when required to send first message to remote <see cref="IReceiver"/></param>
+        public void AddFactory<TSender>(ISenderFactory<TSender> factory)
             where TSender : ISender
         {
-            var senderType = typeof(TSender);
+            if (null == factory)
+                throw new ArgumentNullException(nameof(factory));
 
-            if (senderFactories.ContainsKey(senderType))
-                throw new InvalidOperationException($"SenderFactory already registered for {senderType.Name}");
+            if (senderFactories.ContainsKey(factory.SenderType))
+                return;
 
-            senderFactories.Add(senderType, senderFactory);
+            senderFactories.Add(factory.SenderType, factory);
+            monitorCache.AddMonitor(factory.SenderMonitor);
         }
 
 

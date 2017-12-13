@@ -46,6 +46,9 @@ namespace MessageRouter.Routing
         public static SenderRouting For<TSender>(IAddress address)
             where TSender : ISender
         {
+            if (null == address)
+                throw new ArgumentNullException(nameof(address));
+
             return new SenderRouting(typeof(TSender), address);
         }
 

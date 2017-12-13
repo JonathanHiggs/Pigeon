@@ -12,7 +12,7 @@ namespace MessageRouter.Senders
     public interface ISenderCache : ISend
     {
         /// <summary>
-        /// Gets a readonly collection of <see cref="ISenderFactory"/>s
+        /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
         /// </summary>
         IReadOnlyCollection<ISenderFactory> Factories { get; }
 
