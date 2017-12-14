@@ -12,46 +12,37 @@ namespace MessageRouter.Messages
     public interface IMessageFactory
     {
         /// <summary>
-        /// Wraps the supplied request object in a <see cref="Message"/>
+        /// Wraps the supplied object in a <see cref="Message"/>
         /// </summary>
-        /// <typeparam name="TRequest">Type of the request object</typeparam>
-        /// <param name="request">Request object</param>
-        /// <returns>Serializable Message wrapping the request object</returns>
-        Message CreateRequest<TRequest>(TRequest request) where TRequest : class;
-
-
-        /// <summary>
-        /// Wraps the supplied response object in a <see cref="Message"/>
-        /// </summary>
-        /// <typeparam name="TResponse">Type of the response object</typeparam>
-        /// <param name="response">Response object</param>
-        /// <returns>Serializable Message wrapping the response object</returns>
-        Message CreateResponse<TResponse>(TResponse response) where TResponse : class;
-
+        /// <typeparam name="TMessage">Type of the wrapped message object</typeparam>
+        /// <param name="message">Message object</param>
+        /// <returns>Serializable Message wrapping the object</returns>
+        Message CreateMessage<TMessage>(TMessage message) where TMessage : class;
+        
 
         /// <summary>
         /// Wraps the supplied request object in a <see cref="Message"/>
         /// </summary>
-        /// <param name="response">Response object</param>
-        /// <returns>Serializable Message wrapping the response object</returns>
-        Message CreateResponse(object response);
+        /// <param name="message">Message object</param>
+        /// <returns>Serializable Message wrapping the object</returns>
+        Message CreateMessage(object message);
 
 
         /// <summary>
-        /// Extracts a request object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
+        /// Extracts an object from the supplied <see cref="Message"/>
         /// </summary>
-        /// <param name="requestMessage">Request Message wrapper</param>
-        /// <returns>Request object</returns>
-        object ExtractRequest(Message requestMessage);
+        /// <param name="message">Message wrapper</param>
+        /// <returns>Message object</returns>
+        object ExtractMessage(Message message);
 
 
         /// <summary>
-        /// Extracts a responce object from the supplied <see cref="Message"/>. An exception will be throw if the message response is an unexpected type
+        /// Extracts an object from the supplied <see cref="Message"/>. An exception will be throw if the inner message object is an unexpected type
         /// ToDo: Add Action<Exception> exception handler
         /// </summary>
-        /// <typeparam name="TResponse">Type of the response object</typeparam>
-        /// <param name="responseMessage">Response Message wrapper</param>
-        /// <returns>Response object</returns>
-        TResponse ExtractResponse<TResponse>(Message responseMessage) where TResponse : class;
+        /// <typeparam name="TMessage">Type of the message object</typeparam>
+        /// <param name="message">Message wrapper</param>
+        /// <returns>Message object</returns>
+        TMessage ExtractMessage<TMessage>(Message message) where TMessage : class;
     }
 }

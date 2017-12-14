@@ -22,14 +22,14 @@ namespace MessageRouter.Senders
 
         
         /// <summary>
-        /// Adds an address to the collection of endpoints the <see cref="ISender"/> connects to
+        /// Adds an <see cref="IAddress"/> to the collection of endpoints the <see cref="ISender"/> connects to
         /// </summary>
         /// <param name="address">Address of the remote</param>
         void AddAddress(IAddress address);
 
         
         /// <summary>
-        /// Removes an address from the collection of endpoints the <see cref="ISender"/> connects to
+        /// Removes an <see cref="IAddress"/> from the collection of endpoints the <see cref="ISender"/> connects to
         /// </summary>
         /// <param name="address"></param>
         void RemoveAddress(IAddress address);

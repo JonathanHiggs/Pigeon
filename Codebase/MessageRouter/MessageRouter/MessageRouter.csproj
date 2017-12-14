@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Publishers\IPublish.cs" />
+    <Compile Include="Publishers\IPublisher.cs" />
+    <Compile Include="Publishers\IPublisherCache.cs" />
+    <Compile Include="Publishers\IPublisherFactory.cs" />
+    <Compile Include="Publishers\IPublisherMonitor.cs" />
+    <Compile Include="Publishers\PublisherCache.cs" />
+    <Compile Include="Subscribers\ISubscriber.cs" />
     <Compile Include="TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
     <Compile Include="IEndPoint.cs" />

@@ -76,11 +76,11 @@ namespace MessageRouter.UnitTests.Senders
         public void SetupMirroredResponse<TRequest>(SenderCache senderCache, TRequest response) where TRequest : class
         {
             mockMessageFactory
-                .Setup(m => m.CreateRequest(It.IsAny<TRequest>()))
+                .Setup(m => m.CreateMessage(It.IsAny<TRequest>()))
                 .Returns<TRequest>(t => new DataMessage<TRequest>(new GuidMessageId(), t));
 
             mockMessageFactory
-                .Setup(m => m.ExtractResponse<TRequest>(It.IsAny<Message>()))
+                .Setup(m => m.ExtractMessage<TRequest>(It.IsAny<Message>()))
                 .Returns<DataMessage<TRequest>>(m => m.Data);
             
             mockSender
@@ -227,7 +227,7 @@ namespace MessageRouter.UnitTests.Senders
             // Assert
             mockMessageFactory
                 .Verify(
-                    m => m.CreateRequest<object>(It.IsAny<object>()),
+                    m => m.CreateMessage<object>(It.IsAny<object>()),
                     Times.Once);
         }
 
@@ -265,7 +265,7 @@ namespace MessageRouter.UnitTests.Senders
             // Assert
             mockMessageFactory
                 .Verify(
-                    m => m.ExtractResponse<string>(It.IsAny<Message>()),
+                    m => m.ExtractMessage<string>(It.IsAny<Message>()),
                     Times.Once);
         }
 

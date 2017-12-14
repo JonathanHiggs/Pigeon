@@ -19,7 +19,7 @@ namespace MessageRouter.UnitTests.Messages
             var request = new object();
 
             // Act
-            var requestMessage = factory.CreateRequest<object>(request);
+            var requestMessage = factory.CreateMessage<object>(request);
 
             // Assert
             Assert.IsNotNull(requestMessage);
@@ -33,7 +33,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), new object());
 
             // Act
-            var requestMessage = factory.CreateRequest<Message>(message);
+            var requestMessage = factory.CreateMessage<Message>(message);
 
             // Assert
             Assert.AreSame(message, requestMessage);
@@ -47,7 +47,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), new object());
 
             // Act
-            var requestMessage = factory.CreateRequest<DataMessage<object>>(message);
+            var requestMessage = factory.CreateMessage<DataMessage<object>>(message);
 
             // Assert
             Assert.AreSame(message, requestMessage);
@@ -108,7 +108,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), request);
 
             // Act
-            var extractedRequest = factory.ExtractRequest(message);
+            var extractedRequest = factory.ExtractMessage(message);
 
             // Assert
             Assert.AreSame(request, extractedRequest);
@@ -125,7 +125,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), response);
 
             // Act
-            var extractedResponse = factory.ExtractResponse<object>(message);
+            var extractedResponse = factory.ExtractMessage<object>(message);
 
             // Assert
             Assert.AreSame(response, extractedResponse);
@@ -139,7 +139,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<object>(new GuidMessageId(), new object());
 
             // Act
-            var extractedResponse = factory.ExtractResponse<Message>(message);
+            var extractedResponse = factory.ExtractMessage<Message>(message);
 
             // Assert
             Assert.AreSame(message, extractedResponse);
@@ -153,7 +153,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new DataMessage<String>(new GuidMessageId(), String.Empty);
 
             // Act
-            TestDelegate extract = () => factory.ExtractResponse<List<String>>(message);
+            TestDelegate extract = () => factory.ExtractMessage<List<String>>(message);
 
             // Assert
             Assert.That(extract, Throws.InstanceOf<InvalidCastException>());
@@ -167,7 +167,7 @@ namespace MessageRouter.UnitTests.Messages
             var message = new ExceptionMessage(new GuidMessageId(), new Exception());
 
             // Act
-            TestDelegate extract = () => factory.ExtractResponse<List<String>>(message);
+            TestDelegate extract = () => factory.ExtractMessage<List<String>>(message);
 
             // Assert
             Assert.That(extract, Throws.Exception);

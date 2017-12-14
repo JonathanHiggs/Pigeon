@@ -19,13 +19,13 @@ namespace MessageRouter.Receivers
         private readonly IMessageFactory messageFactory;
         private readonly IRequestDispatcher requestDispatcher;
         private readonly Dictionary<IAddress, IReceiver> receivers = new Dictionary<IAddress, IReceiver>();
-        private readonly Dictionary<Type, IReceiverFactory> receiverFactories = new Dictionary<Type, IReceiverFactory>();
+        private readonly Dictionary<Type, IReceiverFactory> factories = new Dictionary<Type, IReceiverFactory>();
 
 
         /// <summary>
         /// Gets a readonly collection of <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at runtime
         /// </summary>
-        public IReadOnlyCollection<IReceiverFactory> ReceiverFactories => receiverFactories.Values;
+        public IReadOnlyCollection<IReceiverFactory> ReceiverFactories => factories.Values;
 
 
         /// <summary>
@@ -49,15 +49,15 @@ namespace MessageRouter.Receivers
         /// <param name="requestTask">Combined incoming message with method of returning a response</param>
         public void HandleRequest(RequestTask requestTask)
         {
-            var requestObject = messageFactory.ExtractRequest(requestTask.Request);
+            var requestObject = messageFactory.ExtractMessage(requestTask.Request);
             var responseObject = requestDispatcher.Handle(requestObject);
-            var responseMessage = messageFactory.CreateResponse(responseObject);
+            var responseMessage = messageFactory.CreateMessage(responseObject);
             requestTask.ResponseHandler(responseMessage);
         }
 
 
         /// <summary>
-        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the cache for config-time construction of <see cref="IReceiver"/>s
+        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the cache for config-time creation of <see cref="IReceiver"/>s
         /// </summary>
         /// <typeparam name="TReceiver">Transport specific implementation of <see cref="IReceiver"/></typeparam>
         /// <param name="factory">Factory used to create <see cref="IReceiver"/>s at config-time</param>
@@ -66,16 +66,16 @@ namespace MessageRouter.Receivers
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));
 
-            if (receiverFactories.ContainsKey(factory.ReceiverType))
+            if (factories.ContainsKey(factory.ReceiverType))
                 return;
 
-            receiverFactories.Add(factory.ReceiverType, factory);
+            factories.Add(factory.ReceiverType, factory);
             monitorCache.AddMonitor(factory.ReceiverMonitor);
         }
 
 
         /// <summary>
-        /// Adds a <see cref="IReceiver"/> to the cache that binds and accepts requests sent to the <see cref="IAddress"/> created from the matching <see cref="IReceiverFactory{TReceiver}"/>
+        /// Creates and adds a <see cref="IReceiver"/> to the cache that binds and accepts requests sent to the <see cref="IAddress"/> created from the matching <see cref="IReceiverFactory{TReceiver}"/>
         /// </summary>
         /// <typeparam name="TReceiver">Transport specific implementation of <see cref="IReceiver"/> to create</typeparam>
         /// <param name="address">The <see cref="IAddress"/> the <see cref="IReceiver"/> binds to</param>
@@ -84,7 +84,10 @@ namespace MessageRouter.Receivers
             if (null == address)
                 throw new ArgumentNullException(nameof(address));
 
-            var factory = receiverFactories[typeof(TReceiver)];
+            if (receivers.ContainsKey(address))
+                throw new InvalidOperationException(nameof(address));
+
+            var factory = factories[typeof(TReceiver)];
             var receiver = factory.CreateReceiver(address);
             receiver.RequestReceived += (s, e) => Task.Run(() => HandleRequest(e));
             receivers.Add(address, receiver);

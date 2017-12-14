@@ -213,6 +213,22 @@ namespace MessageRouter.UnitTests.Receivers
             // Assert
             mockReceiverFactory.Verify(m => m.CreateReceiver(It.IsIn(address)), Times.Once);
         }
+
+
+        [Test]
+        public void AddReceiver_WithExistingReceiverForAddress_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var cache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
+            cache.AddFactory(receiverFactory);
+            cache.AddReceiver<IReceiver>(address);
+
+            // Act
+            TestDelegate addReceiver = () => cache.AddReceiver<IReceiver>(address);
+
+            // Assert
+            Assert.That(addReceiver, Throws.InvalidOperationException);
+        }
         #endregion
     }
 }

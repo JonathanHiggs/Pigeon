@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
@@ -13,7 +14,7 @@ namespace MessageRouter
     /// parts of the architecture
     /// </summary>
     /// <typeparam name="TRouterInfo"></typeparam>
-    public interface IRouter<TRouterInfo> : ISend where TRouterInfo : IRouterInfo
+    public interface IRouter<TRouterInfo> : ISend, IPublish where TRouterInfo : IRouterInfo
     {
         /// <summary>
         /// Gets a <see cref="TRouterInfo"/> to access state information of the <see cref="IRouter{TRouterInfo}"/>

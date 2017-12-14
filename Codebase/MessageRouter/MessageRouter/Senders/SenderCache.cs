@@ -117,9 +117,9 @@ namespace MessageRouter.Senders
                 throw new ArgumentNullException(nameof(request));
 
             var sender = SenderFor<TRequest>();
-            var requestMessage = messageFactory.CreateRequest(request);
+            var requestMessage = messageFactory.CreateMessage(request);
             var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
-            var response = messageFactory.ExtractResponse<TResponse>(responseMessage);
+            var response = messageFactory.ExtractMessage<TResponse>(responseMessage);
             return response;
         }
     }

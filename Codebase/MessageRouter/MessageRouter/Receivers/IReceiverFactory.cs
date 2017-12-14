@@ -10,7 +10,7 @@ using MessageRouter.Monitors;
 namespace MessageRouter.Receivers
 {
     /// <summary>
-    /// Factory for <see cref="IReceiver"/>s 
+    /// Factory for creating <see cref="IReceiver"/>s at config-time
     /// </summary>
     public interface IReceiverFactory
     {
@@ -21,7 +21,7 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Gets tje <see cref="IMonitor"/> associated with the <see cref="IReceiverFactory"/>s <see cref="IReceiver"/>
+        /// Gets the <see cref="IMonitor"/> associated with the <see cref="IReceiverFactory"/>s <see cref="IReceiver"/>
         /// </summary>
         IMonitor ReceiverMonitor { get; }
 
@@ -36,9 +36,9 @@ namespace MessageRouter.Receivers
 
 
     /// <summary>
-    /// Factory for createing <see cref="TReceiver"/>s
+    /// Factory for createing <see cref="TReceiver"/>s at config-time
     /// </summary>
-    /// <typeparam name="TReceiver">Type of <see cref="IReceiver"/>s the factors constructs</typeparam>
+    /// <typeparam name="TReceiver">Transport specific implementation of <see cref="IReceiver"/>s the factory creates</typeparam>
     public interface IReceiverFactory<TReceiver> : IReceiverFactory where TReceiver : IReceiver
     { }
 }

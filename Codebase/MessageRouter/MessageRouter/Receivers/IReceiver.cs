@@ -34,26 +34,26 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Message"/>s on
+        /// Removes all <see cref="IAddress"/>es the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
         /// </summary>
         void RemoveAll();
 
 
         /// <summary>
-        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Message"/>s on
+        /// Removes an <see cref="IAddress"/> the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
         void Remove(IAddress address);
 
         
         /// <summary>
-        /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
+        /// Starts the <see cref="IReceiver"/> listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
         /// </summary>
         void BindAll();
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
+        /// Stops the <see cref="IReceiver"/> listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         void UnbindAll();
     }

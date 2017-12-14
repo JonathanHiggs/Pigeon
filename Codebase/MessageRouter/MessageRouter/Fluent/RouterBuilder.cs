@@ -3,6 +3,7 @@
 using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
+using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Requests;
 using MessageRouter.Routing;
@@ -21,6 +22,7 @@ namespace MessageRouter.Fluent
         private readonly SenderCache senderCache;
         private readonly ReceiverCache receiverCache;
         private readonly MonitorCache monitorCache;
+        private readonly PublisherCache publisherCache;
 
 
         public RouterBuilder(string name)
@@ -33,6 +35,7 @@ namespace MessageRouter.Fluent
 
             senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
             receiverCache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
+            publisherCache = new PublisherCache(monitorCache, messageFactory);
         }
 
 
@@ -85,7 +88,7 @@ namespace MessageRouter.Fluent
 
         public Router BuildAndStart()
         {
-            var router = new Router(name, senderCache, monitorCache, receiverCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
             router.Start();
             return router;
         }

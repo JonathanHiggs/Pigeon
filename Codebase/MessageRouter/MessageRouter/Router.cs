@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using MessageRouter.Fluent;
 using MessageRouter.Monitors;
+using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
@@ -18,6 +19,7 @@ namespace MessageRouter
         private readonly ISenderCache senderCache;
         private readonly IMonitorCache monitorCache;
         private readonly IReceiverCache receiverCache;
+        private readonly IPublisherCache publisherCache;
 
         private readonly RouterInfo routerInfo;
         private bool running = false;
@@ -29,21 +31,21 @@ namespace MessageRouter
         /// </summary>
         public IRouterInfo Info => routerInfo;
 
-
+        
         /// <summary>
-        /// Initializes a new instance of <see cref="Router"/>
+        /// Initializes a new instance of <see cref="IPublisherCache"/>
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="senderCache">Manages sender connections to remotes</param>
-        /// <param name="monitorCache">Manages the state of <see cref="ISender"/>s</param>
-        /// <param name="messageFactory">Wraps requests in the message protocol</param>
-        /// <param name="receiverMonitor">Manages the state of <see cref="IReceiver"/>s</param>
-        /// <param name="requestDispatcher">Resolves a registered handler for incoming requests from <see cref="IReceiver"/>s</param>
+        /// <param name="name">A name that can be used to identify the router as a node on a distributed network</param>
+        /// <param name="senderCache"></param>
+        /// <param name="monitorCache"></param>
+        /// <param name="receiverCache"></param>
+        /// <param name="publisherCache"></param>
         public Router(
             string name,
             ISenderCache senderCache,
             IMonitorCache monitorCache,
-            IReceiverCache receiverCache)
+            IReceiverCache receiverCache,
+            IPublisherCache publisherCache)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -51,6 +53,7 @@ namespace MessageRouter
             this.senderCache = senderCache ?? throw new ArgumentNullException(nameof(senderCache));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
             this.receiverCache = receiverCache ?? throw new ArgumentNullException(nameof(receiverCache));
+            this.publisherCache = publisherCache ?? throw new ArgumentNullException(nameof(publisherCache));
 
             routerInfo = new RouterInfo
             {
@@ -139,6 +142,11 @@ namespace MessageRouter
         public static RouterBuilder Builder(string name)
         {
             return new RouterBuilder(name);
+        }
+
+        public void Publish<TMessage>(TMessage message) where TMessage : class
+        {
+            throw new NotImplementedException();
         }
     }
 }

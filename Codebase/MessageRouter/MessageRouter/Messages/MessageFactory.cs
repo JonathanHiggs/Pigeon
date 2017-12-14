@@ -30,7 +30,7 @@ namespace MessageRouter.Messages
         /// <typeparam name="TRequest">Type of the request object</typeparam>
         /// <param name="request">Request object</param>
         /// <returns>Serializable Message wrapping the request object</returns>
-        public Message CreateRequest<TRequest>(TRequest request) where TRequest : class
+        public Message CreateMessage<TRequest>(TRequest request) where TRequest : class
         {
             return Create(request);
         }
@@ -53,7 +53,7 @@ namespace MessageRouter.Messages
         /// </summary>
         /// <param name="response">Response object</param>
         /// <returns>Serializable Message wrapping the response object</returns>
-        public Message CreateResponse(object response)
+        public Message CreateMessage(object response)
         {
             var method = unboundCreateResponse.MakeGenericMethod(response.GetType());
             return (Message)method.Invoke(this, new object[] { response });
@@ -65,7 +65,7 @@ namespace MessageRouter.Messages
         /// </summary>
         /// <param name="requestMessage">Request Message wrapper</param>
         /// <returns>Request object</returns>
-        public object ExtractRequest(Message requestMessage)
+        public object ExtractMessage(Message requestMessage)
         {
             return requestMessage.Body;
         }
@@ -77,7 +77,7 @@ namespace MessageRouter.Messages
         /// <typeparam name="TResponse">Type of the response object</typeparam>
         /// <param name="responseMessage">Response Message wrapper</param>
         /// <returns>Response object</returns>
-        public TResponse ExtractResponse<TResponse>(Message responseMessage) where TResponse : class
+        public TResponse ExtractMessage<TResponse>(Message responseMessage) where TResponse : class
         {
             if (typeof(TResponse).IsAssignableFrom(responseMessage.GetType()) && typeof(TResponse) != typeof(object))
                 return responseMessage as TResponse;
