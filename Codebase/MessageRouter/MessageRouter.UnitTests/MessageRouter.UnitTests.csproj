@@ -58,6 +58,7 @@
     <Compile Include="Messages\GuidMessageIdTests.cs" />
     <Compile Include="Messages\MessageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Publishers\PublisherCacheTests.cs" />
     <Compile Include="Receivers\ReceiverCacheTests.cs" />
     <Compile Include="Receivers\RequestTaskTests.cs" />
     <Compile Include="RouterTests.cs" />

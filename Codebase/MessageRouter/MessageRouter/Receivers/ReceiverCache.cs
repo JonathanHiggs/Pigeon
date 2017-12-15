@@ -86,7 +86,7 @@ namespace MessageRouter.Receivers
 
             if (receivers.ContainsKey(address))
                 throw new InvalidOperationException(nameof(address));
-
+            
             var factory = factories[typeof(TReceiver)];
             var receiver = factory.CreateReceiver(address);
             receiver.RequestReceived += (s, e) => Task.Run(() => HandleRequest(e));

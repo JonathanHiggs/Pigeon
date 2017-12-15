@@ -219,6 +219,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddReceiver_WithExistingReceiverForAddress_ThrowsInvalidOperationException()
         {
             // Arrange
+            var address = TcpAddress.Wildcard(5555);
             var cache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
             cache.AddFactory(receiverFactory);
             cache.AddReceiver<IReceiver>(address);

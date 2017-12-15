@@ -83,6 +83,9 @@ namespace MessageRouter.Publishers
         /// <param name="message">The published message to distribute</param>
         public void Publish<TMessage>(TMessage message) where TMessage : class
         {
+            if (null == message)
+                throw new ArgumentNullException(nameof(message));
+
             var wrappedMessage = messageFactory.CreateMessage(message);
 
             foreach (var publisher in publishers.Values)
