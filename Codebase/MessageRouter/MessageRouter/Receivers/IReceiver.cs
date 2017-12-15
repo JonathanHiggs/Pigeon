@@ -27,7 +27,7 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
+        /// Adds the <see cref="IAddress"/> the set of endpoints the <see cref="IReceiver"/> will listening to incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
         void AddAddress(IAddress address);
@@ -36,14 +36,14 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Removes all <see cref="IAddress"/>es the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
         /// </summary>
-        void RemoveAll();
+        void RemoveAllAddresses();
 
 
         /// <summary>
         /// Removes an <see cref="IAddress"/> the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
-        void Remove(IAddress address);
+        void RemoveAddress(IAddress address);
 
         
         /// <summary>

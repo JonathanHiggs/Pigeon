@@ -163,7 +163,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
-            receiver.RemoveAll();
+            receiver.RemoveAllAddresses();
 
             // Assert
             CollectionAssert.IsEmpty(receiver.Addresses);
@@ -179,7 +179,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             receiver.BindAll();
 
             // Act
-            receiver.RemoveAll();
+            receiver.RemoveAllAddresses();
 
             // Assert
             Assert.That(receiver.IsBound, Is.False);
@@ -198,7 +198,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             receiver.AddAddress(address);
 
             // Act
-            receiver.Remove(address);
+            receiver.RemoveAddress(address);
 
             // Assert
             CollectionAssert.DoesNotContain(receiver.Addresses, address);
@@ -213,7 +213,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            TestDelegate test = () => receiver.Remove(TcpAddress.Wildcard(5555));
+            TestDelegate test = () => receiver.RemoveAddress(TcpAddress.Wildcard(5555));
 
             // Assert
             Assert.That(test, Throws.Nothing);

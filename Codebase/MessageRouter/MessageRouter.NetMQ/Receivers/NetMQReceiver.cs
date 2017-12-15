@@ -85,7 +85,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Message"/>s on
         /// </summary>
-        public void RemoveAll()
+        public void RemoveAllAddresses()
         {
             if (isBound)
                 UnbindAll();
@@ -98,7 +98,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Message"/>s on
         /// </summary>
         /// <param name="address"></param>
-        public void Remove(IAddress address)
+        public void RemoveAddress(IAddress address)
         {
             if (!boundStatusByAddress.ContainsKey(address))
                 return;

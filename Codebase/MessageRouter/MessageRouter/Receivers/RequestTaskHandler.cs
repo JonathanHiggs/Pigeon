@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MessageRouter.Receivers
+﻿namespace MessageRouter.Receivers
 {
     /// <summary>
     /// Represents the method that will handle a <see cref="IReceiver"/>s RequestReceived event
