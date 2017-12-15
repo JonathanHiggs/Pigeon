@@ -9,6 +9,7 @@ using MessageRouter.Monitors;
 using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
+using MessageRouter.Subscribers;
 using Moq;
 using NUnit.Framework;
 
@@ -28,6 +29,9 @@ namespace MessageRouter.UnitTests
 
         private readonly Mock<IPublisherCache> mockPublisherCache = new Mock<IPublisherCache>();
         private IPublisherCache publisherCache;
+
+        private readonly Mock<ISubscriberCache> mockSubscriberCache = new Mock<ISubscriberCache>();
+        private ISubscriberCache subscriberCache;
         
         private readonly string name = "some name";
 
@@ -39,6 +43,7 @@ namespace MessageRouter.UnitTests
             monitorCache = mockMonitorCache.Object;
             receiverCache = mockReceiverCache.Object;
             publisherCache = mockPublisherCache.Object;
+            subscriberCache = mockSubscriberCache.Object;
         }
 
 
@@ -49,6 +54,7 @@ namespace MessageRouter.UnitTests
             mockMonitorCache.Reset();
             mockReceiverCache.Reset();
             mockPublisherCache.Reset();
+            mockSubscriberCache.Reset();
         }
 
 
@@ -57,7 +63,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullName_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(null, senderCache, monitorCache, receiverCache, publisherCache);
+            TestDelegate construct = () => new Router(null, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -68,7 +74,7 @@ namespace MessageRouter.UnitTests
         public void Router_WitNullSenderCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, null, monitorCache, receiverCache, publisherCache);
+            TestDelegate construct = () => new Router(name, null, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -79,7 +85,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, senderCache, null, receiverCache, publisherCache);
+            TestDelegate construct = () => new Router(name, senderCache, null, receiverCache, publisherCache, subscriberCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -90,7 +96,7 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullReceiverCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, senderCache, monitorCache, null, publisherCache);
+            TestDelegate construct = () => new Router(name, senderCache, monitorCache, null, publisherCache, subscriberCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -101,7 +107,18 @@ namespace MessageRouter.UnitTests
         public void Router_WithNullPublisherCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new Router(name, senderCache, monitorCache, receiverCache, null);
+            TestDelegate construct = () => new Router(name, senderCache, monitorCache, receiverCache, null, subscriberCache);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void Router_WithNullSubscriberCache_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => new Router(name, senderCache, monitorCache, receiverCache, publisherCache, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -114,7 +131,7 @@ namespace MessageRouter.UnitTests
         public void Info_WithName_RetunsSameName()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             var infoName = router.Info.Name;
@@ -128,7 +145,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_HasNoStartTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             var startTimestamp = router.Info.StartedTimestamp.HasValue;
@@ -142,7 +159,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_HasNoStopTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             var stopTimestamp = router.Info.StoppedTimestamp.HasValue;
@@ -156,7 +173,7 @@ namespace MessageRouter.UnitTests
         public void Info_BeforeStart_IsNotRunning()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             var running = router.Info.Running;
@@ -167,12 +184,29 @@ namespace MessageRouter.UnitTests
         #endregion
 
 
+        #region Publish
+        [Test]
+        public void Publish_CallsPublisherCache()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var message = "something";
+
+            // Act
+            router.Publish(message);
+
+            // Assert
+            mockPublisherCache.Verify(m => m.Publish(It.IsIn(message)), Times.Once);
+        }
+        #endregion
+
+
         #region Send
         [Test]
         public async Task Send_WithNoTimeout_CallsSenderCache()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             mockSenderCache
                 .Setup(m => m.Send<string, string>(It.IsAny<string>()))
                 .ReturnsAsync("something");
@@ -192,7 +226,7 @@ namespace MessageRouter.UnitTests
         public async Task Send_WithTimeout_CallsSenderCache()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             mockSenderCache
                 .Setup(m => m.Send<string, string>(It.IsAny<string>()))
                 .ReturnsAsync("something");
@@ -214,7 +248,7 @@ namespace MessageRouter.UnitTests
         public void Start_BeforeStarted_StartsMonitors()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             router.Start();
@@ -228,7 +262,7 @@ namespace MessageRouter.UnitTests
         public void Start_WhenAlreadyStarted_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
             mockMonitorCache.ResetCalls();
 
@@ -244,7 +278,7 @@ namespace MessageRouter.UnitTests
         public void Start_BeforeStarted_SetsStartedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             router.Start();
@@ -258,7 +292,7 @@ namespace MessageRouter.UnitTests
         public void Start_WhenAlreadyStarted_DoesNotChangeStartedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
             var startedTimestamp = router.Info.StartedTimestamp.Value;
 
@@ -276,7 +310,7 @@ namespace MessageRouter.UnitTests
         public void Stop_BeforeStarted_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             router.Stop();
@@ -290,7 +324,7 @@ namespace MessageRouter.UnitTests
         public void Stop_WhenRunning_StopsMonitors()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
 
             // Act
@@ -305,7 +339,7 @@ namespace MessageRouter.UnitTests
         public void Stop_AfterAlreadyStopped_DoesNothing()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
             router.Stop();
             mockMonitorCache.ResetCalls();
@@ -322,7 +356,7 @@ namespace MessageRouter.UnitTests
         public void Stop_BeforeStarted_DoesNotSetStopTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
 
             // Act
             router.Stop();
@@ -336,7 +370,7 @@ namespace MessageRouter.UnitTests
         public void Stop_AfterRunning_SetsStoppedTimestamp()
         {
             // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
 
             // Act

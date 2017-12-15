@@ -17,7 +17,7 @@ namespace MessageRouter.Subscribers
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        event SubscriberEventHandler PublishedMessage;
+        event TopicEventHandler TopicMessageReceived;
 
 
         /// <summary>

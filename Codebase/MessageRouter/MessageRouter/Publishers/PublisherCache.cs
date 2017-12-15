@@ -7,6 +7,7 @@ using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
 using MessageRouter.Subscribers;
+using MessageRouter.Verbs;
 
 namespace MessageRouter.Publishers
 {

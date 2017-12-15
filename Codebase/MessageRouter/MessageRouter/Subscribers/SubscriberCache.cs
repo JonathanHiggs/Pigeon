@@ -7,7 +7,7 @@ using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
 using MessageRouter.Publishers;
-using MessageRouter.Subscriptions;
+using MessageRouter.Topics;
 
 namespace MessageRouter.Subscribers
 {
@@ -18,7 +18,7 @@ namespace MessageRouter.Subscribers
     {
         private readonly IMonitorCache monitorCache;
         private readonly IMessageFactory messageFactory;
-        private readonly ISubscriptionEventDispatcher dispatcher;
+        private readonly ITopicDispatcher dispatcher;
         private readonly Dictionary<IAddress, ISubscriber> subscribers = new Dictionary<IAddress, ISubscriber>();
         private readonly Dictionary<Type, ISubscriberFactory> factories = new Dictionary<Type, ISubscriberFactory>();
 
@@ -35,7 +35,7 @@ namespace MessageRouter.Subscribers
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="ISubscriber"/>s</param>
         /// <param name="messageFactory">Creates and extracts <see cref="Message"/>s that are received from remote <see cref="IPublisher"/>s</param>
         /// <param name="dispatcher">Maps request messages to registered handlers for processing</param>
-        public SubscriberCache(IMonitorCache monitorCache, IMessageFactory messageFactory, ISubscriptionEventDispatcher dispatcher)
+        public SubscriberCache(IMonitorCache monitorCache, IMessageFactory messageFactory, ITopicDispatcher dispatcher)
         {
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
@@ -90,7 +90,7 @@ namespace MessageRouter.Subscribers
 
             var factory = factories[typeof(TSubscriber)];
             var subscriber = factory.CreateSubscriber(address);
-            subscriber.PublishedMessage += (s, e) => Task.Run(() => HandleSubscriptionEvent(e));
+            subscriber.TopicMessageReceived += (s, e) => Task.Run(() => HandleSubscriptionEvent(e));
             subscribers.Add(address, subscriber);
         }
     }

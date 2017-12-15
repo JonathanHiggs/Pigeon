@@ -1,4 +1,4 @@
-﻿using MessageRouter.Subscriptions;
+﻿using MessageRouter.Topics;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -15,8 +15,8 @@ namespace MessageRouter.UnitTests.Subscripions
         public class Topic { }
         public class SubTopic : Topic { }
 
-        private readonly Mock<ISubscriptionHandler<Topic>> mockHandler = new Mock<ISubscriptionHandler<Topic>>();
-        private ISubscriptionHandler<Topic> handler;
+        private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
+        private ITopicHandler<Topic> handler;
         
 
         [SetUp]
@@ -38,7 +38,7 @@ namespace MessageRouter.UnitTests.Subscripions
         public void Handle_WithNullMessage_DoesNothing()
         {
             // Arrange
-            var dispatcher = SubscriptionEventDispatcher.Create();
+            var dispatcher = TopicDispatcher.Create();
 
             // Act
             TestDelegate handle = () => dispatcher.Handle(null);
@@ -52,7 +52,7 @@ namespace MessageRouter.UnitTests.Subscripions
         public void Handle_WithNoHandlerRegistered_DoesNothing()
         {
             // Arrange
-            var dispatcher = SubscriptionEventDispatcher.Create();
+            var dispatcher = TopicDispatcher.Create();
             var message = new Topic();
 
             // Act
@@ -67,7 +67,7 @@ namespace MessageRouter.UnitTests.Subscripions
         public void Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
-            var dispatcher = SubscriptionEventDispatcher.Create().Register(handler);
+            var dispatcher = TopicDispatcher.Create().Register(handler);
             var message = new Topic();
 
             // Act
@@ -83,7 +83,7 @@ namespace MessageRouter.UnitTests.Subscripions
         {
             // Arrange
             var handled = false;
-            var dispatcher = SubscriptionEventDispatcher.Create().Register<Topic>(e => { handled = true; });
+            var dispatcher = TopicDispatcher.Create().Register<Topic>(e => { handled = true; });
             var message = new Topic();
 
             // Act
@@ -98,7 +98,7 @@ namespace MessageRouter.UnitTests.Subscripions
         public void Handle_WithBaseClassHandlerRegistered_DoesNothing()
         {
             // Arrange
-            var dispatcher = SubscriptionEventDispatcher.Create().Register(handler);
+            var dispatcher = TopicDispatcher.Create().Register(handler);
             var message = new SubTopic();
 
             // Act

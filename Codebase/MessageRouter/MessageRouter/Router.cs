@@ -6,6 +6,7 @@ using MessageRouter.Monitors;
 using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
+using MessageRouter.Subscribers;
 
 namespace MessageRouter
 {
@@ -20,6 +21,7 @@ namespace MessageRouter
         private readonly IMonitorCache monitorCache;
         private readonly IReceiverCache receiverCache;
         private readonly IPublisherCache publisherCache;
+        private readonly ISubscriberCache subscriberCache;
 
         private readonly RouterInfo routerInfo;
         private bool running = false;
@@ -40,12 +42,14 @@ namespace MessageRouter
         /// <param name="monitorCache"></param>
         /// <param name="receiverCache"></param>
         /// <param name="publisherCache"></param>
+        /// <param name="subscriberCache"></param>
         public Router(
             string name,
             ISenderCache senderCache,
             IMonitorCache monitorCache,
             IReceiverCache receiverCache,
-            IPublisherCache publisherCache)
+            IPublisherCache publisherCache,
+            ISubscriberCache subscriberCache)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -54,6 +58,7 @@ namespace MessageRouter
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
             this.receiverCache = receiverCache ?? throw new ArgumentNullException(nameof(receiverCache));
             this.publisherCache = publisherCache ?? throw new ArgumentNullException(nameof(publisherCache));
+            this.subscriberCache = subscriberCache ?? throw new ArgumentNullException(nameof(subscriberCache));
 
             routerInfo = new RouterInfo
             {
@@ -62,6 +67,17 @@ namespace MessageRouter
                 StartedTimestamp = null,
                 StoppedTimestamp = null
             };
+        }
+
+
+        /// <summary>
+        /// Distributes a message to any and all connected <see cref="ISubscriber"/>s
+        /// </summary>
+        /// <typeparam name="TTopic">The topic type of the message to publish</typeparam>
+        /// <param name="message">The topic message to distribute</param>
+        public void Publish<TTopic>(TTopic message) where TTopic : class
+        {
+            publisherCache.Publish(message);
         }
 
 
@@ -142,11 +158,6 @@ namespace MessageRouter
         public static RouterBuilder Builder(string name)
         {
             return new RouterBuilder(name);
-        }
-
-        public void Publish<TMessage>(TMessage message) where TMessage : class
-        {
-            throw new NotImplementedException();
         }
     }
 }

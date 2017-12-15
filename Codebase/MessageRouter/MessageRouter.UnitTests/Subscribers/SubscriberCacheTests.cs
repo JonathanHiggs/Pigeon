@@ -4,7 +4,7 @@ using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Monitors;
 using MessageRouter.Subscribers;
-using MessageRouter.Subscriptions;
+using MessageRouter.Topics;
 
 using Moq;
 
@@ -21,8 +21,8 @@ namespace MessageRouter.UnitTests.Subscribers
         private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
         private IMessageFactory messageFactory;
 
-        private readonly Mock<ISubscriptionEventDispatcher> mockDispatcher = new Mock<ISubscriptionEventDispatcher>();
-        private ISubscriptionEventDispatcher dispatcher;
+        private readonly Mock<ITopicDispatcher> mockDispatcher = new Mock<ITopicDispatcher>();
+        private ITopicDispatcher dispatcher;
 
         private readonly Mock<ISubscriberFactory<ISubscriber>> mockSubscriberFactory = new Mock<ISubscriberFactory<ISubscriber>>();
         private ISubscriberFactory<ISubscriber> subscriberFactory;

@@ -7,5 +7,5 @@ using MessageRouter.Messages;
 
 namespace MessageRouter.Subscribers
 {
-    public delegate void SubscriberEventHandler(ISubscriber subscriber, Message subscriptionEvent);
+    public delegate void TopicEventHandler(ISubscriber subscriber, Message message);
 }

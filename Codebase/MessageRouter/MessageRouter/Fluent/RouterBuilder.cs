@@ -8,6 +8,8 @@ using MessageRouter.Receivers;
 using MessageRouter.Requests;
 using MessageRouter.Routing;
 using MessageRouter.Senders;
+using MessageRouter.Subscribers;
+using MessageRouter.Topics;
 
 namespace MessageRouter.Fluent
 {
@@ -17,25 +19,29 @@ namespace MessageRouter.Fluent
 
         private readonly RequestRouter requestRouter;
         private readonly MessageFactory messageFactory;
+        private readonly TopicDispatcher topicDispatcher;
         private readonly RequestDispatcher requestDispatcher;
 
         private readonly SenderCache senderCache;
-        private readonly ReceiverCache receiverCache;
         private readonly MonitorCache monitorCache;
+        private readonly ReceiverCache receiverCache;
         private readonly PublisherCache publisherCache;
+        private readonly SubscriberCache subscriberCache;
 
 
         public RouterBuilder(string name)
         {
             this.name = name;
+            monitorCache = new MonitorCache();
             requestRouter = new RequestRouter();
             messageFactory = new MessageFactory();
+            topicDispatcher = new TopicDispatcher();
             requestDispatcher = new RequestDispatcher();
-            monitorCache = new MonitorCache();
 
             senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
             receiverCache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
             publisherCache = new PublisherCache(monitorCache, messageFactory);
+            subscriberCache = new SubscriberCache(monitorCache, messageFactory, topicDispatcher);
         }
 
 
@@ -88,7 +94,7 @@ namespace MessageRouter.Fluent
 
         public Router BuildAndStart()
         {
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache);
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
             return router;
         }

@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Subscribers;
 
-namespace MessageRouter.Publishers
+namespace MessageRouter.Verbs
 {
     public interface IPublish
     {
         /// <summary>
         /// Distributes a message to any and all connected <see cref="ISubscriber"/>s
         /// </summary>
-        /// <typeparam name="TMessage"></typeparam>
-        /// <param name="message">The published message to distribute</param>
-        void Publish<TMessage>(TMessage message)
-            where TMessage : class;
+        /// <typeparam name="TTopic">The topic type of the message to publish</typeparam>
+        /// <param name="message">The topic message to distribute</param>
+        void Publish<TTopic>(TTopic message)
+            where TTopic : class;
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Receivers;
 
-namespace MessageRouter.Senders
+namespace MessageRouter.Verbs
 {
     public interface ISend
     {

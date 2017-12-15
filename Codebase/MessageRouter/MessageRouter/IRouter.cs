@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
+using MessageRouter.Verbs;
 
 namespace MessageRouter
 {

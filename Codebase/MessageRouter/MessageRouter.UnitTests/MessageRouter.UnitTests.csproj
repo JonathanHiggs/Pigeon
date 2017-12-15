@@ -69,7 +69,7 @@
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Requests\RequestDispatcherTests.cs" />
     <Compile Include="Subscribers\SubscriberCacheTests.cs" />
-    <Compile Include="Subscripions\SubscriptionEventDispatcherTests.cs" />
+    <Compile Include="Topics\TopicDispatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
