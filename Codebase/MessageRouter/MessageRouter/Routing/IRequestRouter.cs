@@ -22,8 +22,8 @@ namespace MessageRouter.Routing
         /// TryGets a routing for a request type
         /// </summary>
         /// <typeparam name="TRequest">Request type</typeparam>
-        /// <param name="senderMapping">Matching <see cref="SenderRouting"/></param>
+        /// <param name="routing">Matching <see cref="SenderRouting"/></param>
         /// <returns>true if the <see cref="IRequestRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
-        bool RoutingFor<TRequest>(out SenderRouting senderMapping);
+        bool RoutingFor<TRequest>(out SenderRouting routing);
     }
 }

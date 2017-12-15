@@ -41,6 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Routing\ITopicRouter.cs" />
+    <Compile Include="Routing\SubscriberRouting.cs" />
+    <Compile Include="Routing\TopicRouter.cs" />
+    <Compile Include="Subscribers\ISubscriptionCache.cs" />
+    <Compile Include="Subscribers\Subscription.cs" />
+    <Compile Include="Subscribers\SubscriptionCache.cs" />
     <Compile Include="Verbs\IPublish.cs" />
     <Compile Include="Publishers\IPublisher.cs" />
     <Compile Include="Publishers\IPublisherCache.cs" />
@@ -106,6 +112,7 @@
     <Compile Include="Requests\RequestHandlerDelegate.cs" />
     <Compile Include="Requests\RequestHandlerFunction.cs" />
     <Compile Include="Addresses\TcpAddress.cs" />
+    <Compile Include="Verbs\ISubscribe.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

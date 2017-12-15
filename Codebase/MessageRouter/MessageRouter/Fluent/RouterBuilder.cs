@@ -18,6 +18,7 @@ namespace MessageRouter.Fluent
     {
         private string name;
 
+        private readonly TopicRouter topicRouter;
         private readonly RequestRouter requestRouter;
         private readonly MessageFactory messageFactory;
         private readonly TopicDispatcher topicDispatcher;
@@ -33,6 +34,7 @@ namespace MessageRouter.Fluent
         public RouterBuilder(string name)
         {
             this.name = name;
+            topicRouter = new TopicRouter();
             monitorCache = new MonitorCache();
             requestRouter = new RequestRouter();
             messageFactory = new MessageFactory();
@@ -42,7 +44,7 @@ namespace MessageRouter.Fluent
             senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
             receiverCache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
             publisherCache = new PublisherCache(monitorCache, messageFactory);
-            subscriberCache = new SubscriberCache(monitorCache, messageFactory, topicDispatcher);
+            subscriberCache = new SubscriberCache(topicRouter, monitorCache, messageFactory, topicDispatcher);
         }
 
 
@@ -92,10 +94,10 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithSubscriber<TSubscriber>(IAddress address)
+        public RouterBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
-            subscriberCache.AddSubscriber<TSubscriber>(address);
+            topicRouter.AddSubscriberRouting<TTopic, TSubscriber>(address);
             return this;
         }
 

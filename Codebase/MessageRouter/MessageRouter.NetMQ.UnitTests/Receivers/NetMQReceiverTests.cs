@@ -118,9 +118,24 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         #endregion
 
 
-        #region Add
+        #region AddAddress
         [Test]
-        public void Add_WithNewAddress_AddsToAddresses()
+        public void AddAddress_WithNullAddress_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var routerSocket = new RouterSocket();
+            var receiver = new NetMQReceiver(routerSocket, serializer);
+
+            // Act
+            TestDelegate addAddress = () => receiver.AddAddress(null);
+
+            // Assert
+            Assert.That(addAddress, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void AddAddress_WithNewAddress_AddsToAddresses()
         {
             // Arrange
             var routerSocket = new RouterSocket();
@@ -136,7 +151,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
 
 
         [Test]
-        public void Add_WithAlreadyAddedAddress_DoesNotAddTwice()
+        public void AddAddress_WithAlreadyAddedAddress_DoesNotAddTwice()
         {
             // Arrange
             var routerSocket = new RouterSocket();
@@ -150,6 +165,11 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             // Assert
             Assert.That(receiver.Addresses, Has.Count.EqualTo(1));
         }
+        #endregion
+
+
+        #region RemoveAddress
+
         #endregion
 
 

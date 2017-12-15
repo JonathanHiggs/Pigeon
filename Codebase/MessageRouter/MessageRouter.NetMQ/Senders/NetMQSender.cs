@@ -60,8 +60,13 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="address">Address of the remote</param>
         public void AddAddress(IAddress address)
         {
-            if (!addresses.Contains(address))
-                addresses.Add(address);
+            if (null == address)
+                throw new ArgumentNullException(nameof(address));
+
+            if (addresses.Contains(address))
+                return;
+
+            addresses.Add(address);
         }
 
 
@@ -71,8 +76,10 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="address"></param>
         public void RemoveAddress(IAddress address)
         {
-            if (addresses.Contains(address))
-                addresses.Remove(address);
+            if (null == address || addresses.Contains(address))
+                return;
+
+            addresses.Remove(address);
         }
 
 

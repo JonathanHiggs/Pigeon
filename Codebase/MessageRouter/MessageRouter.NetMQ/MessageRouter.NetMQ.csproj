@@ -53,6 +53,7 @@
     <Compile Include="NetMQFactory.cs" />
     <Compile Include="NetMQConfig.cs" />
     <Compile Include="Publishers\INetMQPublisher.cs" />
+    <Compile Include="Publishers\NetMQPublisher.cs" />
     <Compile Include="Senders\AsyncSocket.cs" />
     <Compile Include="Receivers\INetMQReceiver.cs" />
     <Compile Include="Senders\IAsyncSocket.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Senders\NetMQTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscribers\INetMQSubscriber.cs" />
+    <Compile Include="Subscribers\NetMQSubscriber.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

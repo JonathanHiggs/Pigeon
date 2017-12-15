@@ -114,6 +114,18 @@ namespace MessageRouter
         }
 
 
+        public IDisposable Subscribe<TTopic>()
+        {
+            return subscriberCache.Subscribe<TTopic>();
+        }
+
+
+        public void Unsubscribe<TTopic>()
+        {
+            subscriberCache.Unsubscribe<TTopic>();
+        }
+
+
         /// <summary>
         /// Starts all internal active transports running
         /// </summary>

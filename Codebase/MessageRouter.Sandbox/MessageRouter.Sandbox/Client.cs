@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
-using MessageRouter.NetMQ.Receivers;
 using MessageRouter.NetMQ.Senders;
 
 namespace MessageRouter.Sandbox

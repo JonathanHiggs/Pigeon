@@ -18,14 +18,14 @@ namespace MessageRouter.Senders
         private readonly IRequestRouter requestRouter;
         private readonly IMonitorCache monitorCache;
         private readonly IMessageFactory messageFactory;
-        private readonly Dictionary<SenderRouting, ISender> senderCache = new Dictionary<SenderRouting, ISender>();
-        private readonly Dictionary<Type, ISenderFactory> senderFactories = new Dictionary<Type, ISenderFactory>();
+        private readonly Dictionary<SenderRouting, ISender> senders = new Dictionary<SenderRouting, ISender>();
+        private readonly Dictionary<Type, ISenderFactory> factories = new Dictionary<Type, ISenderFactory>();
 
 
         /// <summary>
         /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
         /// </summary>
-        public IReadOnlyCollection<ISenderFactory> Factories => senderFactories.Values;
+        public IReadOnlyCollection<ISenderFactory> Factories => factories.Values;
 
 
         /// <summary>
@@ -52,13 +52,13 @@ namespace MessageRouter.Senders
             if (!requestRouter.RoutingFor<TRequest>(out var senderRouting))
                 throw new KeyNotFoundException($"No mapping found for {typeof(TRequest).Name}");
 
-            if (!senderCache.TryGetValue(senderRouting, out var sender))
+            if (!senders.TryGetValue(senderRouting, out var sender))
             {
-                if (!senderFactories.TryGetValue(senderRouting.SenderType, out var factory))
-                    throw new KeyNotFoundException($"No SenderFactory found for {senderRouting.SenderType} needed for request type {typeof(TRequest).Name}");
+                if (!factories.TryGetValue(senderRouting.SenderType, out var factory))
+                    throw new KeyNotFoundException($"No SenderFactory found for {senderRouting.SenderType.Name} needed for request type {typeof(TRequest).Name}");
 
                 sender = factory.CreateSender(senderRouting.Address);  // SenderRouting.Address is not-null
-                senderCache.Add(senderRouting, sender);
+                senders.Add(senderRouting, sender);
             }
 
             return sender;
@@ -74,10 +74,10 @@ namespace MessageRouter.Senders
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));
 
-            if (senderFactories.ContainsKey(factory.SenderType))
+            if (factories.ContainsKey(factory.SenderType))
                 return;
 
-            senderFactories.Add(factory.SenderType, factory);
+            factories.Add(factory.SenderType, factory);
             monitorCache.AddMonitor(factory.SenderMonitor);
         }
 

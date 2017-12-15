@@ -15,7 +15,7 @@ namespace MessageRouter
     /// parts of the architecture
     /// </summary>
     /// <typeparam name="TRouterInfo"></typeparam>
-    public interface IRouter<TRouterInfo> : ISend, IPublish where TRouterInfo : IRouterInfo
+    public interface IRouter<TRouterInfo> : ISend, IPublish, ISubscribe where TRouterInfo : IRouterInfo
     {
         /// <summary>
         /// Gets a <see cref="TRouterInfo"/> to access state information of the <see cref="IRouter{TRouterInfo}"/>

@@ -1,4 +1,7 @@
-﻿using MessageRouter.Receivers;
+﻿using MessageRouter.Addresses;
+using MessageRouter.Receivers;
+using MessageRouter.Senders;
+
 using NetMQ;
 
 namespace MessageRouter.NetMQ.Receivers

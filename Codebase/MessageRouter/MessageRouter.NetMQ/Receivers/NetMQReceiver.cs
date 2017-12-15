@@ -17,11 +17,11 @@ namespace MessageRouter.NetMQ.Receivers
     /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Message"/>es from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQReceiver : INetMQReceiver
+    public class NetMQReceiver : INetMQReceiver, IDisposable
     {
         private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
-        protected readonly RouterSocket routerSocket;
         private readonly ISerializer<byte[]> serializer;
+        private RouterSocket socket;
         private bool isBound = false;
 
 
@@ -40,7 +40,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Gets the inner pollable socket
         /// </summary>
-        public ISocketPollable PollableSocket => routerSocket;
+        public ISocketPollable PollableSocket => socket;
 
 
         /// <summary>
@@ -50,16 +50,16 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Initializes a new instance of a NetMQReceiver
+        /// Initializes a new instance of <see cref="NetMQReceiver"/>
         /// </summary>
-        /// <param name="routerSocket">Inner NetMQ RouterSocket</param>
+        /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
-        public NetMQReceiver(RouterSocket routerSocket, ISerializer<byte[]> serializer)
+        public NetMQReceiver(RouterSocket socket, ISerializer<byte[]> serializer)
         {
-            this.routerSocket = routerSocket ?? throw new ArgumentNullException(nameof(routerSocket));
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(routerSocket));
+            this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(socket));
 
-            routerSocket.ReceiveReady += OnRequestReceived;
+            socket.ReceiveReady += OnRequestReceived;
         }
 
 
@@ -69,6 +69,9 @@ namespace MessageRouter.NetMQ.Receivers
         /// <param name="address"></param>
         public void AddAddress(IAddress address)
         {
+            if (null == address)
+                throw new ArgumentNullException(nameof(address));
+
             if (boundStatusByAddress.ContainsKey(address))
                 return;
 
@@ -76,7 +79,7 @@ namespace MessageRouter.NetMQ.Receivers
 
             if (isBound)
             {
-                routerSocket.Bind(address.ToString());
+                socket.Bind(address.ToString());
                 boundStatusByAddress[address] = true;
             }
         }
@@ -100,7 +103,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <param name="address"></param>
         public void RemoveAddress(IAddress address)
         {
-            if (!boundStatusByAddress.ContainsKey(address))
+            if (null == address || !boundStatusByAddress.ContainsKey(address))
                 return;
 
             if (isBound && !boundStatusByAddress[address])
@@ -122,7 +125,7 @@ namespace MessageRouter.NetMQ.Receivers
                                     where !IsAddedAndBound(address)
                                     select address).ToList())
             {
-                routerSocket.Bind(address.ToString());
+                socket.Bind(address.ToString());
                 boundStatusByAddress[address] = true;
             }
 
@@ -142,7 +145,7 @@ namespace MessageRouter.NetMQ.Receivers
                                     where IsAddedAndBound(address)
                                     select address).ToList())
             {
-                routerSocket.Unbind(address.ToString());
+                socket.Unbind(address.ToString());
                 boundStatusByAddress[address] = false;
             }
 
@@ -158,7 +161,7 @@ namespace MessageRouter.NetMQ.Receivers
         public bool TryReceive(out RequestTask requestTask)
         {
             NetMQMessage message = default(NetMQMessage);
-            if (!routerSocket.TryReceiveMultipartMessage(ref message))
+            if (!socket.TryReceiveMultipartMessage(ref message))
             {
                 requestTask = default(RequestTask);
                 return false;
@@ -175,7 +178,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
         public RequestTask Receive()
         {
-            var requestMessage = routerSocket.ReceiveMultipartMessage();
+            var requestMessage = socket.ReceiveMultipartMessage();
             return Handle(requestMessage);
         }
 
@@ -197,7 +200,7 @@ namespace MessageRouter.NetMQ.Receivers
                 AddAddress(message, requestMessage);
                 AddRequestId(message, requestMessage);
                 AddResponse(message, response);
-                routerSocket.SendMultipartMessage(message);
+                socket.SendMultipartMessage(message);
             });
 
             return requestTask;
@@ -240,7 +243,7 @@ namespace MessageRouter.NetMQ.Receivers
 
         private NetMQMessage AddResponse(NetMQMessage responseMessage, Message response)
         {
-            var data = serializer.Serialize<Message>(response);
+            var data = serializer.Serialize(response);
             responseMessage.Append(data);
             return responseMessage;
         }
@@ -262,8 +265,37 @@ namespace MessageRouter.NetMQ.Receivers
             if (!IsAddedAndBound(address))
                 return;
 
-            routerSocket.Unbind(address.ToString());
+            socket.Unbind(address.ToString());
             boundStatusByAddress[address] = false;
+        }
+
+        #endregion
+
+        
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    UnbindAll();
+                    socket.ReceiveReady -= OnRequestReceived;
+                    socket.Dispose();
+                    socket = null;
+                }
+                
+                disposedValue = true;
+            }
+        }
+
+        
+        public void Dispose()
+        {
+            Dispose(true);
         }
         #endregion
     }

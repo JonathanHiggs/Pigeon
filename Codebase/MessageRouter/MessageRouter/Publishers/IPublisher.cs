@@ -26,7 +26,7 @@ namespace MessageRouter.Publishers
         /// Removes an <see cref="IAddress"/> from the collection of endpoints to which the <see cref="IPublisher"/> publishes <see cref="Message"/>s
         /// </summary>
         /// <param name="address"></param>
-        void RemoteAddress(IAddress address);
+        void RemoveAddress(IAddress address);
 
 
         /// <summary>

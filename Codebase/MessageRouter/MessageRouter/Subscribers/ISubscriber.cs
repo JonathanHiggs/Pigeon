@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
 using MessageRouter.Messages;
+using MessageRouter.Publishers;
 using MessageRouter.Transport;
+using MessageRouter.Verbs;
 
 namespace MessageRouter.Subscribers
 {
@@ -54,5 +56,11 @@ namespace MessageRouter.Subscribers
         /// Terminates the connection to all added addresses
         /// </summary>
         void DisconnectAll();
+
+
+        void Subscribe<TTopic>();
+
+
+        void Unsubscribe<TTopic>();
     }
 }

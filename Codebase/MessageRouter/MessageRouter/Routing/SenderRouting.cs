@@ -32,8 +32,8 @@ namespace MessageRouter.Routing
         /// <param name="address">Address of the remote</param>
         private SenderRouting(Type senderType, IAddress address)
         {
-            SenderType = senderType;
-            Address = address;
+            SenderType = senderType ?? throw new ArgumentNullException(nameof(senderType));
+            Address = address ?? throw new ArgumentNullException(nameof(address));
         }
 
 
@@ -46,9 +46,6 @@ namespace MessageRouter.Routing
         public static SenderRouting For<TSender>(IAddress address)
             where TSender : ISender
         {
-            if (null == address)
-                throw new ArgumentNullException(nameof(address));
-
             return new SenderRouting(typeof(TSender), address);
         }
 
