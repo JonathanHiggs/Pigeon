@@ -12,7 +12,7 @@ namespace MessageRouter.Receivers
     public interface IReceiverCache
     {
         /// <summary>
-        /// Gets a readonly collection of <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at config-time
+        /// Gets a readonly collection of all registered <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at config-time
         /// </summary>
         IReadOnlyCollection<IReceiverFactory> ReceiverFactories { get; }
     }

@@ -48,6 +48,10 @@
     <Compile Include="Publishers\IPublisherMonitor.cs" />
     <Compile Include="Publishers\PublisherCache.cs" />
     <Compile Include="Subscribers\ISubscriber.cs" />
+    <Compile Include="Subscribers\ISubscriberCache.cs" />
+    <Compile Include="Subscribers\ISubscriberFactory.cs" />
+    <Compile Include="Subscribers\ISubscriberMonitor.cs" />
+    <Compile Include="Subscribers\SubscriberCache.cs" />
     <Compile Include="Subscribers\SubscriberEventHandler.cs" />
     <Compile Include="Subscriptions\ISubscriptionEventDispatcher.cs" />
     <Compile Include="Subscriptions\ISubscriptionHandler.cs" />
