@@ -5,7 +5,7 @@ namespace MessageRouter.Subscriptions
     /// <summary>
     /// Represents the method to handle a <see cref="ISubscriber"/>s PublishedMessage event
     /// </summary>
-    /// <param name="subscriber">The source <see cref="ISubscriber"/> that received the published message</param>
+    /// <typeparam name="TEvent">Type of the subscription event that is handled</typeparam>
     /// <param name="publishedMessage">The message object that was published</param>
-    public delegate void PublishedMessageHandler(ISubscriber subscriber, object publishedMessage);
+    public delegate void SubscriptionEventHandler<TEvent>(TEvent publishedMessage);
 }

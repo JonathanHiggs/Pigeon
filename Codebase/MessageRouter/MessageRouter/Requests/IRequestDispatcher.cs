@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 namespace MessageRouter.Requests
 {
     /// <summary>
-    /// Interface defines the surface for routing the executing of requests
-    /// to handle and prepare responses
+    /// Takes incoming request messages and resolved a registered <see cref="IRequestHandler{TRequest, TResponse}"/>
+    /// prepare a response message
     /// </summary>
     public interface IRequestDispatcher
     {
         /// <summary>
-        /// Dispatching the handling of a Message and returns the response
+        /// Dispatching the handling of a message and returns the response
         /// </summary>
-        /// <param name="requestObject">Request object</param>
-        /// <returns>Response object</returns>
-        object Handle(object requestObject);
+        /// <param name="request">Request message</param>
+        /// <returns>Response to the request</returns>
+        object Handle(object request);
     }
 }

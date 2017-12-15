@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
 using MessageRouter.Messages;
-using MessageRouter.Subscriptions;
 
 namespace MessageRouter.Subscribers
 {
@@ -18,7 +17,7 @@ namespace MessageRouter.Subscribers
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        event PublishedMessageHandler PublishedMessage;
+        event SubscriberEventHandler PublishedMessage;
 
 
         /// <summary>

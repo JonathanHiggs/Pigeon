@@ -48,6 +48,12 @@
     <Compile Include="Publishers\IPublisherMonitor.cs" />
     <Compile Include="Publishers\PublisherCache.cs" />
     <Compile Include="Subscribers\ISubscriber.cs" />
+    <Compile Include="Subscribers\SubscriberEventHandler.cs" />
+    <Compile Include="Subscriptions\ISubscriptionEventDispatcher.cs" />
+    <Compile Include="Subscriptions\ISubscriptionHandler.cs" />
+    <Compile Include="Subscriptions\SubscriptionEventDispatcher.cs" />
+    <Compile Include="Subscriptions\SubscriptionEventFunction.cs" />
+    <Compile Include="Subscriptions\SubscriptionEventHandler.cs" />
     <Compile Include="TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
     <Compile Include="IEndPoint.cs" />

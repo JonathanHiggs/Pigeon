@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MessageRouter.Requests
 {
     /// <summary>
-    /// Prepares responses to requests by routing to a registered handler
+    /// Finds an appropriate handler for an incoming request to invoke to prepare responses and respond to
     /// </summary>
     public class RequestDispatcher : IRequestDispatcher
     {
@@ -15,30 +15,30 @@ namespace MessageRouter.Requests
 
 
         /// <summary>
-        /// Dispatches the handling of a request to a registered handler
+        /// Finds and invokes a registered handler for the reuqest to prepare a response
         /// </summary>
-        /// <param name="requestObject">Request object</param>
-        /// <returns>Response object</returns>
-        public object Handle(object requestObject)
+        /// <param name="request">Request message</param>
+        /// <returns>Response message</returns>
+        public object Handle(object request)
         {
-            if (null == requestObject)
-                throw new ArgumentNullException(nameof(requestObject));
+            if (null == request)
+                throw new ArgumentNullException(nameof(request));
 
-            var requestType = requestObject.GetType();
-            if (!requestHandlers.ContainsKey(requestType))
+            var requestType = request.GetType();
+            if (!requestHandlers.TryGetValue(requestType, out var handler))
                 throw new RequestHandlerNotFoundException(requestType);
 
-            return requestHandlers[requestType](requestObject);
+            return handler(request);
         }
 
 
         /// <summary>
         /// Registers an <see cref="IRequestHandler{TRequest, TResponse}"/>
         /// </summary>
-        /// <typeparam name="TRequest">Type of request object</typeparam>
-        /// <typeparam name="TResponse">Type of response object</typeparam>
+        /// <typeparam name="TRequest">Type of request message</typeparam>
+        /// <typeparam name="TResponse">Type of response message</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns he same RequestDispatcher instance for fluent construction</returns>
+        /// <returns>Returns the same <see cref="RequestDispatcher"/> for fluent construction</returns>
         public RequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
             requestHandlers.Add(typeof(TRequest), request => handler.Handle((TRequest)request));
@@ -63,7 +63,7 @@ namespace MessageRouter.Requests
         /// <summary>
         /// Initializes a new instance of a <see cref="RequestDispatcher"/> used for fluent construction
         /// </summary>
-        /// <returns>Empty <see cref="RequestDispatcher"/></returns>
+        /// <returns>An empty <see cref="RequestDispatcher"/></returns>
         public static RequestDispatcher Create()
         {
             return new RequestDispatcher();

@@ -36,13 +36,13 @@ namespace MessageRouter.Senders
 
 
         /// <summary>
-        /// Initializes the connection to all added addresses
+        /// Initializes the connections to all added addresses
         /// </summary>
         void ConnectAll();
 
 
         /// <summary>
-        /// Terminates the connection to all added addresses
+        /// Terminates the connections to all added addresses
         /// </summary>
         void DisconnectAll();
 
