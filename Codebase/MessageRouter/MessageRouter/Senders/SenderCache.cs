@@ -68,10 +68,8 @@ namespace MessageRouter.Senders
         /// <summary>
         /// Adds a <see cref="ISenderFactory{TSender}"/> to the registered factories
         /// </summary>
-        /// <typeparam name="TSender">Transport specific implementation of <see cref="ISender"/></typeparam>
         /// <param name="factory">Factory used to create <see cref="ISender"/>s at when required to send first message to remote <see cref="IReceiver"/></param>
-        public void AddFactory<TSender>(ISenderFactory<TSender> factory)
-            where TSender : ISender
+        public void AddFactory(ISenderFactory factory)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));

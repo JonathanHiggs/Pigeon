@@ -160,7 +160,7 @@ namespace MessageRouter.UnitTests.Senders
             var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
 
             // Act
-            TestDelegate addFactory = () => cache.AddFactory<ISender>(null);
+            TestDelegate addFactory = () => cache.AddFactory(null);
 
             // Assert
             Assert.That(addFactory, Throws.ArgumentNullException);

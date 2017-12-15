@@ -118,7 +118,7 @@ namespace MessageRouter.UnitTests.Receivers
             var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
 
             // Act
-            TestDelegate addFactory = () => cache.AddFactory<IReceiver>(null);
+            TestDelegate addFactory = () => cache.AddFactory(null);
 
             // Assert
             Assert.That(addFactory, Throws.ArgumentNullException);

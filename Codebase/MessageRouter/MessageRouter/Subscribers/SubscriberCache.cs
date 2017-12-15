@@ -57,10 +57,9 @@ namespace MessageRouter.Subscribers
         /// <summary>
         /// Adds a <see cref="ISubscriberFactory{TSubscriber}"/> to the set of factories for runtime creation of <see cref="ISubscriber"/>s
         /// </summary>
-        /// <typeparam name="TSubscriber">Transport specific implementation of <see cref="ISubscriber"/></typeparam>
         /// <param name="factory">Factory that will be used to create <see cref="ISubscriber"/>s when 
         /// <see cref="AddSubscriber{TSubscriber}(IAddress)"/> is called</param>
-        public void AddFactory<TSubscriber>(ISubscriberFactory<TSubscriber> factory) where TSubscriber : ISubscriber
+        public void AddFactory(ISubscriberFactory factory)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));

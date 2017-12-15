@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MessageRouter.NetMQ.Receivers;
-using MessageRouter.NetMQ.Senders;
+
+using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
+using MessageRouter.Subscribers;
 using MessageRouter.Transport;
+
 using NetMQ;
 
 namespace MessageRouter.NetMQ
 {
-    public class NetMQTransport : ITransport<INetMQSender, INetMQReceiver>
+    public class NetMQTransport : ITransportConfig
     {
         private readonly NetMQFactory factory;
-
-
-        public ISenderFactory<INetMQSender> SenderFactory => factory;
-
-
-        public IReceiverFactory<INetMQReceiver> ReceiverFactory => factory;
+        
 
 
         public NetMQTransport()
@@ -31,5 +24,14 @@ namespace MessageRouter.NetMQ
 
             factory = new NetMQFactory(monitor, monitor, new BinarySerializer());
         }
+        
+
+        public ISenderFactory SenderFactory => throw new NotImplementedException();
+
+        public IReceiverFactory ReceiverFactory => throw new NotImplementedException();
+
+        public IPublisherFactory PublisherFactory => throw new NotImplementedException();
+
+        public ISubscriberFactory SubscriberFactory => throw new NotImplementedException();
     }
 }

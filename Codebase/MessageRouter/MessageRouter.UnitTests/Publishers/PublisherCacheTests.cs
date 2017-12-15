@@ -115,7 +115,7 @@ namespace MessageRouter.UnitTests.Publishers
             var cache = new PublisherCache(monitorCache, messageFactory);
 
             // Act
-            TestDelegate addFactory = () => cache.AddFactory<IPublisher>(null);
+            TestDelegate addFactory = () => cache.AddFactory(null);
 
             // Assert
             Assert.That(addFactory, Throws.ArgumentNullException);

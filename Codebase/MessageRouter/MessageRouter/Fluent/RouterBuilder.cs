@@ -46,14 +46,23 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithTransport<TTransport, TSender, TReceiver>()
-            where TTransport : ITransport<TSender, TReceiver>
-            where TSender : ISender
-            where TReceiver : IReceiver
+        public RouterBuilder WithTransport<TTransport>()
+            where TTransport : ITransportConfig
         {
             var transport = Activator.CreateInstance<TTransport>();
-            senderCache.AddFactory(transport.SenderFactory);
-            receiverCache.AddFactory(transport.ReceiverFactory);
+
+            if (null != transport.SenderFactory)
+                senderCache.AddFactory(transport.SenderFactory);
+
+            if (null != transport.ReceiverFactory)
+                receiverCache.AddFactory(transport.ReceiverFactory);
+
+            if (null != transport.PublisherFactory)
+                publisherCache.AddFactory(transport.PublisherFactory);
+
+            if (null != transport.SubscriberFactory)
+                subscriberCache.AddFactory(transport.SubscriberFactory);
+
             return this;
         }
 
@@ -75,7 +84,23 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public RouterBuilder WithPublisher<TPublisher>(IAddress address)
+            where TPublisher : IPublisher
+        {
+            publisherCache.AddPublisher<TPublisher>(address);
+            return this;
+        }
+
+
+        public RouterBuilder WithSubscriber<TSubscriber>(IAddress address)
+            where TSubscriber : ISubscriber
+        {
+            subscriberCache.AddSubscriber<TSubscriber>(address);
+            return this;
+        }
+
+
+        public RouterBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -84,11 +109,25 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public RouterBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
             requestDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public RouterBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
+        {
+            topicDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public RouterBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        {
+            topicDispatcher.Register(handler);
             return this;
         }
 

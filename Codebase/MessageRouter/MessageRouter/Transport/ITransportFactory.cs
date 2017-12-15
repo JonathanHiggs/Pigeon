@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Publishers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
+using MessageRouter.Subscribers;
 
 namespace MessageRouter.Transport
 {
     /// <summary>
-    /// Combined factory for <see cref="ISender"/>s and <see cref="IReceiver"/>s
+    /// Combined factory for <see cref="ISender"/>s, <see cref="IReceiver"/>s, <see cref="IPublisher"/>s and <see cref="ISubscriber"/>s
     /// </summary>
-    /// <typeparam name="TSender">The implementation of <see cref="ISender"/> this factory creates</typeparam>
-    /// <typeparam name="TReceiver">The implementation of <see cref="IReceiver"/> this factory creates</typeparam>
-    public interface ITransportFactory<TSender, TReceiver> : ISenderFactory<TSender>, IReceiverFactory<TReceiver>
+    /// <typeparam name="TSender">The transport specific implementation of <see cref="ISender"/> this factory creates</typeparam>
+    /// <typeparam name="TReceiver">The transport specific implementation of <see cref="IReceiver"/> this factory creates</typeparam>
+    /// <typeparam name="TPublisher">The transport specific implementation of <see cref="IPublisher"/> this factory creates</typeparam>
+    /// <typeparam name="TSubscriber">The transport specific implementation of <see cref="ISubscriber"/> this factory creates</typeparam>
+    public interface ITransportFactory<TSender, TReceiver, TPublisher, TSubscriber> 
+        : ISenderFactory<TSender>, IReceiverFactory<TReceiver>, IPublisherFactory<TPublisher>, ISubscriberFactory<TSubscriber>
         where TSender : ISender
         where TReceiver : IReceiver
+        where TPublisher : IPublisher
+        where TSubscriber : ISubscriber
     {
     }
 }

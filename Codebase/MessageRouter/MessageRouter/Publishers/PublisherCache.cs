@@ -43,9 +43,8 @@ namespace MessageRouter.Publishers
         /// <summary>
         /// Adds a <see cref="IPublisherFactory{TPublisher}"/> to the cache for config-time creation of <see cref="IPublisher"/>s
         /// </summary>
-        /// <typeparam name="TPublisher">Transport specific implementation of <see cref="IPublisher"/></typeparam>
         /// <param name="factory">Factory used to create <see cref="IPublisher"/>s at config-time</param>
-        public void AddFactory<TPublisher>(IPublisherFactory<TPublisher> factory) where TPublisher : IPublisher
+        public void AddFactory(IPublisherFactory factory)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));

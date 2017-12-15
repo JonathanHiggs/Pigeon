@@ -118,7 +118,7 @@ namespace MessageRouter.UnitTests.Subscribers
             var cache = new SubscriberCache(monitorCache, messageFactory, dispatcher);
 
             // Act
-            TestDelegate addFactory = () => cache.AddFactory<ISubscriber>(null);
+            TestDelegate addFactory = () => cache.AddFactory(null);
 
             // Assert
             Assert.That(addFactory, Throws.ArgumentNullException);

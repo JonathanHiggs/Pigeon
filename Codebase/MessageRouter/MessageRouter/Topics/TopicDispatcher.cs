@@ -46,12 +46,12 @@ namespace MessageRouter.Topics
 
 
         /// <summary>
-        /// Registers a <see cref="TopicHandler{TEvent}"/>
+        /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
         /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
-        public TopicDispatcher Register<TTopic>(TopicHandler<TTopic> handler)
+        public TopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
             return this;

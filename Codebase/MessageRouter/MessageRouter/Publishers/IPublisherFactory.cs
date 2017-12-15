@@ -24,8 +24,8 @@ namespace MessageRouter.Publishers
         /// <summary>
         /// Creates a new instance of a <see cref="IPublisher"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
+        /// <param name="address"><see cref="IAddress"/> publisher binds to</param>
+        /// <returns><see cref="IPublisher"/> bound to the <see cref="IAddress"/></returns>
         IPublisher CreatePublisher(IAddress address);
     }
 

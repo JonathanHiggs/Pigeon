@@ -57,14 +57,14 @@
     <Compile Include="Topics\ITopicHandler.cs" />
     <Compile Include="Topics\TopicDispatcher.cs" />
     <Compile Include="Topics\TopicHandlerFunction.cs" />
-    <Compile Include="Topics\TopicHandler.cs" />
+    <Compile Include="Topics\TopicHandlerDelegate.cs" />
     <Compile Include="Transport\TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
     <Compile Include="Transport\IEndPoint.cs" />
     <Compile Include="Transport\ITransportFactory.cs" />
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
-    <Compile Include="Transport\ITransport.cs" />
+    <Compile Include="Transport\ITransportConfig.cs" />
     <Compile Include="Messages\ExceptionMessage.cs" />
     <Compile Include="Monitors\IMonitor.cs" />
     <Compile Include="Receivers\IReceiverCache.cs" />

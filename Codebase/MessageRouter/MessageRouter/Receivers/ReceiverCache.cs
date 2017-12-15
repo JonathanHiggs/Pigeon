@@ -59,10 +59,9 @@ namespace MessageRouter.Receivers
         /// <summary>
         /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories config-time creation of <see cref="IReceiver"/>s
         /// </summary>
-        /// <typeparam name="TReceiver">Transport specific implementation of <see cref="IReceiver"/></typeparam>
         /// <param name="factory">Factory that will be used to create <see cref="IReceiver"/>s when 
         /// <see cref="AddReceiver{TReceiver}(IAddress)"/> is called</param>
-        public void AddFactory<TReceiver>(IReceiverFactory<TReceiver> factory) where TReceiver : IReceiver
+        public void AddFactory(IReceiverFactory factory)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));

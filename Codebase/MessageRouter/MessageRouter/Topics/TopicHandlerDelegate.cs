@@ -7,5 +7,5 @@ namespace MessageRouter.Topics
     /// </summary>
     /// <typeparam name="TTopic">Type of the topic message that is handled</typeparam>
     /// <param name="message">The topic message object that was published</param>
-    public delegate void TopicHandler<TTopic>(TTopic message);
+    public delegate void TopicHandlerDelegate<TTopic>(TTopic message);
 }
