@@ -14,11 +14,6 @@ namespace MessageRouter.NetMQ.Subscribers
     /// Interface encapsulates a connection that is able to connect to <see cref="IAddress"/>es to receive messages
     /// from <see cref="IPublisher"/>s
     /// </summary>
-    public interface INetMQSubscriber : ISubscriber
-    {
-        /// <summary>
-        /// The NetMQ socket that a <see cref="NetMQPoller"/> will actively monitor for incoming requests
-        /// </summary>
-        ISocketPollable PollableSocket { get; }
-    }
+    public interface INetMQSubscriber : ISubscriber, INetMQEndPoint
+    { }
 }

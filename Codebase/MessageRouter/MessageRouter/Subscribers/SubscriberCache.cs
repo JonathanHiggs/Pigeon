@@ -21,7 +21,7 @@ namespace MessageRouter.Subscribers
         private readonly IMonitorCache monitorCache;
         private readonly IMessageFactory messageFactory;
         private readonly ITopicDispatcher dispatcher;
-        private readonly ISubscriptionCache subscriptions;
+        private readonly ISubscriptionsCache subscriptions;
         private readonly Dictionary<SubscriberRouting, ISubscriber> subscribers = new Dictionary<SubscriberRouting, ISubscriber>();
         private readonly Dictionary<Type, ISubscriberFactory> factories = new Dictionary<Type, ISubscriberFactory>();
 
@@ -40,7 +40,7 @@ namespace MessageRouter.Subscribers
         /// <param name="messageFactory">Creates and extracts <see cref="Message"/>s that are received from remote <see cref="IPublisher"/>s</param>
         /// <param name="dispatcher">Maps request messages to registered handlers for processing</param>
         /// <param name="subscriptions"></param>
-        public SubscriberCache(ITopicRouter topicRouter, IMonitorCache monitorCache, IMessageFactory messageFactory, ITopicDispatcher dispatcher, ISubscriptionCache subscriptions)
+        public SubscriberCache(ITopicRouter topicRouter, IMonitorCache monitorCache, IMessageFactory messageFactory, ITopicDispatcher dispatcher, ISubscriptionsCache subscriptions)
         {
             this.topicRouter = topicRouter ?? throw new ArgumentNullException(nameof(topicRouter));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Subscribers
 {
-    public class SubscriptionCache : ISubscriptionCache
+    public class SubscriptionsCache : ISubscriptionsCache
     {
         private readonly Dictionary<Type, Subscription> subscriptions = new Dictionary<Type, Subscription>();
 

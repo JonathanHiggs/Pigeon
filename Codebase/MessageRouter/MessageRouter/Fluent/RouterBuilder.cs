@@ -23,6 +23,7 @@ namespace MessageRouter.Fluent
         private readonly MessageFactory messageFactory;
         private readonly TopicDispatcher topicDispatcher;
         private readonly RequestDispatcher requestDispatcher;
+        private readonly SubscriptionsCache subscriptionsCache;
 
         private readonly SenderCache senderCache;
         private readonly MonitorCache monitorCache;
@@ -40,11 +41,12 @@ namespace MessageRouter.Fluent
             messageFactory = new MessageFactory();
             topicDispatcher = new TopicDispatcher();
             requestDispatcher = new RequestDispatcher();
+            subscriptionsCache = new SubscriptionsCache();
 
             senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
             receiverCache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
             publisherCache = new PublisherCache(monitorCache, messageFactory);
-            subscriberCache = new SubscriberCache(topicRouter, monitorCache, messageFactory, topicDispatcher);
+            subscriberCache = new SubscriberCache(topicRouter, monitorCache, messageFactory, topicDispatcher, subscriptionsCache);
         }
 
 

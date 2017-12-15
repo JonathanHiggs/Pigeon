@@ -21,20 +21,8 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQConfig : ITransportConfig
     {
-        private readonly NetMQFactory factory;
+        private readonly NetMQFactory factory = new NetMQFactory(new NetMQMonitor(new NetMQPoller()), new BinarySerializer());
         
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="NetMQConfig"/>
-        /// </summary>
-        public NetMQConfig()
-        {
-            var poller = new NetMQPoller();
-            var monitor = new NetMQMonitor(poller);
-
-            factory = new NetMQFactory(monitor, new BinarySerializer());
-        }
-
 
         /// <summary>
         /// Gets a factory for creating <see cref="INetMQSender"/>s if available, otherwise null
@@ -51,12 +39,12 @@ namespace MessageRouter.NetMQ
         /// <summary>
         /// Gets a factory for creating <see cref="INetMQPublisher"/>s if available, otherwise null
         /// </summary>
-        public IPublisherFactory PublisherFactory => null;
+        public IPublisherFactory PublisherFactory => factory;
 
 
         /// <summary>
         /// Gets a factory for creating <see cref="INetMQSubscriber"/>s if available, otherwise null
         /// </summary>
-        public ISubscriberFactory SubscriberFactory => null;
+        public ISubscriberFactory SubscriberFactory => factory;
     }
 }

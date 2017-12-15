@@ -1,6 +1,6 @@
 ﻿namespace MessageRouter.Subscribers
 {
-    public interface ISubscriptionCache
+    public interface ISubscriptionsCache
     {
         Subscription Add<TTopic>(ISubscriber subscriber);
         void Remove<TTopic>();

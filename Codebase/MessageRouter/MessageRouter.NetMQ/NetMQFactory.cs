@@ -60,9 +60,8 @@ namespace MessageRouter.NetMQ
         /// <returns>Sender connected to the remote address</returns>
         protected override INetMQSender CreateNewSender(IAddress address)
         {
-            var dealerSocket = new DealerSocket();
-            var asyncSocket = new AsyncSocket(dealerSocket);
-            var sender = new NetMQSender(asyncSocket, serializer);
+            var socket = new AsyncSocket(new DealerSocket());
+            var sender = new NetMQSender(socket, serializer);
 
             sender.AddAddress(address);
 
@@ -77,7 +76,12 @@ namespace MessageRouter.NetMQ
         /// <returns><see cref="INetMQPublisher"/> bound to the <see cref="IAddress"/></returns>
         protected override INetMQPublisher CreateNewPublisher(IAddress address)
         {
-            throw new NotSupportedException();
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, serializer);
+
+            publisher.AddAddress(address);
+
+            return publisher;
         }
 
 
@@ -88,7 +92,12 @@ namespace MessageRouter.NetMQ
         /// <returns><see cref="INetMQSubscriber"/> connected to the <see cref="IAddress"/></returns>
         protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
         {
-            throw new NotSupportedException();
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, serializer);
+
+            subscriber.AddAddress(address);
+
+            return subscriber;
         }
     }
 }

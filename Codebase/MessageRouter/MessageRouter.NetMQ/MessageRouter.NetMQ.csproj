@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INetMQEndPoint.cs" />
     <Compile Include="INetMQMonitor.cs" />
     <Compile Include="NetMQMonitor.cs" />
     <Compile Include="NetMQFactory.cs" />
