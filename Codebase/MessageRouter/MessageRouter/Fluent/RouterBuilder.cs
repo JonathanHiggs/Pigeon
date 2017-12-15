@@ -10,6 +10,7 @@ using MessageRouter.Routing;
 using MessageRouter.Senders;
 using MessageRouter.Subscribers;
 using MessageRouter.Topics;
+using MessageRouter.Transport;
 
 namespace MessageRouter.Fluent
 {

@@ -8,6 +8,7 @@ using MessageRouter.NetMQ.Senders;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
+using MessageRouter.Transport;
 using NetMQ;
 
 namespace MessageRouter.NetMQ

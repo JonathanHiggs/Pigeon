@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
-namespace MessageRouter
+namespace MessageRouter.Transport
 {
     /// <summary>
     /// Combined factory for <see cref="ISender"/>s and <see cref="IReceiver"/>s

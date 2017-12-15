@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Messages;
 using MessageRouter.Addresses;
+using MessageRouter.Transport;
 
 namespace MessageRouter.Receivers
 {

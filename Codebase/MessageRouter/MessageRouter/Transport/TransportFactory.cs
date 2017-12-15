@@ -8,7 +8,7 @@ using MessageRouter.Monitors;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
-namespace MessageRouter
+namespace MessageRouter.Transport
 {
     /// <summary>
     /// Abstract implementation of <see cref="ITransportFactory{TSender, TReceiver}"/> with common methods implemented for convienence

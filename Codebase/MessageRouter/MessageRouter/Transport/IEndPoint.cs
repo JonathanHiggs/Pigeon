@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
 
-namespace MessageRouter
+namespace MessageRouter.Transport
 {
     public interface IEndPoint
     {

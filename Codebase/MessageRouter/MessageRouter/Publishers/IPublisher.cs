@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MessageRouter.Addresses;
 using MessageRouter.Messages;
 using MessageRouter.Subscribers;
+using MessageRouter.Transport;
 
 namespace MessageRouter.Publishers
 {

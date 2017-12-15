@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
-namespace MessageRouter
+namespace MessageRouter.Transport
 {
     public interface ITransport<TSender, TReceiver>
         where TSender : ISender

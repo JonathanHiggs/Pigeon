@@ -58,13 +58,13 @@
     <Compile Include="Topics\TopicDispatcher.cs" />
     <Compile Include="Topics\TopicHandlerFunction.cs" />
     <Compile Include="Topics\TopicHandler.cs" />
-    <Compile Include="TransportFactory.cs" />
+    <Compile Include="Transport\TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
-    <Compile Include="IEndPoint.cs" />
-    <Compile Include="ITransportFactory.cs" />
+    <Compile Include="Transport\IEndPoint.cs" />
+    <Compile Include="Transport\ITransportFactory.cs" />
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
-    <Compile Include="ITransport.cs" />
+    <Compile Include="Transport\ITransport.cs" />
     <Compile Include="Messages\ExceptionMessage.cs" />
     <Compile Include="Monitors\IMonitor.cs" />
     <Compile Include="Receivers\IReceiverCache.cs" />
