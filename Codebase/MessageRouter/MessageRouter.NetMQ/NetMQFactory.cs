@@ -2,8 +2,10 @@
 
 using MessageRouter.Addresses;
 using MessageRouter.Messages;
+using MessageRouter.NetMQ.Publishers;
 using MessageRouter.NetMQ.Receivers;
 using MessageRouter.NetMQ.Senders;
+using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
@@ -13,9 +15,9 @@ using NetMQ.Sockets;
 namespace MessageRouter.NetMQ
 {
     /// <summary>
-    /// Factory for <see cref="INetMQSender"/>s and <see cref="INetMQReceiver"/>s
+    /// Combined factory for NetMQ specific implementations of <see cref="INetMQSender"/>s and <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver>
+    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
     {
         private readonly ISerializer<byte[]> serializer;
 
@@ -23,12 +25,14 @@ namespace MessageRouter.NetMQ
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQFactory"/>
         /// </summary>
-        /// <param name="senderMonitor">Monitor that <see cref="INetMQSender"/>s will be added to</param>
-        /// <param name="receiverMonitor">Monitor that <see cref="INetMQReceiver"/>s will be added to</param>
+        /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="serializer"><see cref="ISerializer{TData}"/> that converts <see cref="Message"/> to binary for sending over the wire</param>
-        public NetMQFactory(ISenderMonitor<INetMQSender> senderMonitor, IReceiverMonitor<INetMQReceiver> receiverMonitor, ISerializer<byte[]> serializer)
-            : base(senderMonitor, receiverMonitor)
+        public NetMQFactory(INetMQMonitor monitor, ISerializer<byte[]> serializer)
+            : base(monitor, monitor, null, null)
         {
+            if (null == monitor)
+                throw new ArgumentNullException(nameof(monitor));
+
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
@@ -63,6 +67,28 @@ namespace MessageRouter.NetMQ
             sender.AddAddress(address);
 
             return sender;
+        }
+
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="INetMQPublisher"/> bound to the supplied <see cref="IAddress"/>
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> publisher binds to</param>
+        /// <returns><see cref="INetMQPublisher"/> bound to the <see cref="IAddress"/></returns>
+        protected override INetMQPublisher CreateNewPublisher(IAddress address)
+        {
+            throw new NotSupportedException();
+        }
+
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="INetMQSubscriber"/> connected to the supplied <see cref="IAddress"/>
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> of the remote publishing endpoint</param>
+        /// <returns><see cref="INetMQSubscriber"/> connected to the <see cref="IAddress"/></returns>
+        protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
+        {
+            throw new NotSupportedException();
         }
     }
 }

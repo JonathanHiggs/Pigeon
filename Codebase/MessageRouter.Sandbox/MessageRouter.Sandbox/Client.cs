@@ -46,7 +46,7 @@ namespace MessageRouter.Sandbox
 
             var router = 
                 Router.Builder("TestClient")
-                      .WithTransport<NetMQTransport, INetMQSender, INetMQReceiver>()
+                      .WithTransport<NetMQConfig>()
                       .WithSenderRouting<INetMQSender, TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555))
                       .BuildAndStart();
 

@@ -14,9 +14,9 @@ namespace MessageRouter.Sandbox
         {
             var router =
                 Router.Builder("TestServer")
-                      .WithTransport<NetMQTransport, INetMQSender, INetMQReceiver>()
+                      .WithTransport<NetMQConfig>()
                       .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
-                      .WithHandler<TestMessage, TestMessage>(Handler)
+                      .WithRequestHandler<TestMessage, TestMessage>(Handler)
                       .BuildAndStart();
             
             Console.WriteLine("Press enter to stop server");

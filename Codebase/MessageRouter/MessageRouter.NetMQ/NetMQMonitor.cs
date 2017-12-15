@@ -13,7 +13,7 @@ namespace MessageRouter.NetMQ
     /// Actively manages <see cref="INetMQSender"/>s and <see cref="INetMQReceiver"/>s, monitoring for asynchronously received
     /// <see cref="NetMQMessage"/>s from remote connections
     /// </summary>
-    public class NetMQMonitor : ISenderMonitor<INetMQSender>, IReceiverMonitor<INetMQReceiver>
+    public class NetMQMonitor : INetMQMonitor
     {
         private readonly INetMQPoller poller;
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
