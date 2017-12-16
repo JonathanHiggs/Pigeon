@@ -1,7 +1,6 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.Routing;
-using MessageRouter.Senders;
-using Moq;
+using MessageRouter.Subscribers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,16 +11,16 @@ using System.Threading.Tasks;
 namespace MessageRouter.UnitTests.Routing
 {
     [TestFixture]
-    public class SenderRoutingTests
+    public class SubscriberRoutingTests
     {
         private readonly IAddress address = TcpAddress.Localhost(5555);
-        
+
 
         [Test]
         public void For_WithNullAddress_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate create = () => SenderRouting.For<ISender>(null);
+            TestDelegate create = () => SubscriberRouting.For<ISubscriber>(null);
 
             // Assert
             Assert.That(create, Throws.ArgumentNullException);
@@ -29,16 +28,16 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
-        public void For_WithAddress_HasSenderType()
+        public void For_WithAddress_HasSubscriberType()
         {
             // Arrange
-            var routing = SenderRouting.For<ISender>(address);
+            var routing = SubscriberRouting.For<ISubscriber>(address);
 
             // Act
-            var senderType = routing.SenderType;
+            var subscriberType = routing.SubscriberType;
 
             // Assert
-            Assert.That(senderType, Is.EqualTo(typeof(ISender)));
+            Assert.That(subscriberType, Is.EqualTo(typeof(ISubscriber)));
         }
 
 
@@ -46,13 +45,13 @@ namespace MessageRouter.UnitTests.Routing
         public void For_WithAddress_ReturnsSameAddress()
         {
             // Arrange
-            var routing = SenderRouting.For<ISender>(address);
+            var routing = SubscriberRouting.For<ISubscriber>(address);
 
             // Act
-            var senderAddress = routing.Address;
+            var subscriberAddress = routing.Address;
 
             // Assert
-            Assert.That(senderAddress, Is.EqualTo(address));
+            Assert.That(subscriberAddress, Is.EqualTo(address));
         }
     }
 }

@@ -55,6 +55,9 @@ namespace MessageRouter.Subscribers
         }
 
 
+        /// <summary>
+        /// Key for the subscription cache
+        /// </summary>
         private struct Key
         {
             public readonly ISubscriber Subscriber;

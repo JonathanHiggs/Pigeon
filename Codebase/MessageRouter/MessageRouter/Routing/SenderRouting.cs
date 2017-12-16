@@ -1,35 +1,33 @@
-﻿using MessageRouter.Addresses;
+﻿using System;
+
+using MessageRouter.Addresses;
+using MessageRouter.Receivers;
 using MessageRouter.Senders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MessageRouter.Routing
 {
     /// <summary>
-    /// Combines a <see cref="ISender"/> type and the remote address for it
+    /// Attaches a <see cref="ISender"/> type to a remote <see cref="IAddress"/> for runtime transport resolution
     /// </summary>
     public struct SenderRouting
     {
         /// <summary>
-        /// Type of the <see cref="ISender"/>
+        /// Transport specifc type of the local <see cref="ISender"/>
         /// </summary>
         public readonly Type SenderType;
 
 
         /// <summary>
-        /// Remote address for the <see cref="ISender"/>
+        /// Remote <see cref="IAddress"/> for the remote <see cref="IReceiver"/>
         /// </summary>
         public readonly IAddress Address;
 
 
         /// <summary>
-        /// Initializes a new instance of a SenderRouting
+        /// Initializes a new instance of a <see cref="SenderRouting"/>
         /// </summary>
-        /// <param name="senderType">Type of the <see cref="ISender"/></param>
-        /// <param name="address">Address of the remote</param>
+        /// <param name="senderType">Transport specific type of the local <see cref="ISender"/></param>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/></param>
         private SenderRouting(Type senderType, IAddress address)
         {
             SenderType = senderType ?? throw new ArgumentNullException(nameof(senderType));
@@ -38,10 +36,10 @@ namespace MessageRouter.Routing
 
 
         /// <summary>
-        /// Initializes a new instance of a SenderRouting
+        /// Initializes a new instance of a <see cref="SenderRouting"/>
         /// </summary>
-        /// <typeparam name="TSender">Type of the <see cref="ISender"/></typeparam>
-        /// <param name="address">Address of the remote</param>
+        /// <typeparam name="TSender">Transport specific type of the local <see cref="ISender"/></typeparam>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/></param>
         /// <returns></returns>
         public static SenderRouting For<TSender>(IAddress address)
             where TSender : ISender
