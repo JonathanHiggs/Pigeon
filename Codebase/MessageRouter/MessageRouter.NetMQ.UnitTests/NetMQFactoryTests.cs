@@ -1,6 +1,8 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.NetMQ.Publishers;
 using MessageRouter.NetMQ.Receivers;
 using MessageRouter.NetMQ.Senders;
+using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
@@ -62,6 +64,118 @@ namespace MessageRouter.NetMQ.UnitTests
             Assert.That(construct, Throws.ArgumentNullException);
         }
         #endregion
+
+
+        [Test]
+        public void SenderMonitor_ReturnsSuppliedMonitor()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var senderMonitor = factory.SenderMonitor;
+
+            // Assert
+            Assert.AreSame(monitor, senderMonitor);
+        }
+
+
+        [Test]
+        public void ReceiverMonitor_ReturnsSuppliedMonitor()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var receiverMonitor = factory.ReceiverMonitor;
+
+            // Assert
+            Assert.AreSame(monitor, receiverMonitor);
+        }
+
+
+        [Test]
+        public void PublisherMonitor_ReturnsSuppliedMonitor()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var publisherMonitor = factory.PublisherMonitor;
+
+            // Assert
+            Assert.AreSame(monitor, publisherMonitor);
+        }
+
+
+        [Test]
+        public void SubscriberMonitor_ReturnsSuppliedMonitor()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var subscriberMonitor = factory.SubscriberMonitor;
+
+            // Assert
+            Assert.AreSame(monitor, subscriberMonitor);
+        }
+
+
+        [Test]
+        public void SenderType_ReturnsINetMQSender()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var senderType = factory.SenderType;
+
+            // Assert
+            Assert.AreSame(senderType, typeof(INetMQSender));
+        }
+
+
+        [Test]
+        public void ReceiverType_ReturnsINetMQReceiver()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var receiverType = factory.ReceiverType;
+
+            // Assert
+            Assert.AreSame(receiverType, typeof(INetMQReceiver));
+        }
+
+
+        [Test]
+        public void PublisherType_ReturnsINetMQPublisher()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var publisherType = factory.PublisherType;
+
+            // Assert
+            Assert.AreSame(publisherType, typeof(INetMQPublisher));
+        }
+
+
+        [Test]
+        public void SubscriberType_ReturnsINetMQSubscriber()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var subscriberType = factory.SubscriberType;
+
+            // Assert
+            Assert.AreSame(subscriberType, typeof(INetMQSubscriber));
+        }
 
 
         [Test]
