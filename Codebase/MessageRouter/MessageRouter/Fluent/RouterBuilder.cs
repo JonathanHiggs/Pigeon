@@ -136,9 +136,16 @@ namespace MessageRouter.Fluent
         }
 
 
-        public Router BuildAndStart()
+        public Router Build()
         {
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            return router;
+        }
+
+
+        public Router BuildAndStart()
+        {
+            var router = Build();
             router.Start();
             return router;
         }

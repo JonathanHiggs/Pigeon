@@ -89,6 +89,12 @@ namespace MessageRouter.NetMQ
                 foreach (var receiver in receivers)
                     receiver.BindAll();
 
+                foreach (var publisher in publishers)
+                    publisher.BindAll();
+
+                foreach (var subscriber in subscribers)
+                    subscriber.ConnectAll();
+
                 running = true;
             }
         }
@@ -111,6 +117,12 @@ namespace MessageRouter.NetMQ
 
                 foreach (var receiver in receivers)
                     receiver.UnbindAll();
+
+                foreach (var publisher in publishers)
+                    publisher.UnbindAll();
+
+                foreach (var subscriber in subscribers)
+                    subscriber.DisconnectAll();
 
                 running = false;
             }

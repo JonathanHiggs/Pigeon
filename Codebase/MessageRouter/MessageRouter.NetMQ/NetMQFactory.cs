@@ -28,7 +28,7 @@ namespace MessageRouter.NetMQ
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="serializer"><see cref="ISerializer{TData}"/> that converts <see cref="Message"/> to binary for sending over the wire</param>
         public NetMQFactory(INetMQMonitor monitor, ISerializer<byte[]> serializer)
-            : base(monitor, monitor, null, null)
+            : base(monitor, monitor, monitor, monitor)
         {
             if (null == monitor)
                 throw new ArgumentNullException(nameof(monitor));
