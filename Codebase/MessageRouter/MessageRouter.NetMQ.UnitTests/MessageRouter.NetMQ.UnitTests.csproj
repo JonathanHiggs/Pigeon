@@ -69,6 +69,7 @@
     <Compile Include="Senders\AsyncSocketTests.cs" />
     <Compile Include="Senders\NetMQSenderTests.cs" />
     <Compile Include="Senders\NetMQTaskTests.cs" />
+    <Compile Include="Subscribers\NetMQSubscriberTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

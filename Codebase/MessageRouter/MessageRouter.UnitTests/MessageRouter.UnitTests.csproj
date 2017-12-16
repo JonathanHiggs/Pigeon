@@ -55,6 +55,7 @@
     <Compile Include="Addresses\TcpAddressTests.cs" />
     <Compile Include="Helpers\RegexAssert.cs" />
     <Compile Include="Messages\DataMessageTests.cs" />
+    <Compile Include="Messages\ExceptionMessageTests.cs" />
     <Compile Include="Messages\GuidMessageIdTests.cs" />
     <Compile Include="Messages\MessageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
