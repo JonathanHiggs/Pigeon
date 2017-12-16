@@ -9,25 +9,25 @@ using System.Threading.Tasks;
 namespace MessageRouter.Routing
 {
     /// <summary>
-    /// Exception that is thrown when a duplicate <see cref="SenderRouting"/> is added to a <see cref="RequestRouter"/>
+    /// Exception that is thrown when a duplicate routing is added to a router
     /// </summary>
     [Serializable]
-    public class RoutingAlreadyRegisteredException : MessageRouterException
+    public class RoutingAlreadyRegisteredException<T> : MessageRouterException
     {
-        private readonly SenderRouting duplicateRouting;
-        private readonly SenderRouting existingRouting;
+        private readonly T duplicateRouting;
+        private readonly T existingRouting;
 
 
         /// <summary>
         /// Gets the duplicate routing that was attempted to be registered
         /// </summary>
-        public SenderRouting DuplicateRouting => duplicateRouting;
+        public T DuplicateRouting => duplicateRouting;
 
 
         /// <summary>
         /// Gets the pre-existing routing that was already registered
         /// </summary>
-        public SenderRouting ExistingRouting => existingRouting;
+        public T ExistingRouting => existingRouting;
 
         
         /// <summary>
@@ -35,7 +35,7 @@ namespace MessageRouter.Routing
         /// </summary>
         /// <param name="duplicateRouting">New routing that was attempted to be registered</param>
         /// <param name="existingRouting">Pre-existing routing that was already registered</param>
-        public RoutingAlreadyRegisteredException(SenderRouting duplicateRouting, SenderRouting existingRouting)
+        public RoutingAlreadyRegisteredException(T duplicateRouting, T existingRouting)
             : this(duplicateRouting, existingRouting, $"New mapping {duplicateRouting.ToString()} already registered with {existingRouting.ToString()}", null)
         { }
 
@@ -46,7 +46,7 @@ namespace MessageRouter.Routing
         /// <param name="duplicateRouting">New routing that was attempted to be registered</param>
         /// <param name="existingRouting">Pre-existing routing that was already registered</param>
         /// <param name="message">Message that describes the exception</param>
-        public RoutingAlreadyRegisteredException(SenderRouting duplicateRouting, SenderRouting existingRouting, string message) 
+        public RoutingAlreadyRegisteredException(T duplicateRouting, T existingRouting, string message) 
             : this(duplicateRouting, existingRouting, message, null)
         { }
 
@@ -58,7 +58,7 @@ namespace MessageRouter.Routing
         /// <param name="existingRouting">Pre-existing routing that was already registered</param>
         /// <param name="message">Message that describes the exception</param>
         /// <param name="inner">Inner exception</param>
-        public RoutingAlreadyRegisteredException(SenderRouting duplicateRouting, SenderRouting existingRouting, string message, Exception inner) 
+        public RoutingAlreadyRegisteredException(T duplicateRouting, T existingRouting, string message, Exception inner) 
             : base(message, inner)
         {
             this.duplicateRouting = duplicateRouting;

@@ -6,11 +6,26 @@ using System.Threading.Tasks;
 
 namespace MessageRouter.Routing
 {
+    /// <summary>
+    /// Maps topic message types to a <see cref="SubscriberRouting"/> for runtime construction and resolution of
+    /// <see cref="ISubscriber"/>s from config-time setup
+    /// </summary>
     public interface ITopicRouter
     {
+        /// <summary>
+        /// Gets the routing table of topic message type to <see cref="SubscriberRouting"/>
+        /// </summary>
         IReadOnlyDictionary<Type, SubscriberRouting> RoutingTable { get; }
 
 
+        /// <summary>
+        /// TryGets a <see cref="SubscriberRouting"/> from the topic message type
+        /// </summary>
+        /// <typeparam name="TTopic">Topic message type</typeparam>
+        /// <param name="routing">Outs a matching <see cref="SubscriberRouting"/> for the topic message type if the
+        /// <see cref="ITopicRouter"/> has one added</param>
+        /// <returns>True if the <see cref="ITopicRouter"/> has a <see cref="SubscriberRouting"/> for the topic message
+        /// type; otherwise false</returns>
         bool RoutingFor<TTopic>(out SubscriberRouting routing);
     }
 }

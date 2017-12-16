@@ -1,22 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using MessageRouter.Addresses;
+using MessageRouter.Publishers;
 using MessageRouter.Subscribers;
 
 namespace MessageRouter.Routing
 {
+    /// <summary>
+    /// Maps topic message types to a <see cref="SubscriberRouting"/> for runtime construction and resolution of
+    /// <see cref="ISubscriber"/>s from config-time setup
+    /// </summary>
     public class TopicRouter : ITopicRouter
     {
         private readonly Dictionary<Type, SubscriberRouting> routingTable = new Dictionary<Type, SubscriberRouting>();
 
 
+        /// <summary>
+        /// Gets the routing table of topic message type to <see cref="SubscriberRouting"/>
+        /// </summary>
         public IReadOnlyDictionary<Type, SubscriberRouting> RoutingTable => routingTable;
 
 
-        public void AddSubscriberRouting<TTopic, TSubscriber>(IAddress address)
+        /// <summary>
+        /// Adds to the routing table
+        /// </summary>
+        /// <typeparam name="TTopic">Topic message type</typeparam>
+        /// <typeparam name="TSubscriber">Transport specific <see cref="ISubscriber"/> type</typeparam>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IPublisher"/> for this
+        /// <see cref="ISubscriber"/></param>
+        public void AddTopicRouting<TTopic, TSubscriber>(IAddress address)
             where TSubscriber : ISubscriber
         {
             if (null == address)
@@ -25,13 +38,26 @@ namespace MessageRouter.Routing
             var topicType = typeof(TTopic);
             var newRouting = SubscriberRouting.For<TSubscriber>(address);
 
-            if (routingTable.ContainsKey(topicType))
-                throw new NotImplementedException();
+            if (routingTable.TryGetValue(topicType, out var existingRouting))
+            {
+                if (newRouting.Address.Equals(existingRouting.Address))
+                    return;
+                else
+                    throw new RoutingAlreadyRegisteredException<SubscriberRouting>(newRouting, existingRouting);
+            }
 
             routingTable.Add(topicType, newRouting);
         }
 
 
+        /// <summary>
+        /// TryGets a <see cref="SubscriberRouting"/> from the topic message type
+        /// </summary>
+        /// <typeparam name="TTopic">Topic message type</typeparam>
+        /// <param name="routing">Outs a matching <see cref="SubscriberRouting"/> for the topic message type if the
+        /// <see cref="TopicRouter"/> has one added</param>
+        /// <returns>True if the <see cref="TopicRouter"/> has a <see cref="SubscriberRouting"/> for the topic message
+        /// type; otherwise false</returns>
         public bool RoutingFor<TTopic>(out SubscriberRouting routing)
         {
             return routingTable.TryGetValue(typeof(TTopic), out routing);

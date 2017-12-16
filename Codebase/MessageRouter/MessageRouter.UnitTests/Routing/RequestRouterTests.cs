@@ -14,17 +14,21 @@ namespace MessageRouter.UnitTests.Routing
     public class RequestRouterTests
     {
         class Request { }
-        class RequestSubClass : Request { }
+        class SubRequest : Request { }
+
+        private readonly IAddress address = TcpAddress.Wildcard(5555);
+        private readonly IAddress address2 = TcpAddress.Wildcard(5556);
 
 
+        #region AddRequestRouting
         [Test]
-        public void AddSenderRouting_WhenNotAlreadyAdded_AddsToRoutingTable()
+        public void AddRequestRouting_WhenNotAlreadyAdded_AddsToRoutingTable()
         {
             // Arrange
             var router = new RequestRouter();
 
             // Act
-            router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
+            router.AddRequestRouting<Request, ISender>(address);
 
             // Assert
             Assert.That(router.RoutingTable.ContainsKey(typeof(Request)), Is.True);
@@ -32,28 +36,43 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
-        public void AddSenderRouting_WithExistingRouting_ThrowsRoutingAlreadyRegisteredException()
+        public void AddRequestRouting_WithDifferentAddressToExistingRouting_ThrowsRoutingAlreadyRegisteredException()
         {
             // Arrange
             var router = new RequestRouter();
-            router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
+            router.AddRequestRouting<Request, ISender>(address);
 
             // Act
-            TestDelegate addRouting = () => router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5556));
+            TestDelegate addRouting = () => router.AddRequestRouting<Request, ISender>(address2);
 
             // Assert
-            Assert.That(addRouting, Throws.TypeOf<RoutingAlreadyRegisteredException>());
+            Assert.That(addRouting, Throws.TypeOf<RoutingAlreadyRegisteredException<SenderRouting>>());
         }
 
 
         [Test]
-        public void AddSenderRouting_WithNullAddress_ThrowsArgumentNullException()
+        public void AddRequestRouting_WithSameAddressAsExistingRouting_DoesNothing()
+        {
+            // Arrange
+            var router = new RequestRouter();
+            router.AddRequestRouting<Request, ISender>(address);
+
+            // Act
+            TestDelegate addTopicRouting = () => router.AddRequestRouting<Request, ISender>(address);
+
+            // Assert
+            Assert.That(addTopicRouting, Throws.Nothing);
+        }
+
+
+        [Test]
+        public void AddRequestRouting_WithNullAddress_ThrowsArgumentNullException()
         {
             // Arrange
             var router = new RequestRouter();
 
             // Act
-            TestDelegate addRouting = () => router.AddSenderRouting<Request, ISender>(null);
+            TestDelegate addRouting = () => router.AddRequestRouting<Request, ISender>(null);
 
             // Assert
             Assert.That(addRouting, Throws.ArgumentNullException);
@@ -61,13 +80,30 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
+        public void AddRequestRouting_WithRequestBaseClassAdded_AddsToRoutingTable()
+        {
+            // Arrange
+            var router = new RequestRouter();
+            router.AddRequestRouting<Request, ISender>(address);
+
+            // Act
+            router.AddRequestRouting<SubRequest, ISender>(address);
+
+            // Assert
+            Assert.That(router.RoutingTable.ContainsKey(typeof(SubRequest)), Is.True);
+        }
+        #endregion
+
+
+        #region RoutingFor
+        [Test]
         public void RoutingFor_WithNoRouting_ReturnsFalse()
         {
             // Arrange
             var router = new RequestRouter();
 
             // Act
-            var hasRouting = router.RoutingFor<Request>(out var mapping);
+            var hasRouting = router.RoutingFor<Request>(out var routing);
 
             // Assert
             Assert.That(hasRouting, Is.False);
@@ -79,10 +115,10 @@ namespace MessageRouter.UnitTests.Routing
         {
             // Arrange
             var router = new RequestRouter();
-            router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
+            router.AddRequestRouting<Request, ISender>(address);
 
             // Act
-            var hasRouting = router.RoutingFor<Request>(out var mapping);
+            var hasRouting = router.RoutingFor<Request>(out var routing);
 
             // Assert
             Assert.That(hasRouting, Is.True);
@@ -90,12 +126,11 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
-        public void RoutingFor_WithRoutingAdded_ReturnsRoutingWithCorrectAddress()
+        public void RoutingFor_WithRoutingAdded_ReturnsRoutingWithSameAddress()
         {
             // Arrange
-            var address = TcpAddress.Wildcard(5555);
             var router = new RequestRouter();
-            router.AddSenderRouting<Request, ISender>(address);
+            router.AddRequestRouting<Request, ISender>(address);
 
             // Act
             var hasRouting = router.RoutingFor<Request>(out var routing);
@@ -106,17 +141,48 @@ namespace MessageRouter.UnitTests.Routing
 
 
         [Test]
-        public void RoutingFor_WithSubClassRegistered_ReturnsFalse()
+        public void RoutingFor_WithRoutingAdded_ReturnsRoutingWithSameSenderType()
         {
             // Arrange
             var router = new RequestRouter();
-            router.AddSenderRouting<Request, ISender>(TcpAddress.Wildcard(5555));
+            router.AddRequestRouting<Request, ISender>(address);
 
             // Act
-            var hasRouting = router.RoutingFor<RequestSubClass>(out var mapping);
+            var hasRouting = router.RoutingFor<Request>(out var routing);
+
+            // Assert
+            Assert.That(routing.SenderType, Is.EqualTo(typeof(ISender)));
+        }
+
+
+        [Test]
+        public void RoutingFor_WithBaseClassRoutingAdded_ReturnsFalse()
+        {
+            // Arrange
+            var router = new RequestRouter();
+            router.AddRequestRouting<Request, ISender>(address);
+
+            // Act
+            var hasRouting = router.RoutingFor<SubRequest>(out var routing);
 
             // Assert
             Assert.That(hasRouting, Is.False);
         }
+
+
+        [Test]
+        public void RoutingFor_WithSubClassRoutingAdded_ReturnsFalse()
+        {
+            // Arrange
+            var router = new RequestRouter();
+            router.AddRequestRouting<SubRequest, ISender>(address);
+
+            // Act
+            var hasRouting = router.RoutingFor<Request>(out var routing);
+
+            // Assert
+            Assert.That(hasRouting, Is.False);
+        }
+        #endregion
     }
 }

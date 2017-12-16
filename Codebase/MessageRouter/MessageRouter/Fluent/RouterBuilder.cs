@@ -75,7 +75,7 @@ namespace MessageRouter.Fluent
             where TSender : ISender
             where TRequest : class
         {
-            requestRouter.AddSenderRouting<TRequest, TSender>(address);
+            requestRouter.AddRequestRouting<TRequest, TSender>(address);
             return this;
         }
 
@@ -99,7 +99,7 @@ namespace MessageRouter.Fluent
         public RouterBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
-            topicRouter.AddSubscriberRouting<TTopic, TSubscriber>(address);
+            topicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
             return this;
         }
 

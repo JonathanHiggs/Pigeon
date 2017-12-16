@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using MessageRouter.Addresses;
+using MessageRouter.Receivers;
 using MessageRouter.Senders;
 
 namespace MessageRouter.Routing
 {
     /// <summary>
-    /// Maps request types to a <see cref="SenderRouting"/>
+    /// Maps request message types to a <see cref="SenderRouting"/> for runtime construction and resolution of
+    /// <see cref="ISender"/>s from config-time setup
     /// </summary>
     public class RequestRouter : IRequestRouter
     {
@@ -17,19 +17,18 @@ namespace MessageRouter.Routing
 
 
         /// <summary>
-        /// Gets the routing table
+        /// Gets the routing table of request message type to <see cref="SenderRouting"/>
         /// </summary>
         public IReadOnlyDictionary<Type, SenderRouting> RoutingTable => routingTable;
 
 
         /// <summary>
-        /// Adds a <see cref="SenderRouting"/> to the routing table
+        /// Adds to the routing table
         /// </summary>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <typeparam name="TSender"><see cref="ISender"/> type</typeparam>
-        /// <param name="address">Remote address</param>
-        public void AddSenderRouting<TRequest, TSender>(IAddress address)
-            where TRequest : class
+        /// <typeparam name="TRequest">Request message type</typeparam>
+        /// <typeparam name="TSender">Transport specific <see cref="ISender"/> type</typeparam>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/> for this <see cref="ISender"/></param>
+        public void AddRequestRouting<TRequest, TSender>(IAddress address)
             where TSender : ISender
         {
             if (null == address)
@@ -38,22 +37,26 @@ namespace MessageRouter.Routing
             var requestType = typeof(TRequest);
             var newRouting = SenderRouting.For<TSender>(address);
 
-            if (routingTable.ContainsKey(requestType))
-                throw new RoutingAlreadyRegisteredException(newRouting, routingTable[requestType]);
+            if (routingTable.TryGetValue(requestType, out var existingRouting))
+            {
+                if (newRouting.Address.Equals(existingRouting.Address))
+                    return;
+                else
+                    throw new RoutingAlreadyRegisteredException<SenderRouting>(newRouting, existingRouting);
+            }
 
             routingTable.Add(requestType, newRouting);
         }
 
 
         /// <summary>
-        /// TryGets a routing for a request type
+        /// TryGets a <see cref="SenderRouting"/> for the request message type
         /// </summary>
-        /// <typeparam name="TRequest">Request type</typeparam>
-        /// <param name="senderMapping">Matching <see cref="SenderRouting"/></param>
-        /// <returns>true if the <see cref="IRequestRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
-        public bool RoutingFor<TRequest>(out SenderRouting senderMapping)
-        {
-            return routingTable.TryGetValue(typeof(TRequest), out senderMapping);
-        }
+        /// <typeparam name="TRequest">Request message type</typeparam>
+        /// <param name="routing">Outs a matching <see cref="SenderRouting"/> for the request message type if the 
+        /// <see cref="RequestRouter"/> has one added</param>
+        /// <returns>True if the <see cref="RequestRouter"/> has a <see cref="SenderRouting"/> for the request type;
+        /// otherwise, false</returns>
+        public bool RoutingFor<TRequest>(out SenderRouting senderMapping) => routingTable.TryGetValue(typeof(TRequest), out senderMapping);
     }
 }
