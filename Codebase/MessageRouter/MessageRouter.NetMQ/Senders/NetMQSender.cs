@@ -76,7 +76,7 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="address"></param>
         public void RemoveAddress(IAddress address)
         {
-            if (null == address || addresses.Contains(address))
+            if (null == address || !addresses.Contains(address))
                 return;
 
             addresses.Remove(address);

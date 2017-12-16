@@ -79,6 +79,12 @@ namespace MessageRouter.Subscribers
         }
 
 
+        /// <summary>
+        /// Retrieves or creates a <see cref="ISubscriber"/> for the topic type that is connected to a remote 
+        /// <see cref="IPublisher"/> chosen by registrations in the <see cref="ITopicRouter"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Topic type</typeparam>
+        /// <returns>Matching <see cref="ISubscriber"/> for the topic type</returns>
         public ISubscriber SubscriberFor<TTopic>()
         {
             if (!topicRouter.RoutingFor<TTopic>(out var routing))
@@ -98,6 +104,12 @@ namespace MessageRouter.Subscribers
         }
 
 
+        #region Verbs.Subscribe
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <returns>A representation of the subscription, the dispose method can be used to terminate the subscription</returns>
         public IDisposable Subscribe<TTopic>()
         {
             var subscriber = SubscriberFor<TTopic>();
@@ -106,9 +118,16 @@ namespace MessageRouter.Subscribers
             return subscriptions.Add<TTopic>(subscriber);
         }
 
+
+        /// <summary>
+        /// Terminates a subscription to the topic message stream
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
         public void Unsubscribe<TTopic>()
         {
-            subscriptions.Remove<TTopic>();
+            var subscriber = SubscriberFor<TTopic>();
+            subscriptions.Remove<TTopic>(subscriber);
         }
+        #endregion
     }
 }

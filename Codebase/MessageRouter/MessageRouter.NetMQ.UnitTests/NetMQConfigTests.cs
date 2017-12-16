@@ -39,7 +39,7 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void PublisherFactory_ReturnsNull()
+        public void PublisherFactory_ReturnsFactory()
         {
             // Arrange
             var config = new NetMQConfig();
@@ -48,12 +48,12 @@ namespace MessageRouter.NetMQ.UnitTests
             var publisherFactory = config.PublisherFactory;
 
             // Assert
-            Assert.That(publisherFactory, Is.Null);
+            Assert.That(publisherFactory, Is.Not.Null);
         }
 
 
         [Test]
-        public void SubscriberFactory_ReturnsNull()
+        public void SubscriberFactory_ReturnsRactory()
         {
             // Arrange
             var config = new NetMQConfig();
@@ -62,7 +62,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var subscriberFactory = config.SubscriberFactory;
 
             // Assert
-            Assert.That(subscriberFactory, Is.Null);
+            Assert.That(subscriberFactory, Is.Not.Null);
         }
     }
 }

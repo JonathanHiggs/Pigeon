@@ -93,30 +93,30 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void CreateNewPublisher_ThrowsNotSupportedException()
+        public void CreateNewPublisher_ReturnsPublisher()
         {
             // Arrange
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            TestDelegate createPublisher = () => factory.CreatePublisher(TcpAddress.Wildcard(5555));
+            var publisher = factory.CreatePublisher(TcpAddress.Wildcard(5555));
 
             // Assert
-            Assert.That(createPublisher, Throws.TypeOf<NotSupportedException>());
+            Assert.That(publisher, Is.Not.Null);
         }
 
 
         [Test]
-        public void CreateNewSubscriber_ThrowsNotSupportedException()
+        public void CreateNewSubscriber_ReturnsSubscriber()
         {
             // Arrange
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            TestDelegate createSubscriber = () => factory.CreateSubscriber(TcpAddress.Localhost(5555));
+            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));
 
             // Assert
-            Assert.That(createSubscriber, Throws.TypeOf<NotSupportedException>());
+            Assert.That(subscriber, Is.Not.Null);
         }
     }
 }

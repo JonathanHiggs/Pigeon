@@ -69,6 +69,8 @@
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Requests\RequestDispatcherTests.cs" />
     <Compile Include="Subscribers\SubscriberCacheTests.cs" />
+    <Compile Include="Subscribers\SubscriptionsCacheTests.cs" />
+    <Compile Include="Subscribers\SubscriptionTests.cs" />
     <Compile Include="Topics\TopicDispatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>

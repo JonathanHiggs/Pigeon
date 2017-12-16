@@ -7,6 +7,9 @@ using MessageRouter.Subscribers;
 
 namespace MessageRouter.Verbs
 {
+    /// <summary>
+    /// Common verb interface that defines now a node is able to publish topic messages to remotes
+    /// </summary>
     public interface IPublish
     {
         /// <summary>
