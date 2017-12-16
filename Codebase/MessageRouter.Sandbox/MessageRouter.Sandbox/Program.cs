@@ -1,4 +1,5 @@
 ﻿using System;
+using MessageRouter.Sandbox.Programs;
 
 namespace MessageRouter.Sandbox
 {
@@ -24,6 +25,14 @@ namespace MessageRouter.Sandbox
 
                     case "Client":
                         Client.Run();
+                        break;
+
+                    case "Publisher":
+                        Publisher.Run();
+                        break;
+
+                    case "Subscriber":
+                        Subscriber.Run();
                         break;
 
                     case "Clear":

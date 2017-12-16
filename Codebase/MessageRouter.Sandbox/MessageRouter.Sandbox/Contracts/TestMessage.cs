@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MessageRouter.Sandbox
+namespace MessageRouter.Sandbox.Contracts
 {
     [Serializable]
     public class TestMessage

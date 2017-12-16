@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MessageRouter.Sandbox
+namespace MessageRouter.Sandbox.Programs
 {
     public class SenderReceiver
     {

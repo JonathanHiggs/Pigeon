@@ -4,8 +4,9 @@ using System.Threading;
 using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Receivers;
+using MessageRouter.Sandbox.Contracts;
 
-namespace MessageRouter.Sandbox
+namespace MessageRouter.Sandbox.Programs
 {
     public class Server
     {

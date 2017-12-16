@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Senders;
+using MessageRouter.Sandbox.Contracts;
 
-namespace MessageRouter.Sandbox
+namespace MessageRouter.Sandbox.Programs
 {
     public class Client
     {
