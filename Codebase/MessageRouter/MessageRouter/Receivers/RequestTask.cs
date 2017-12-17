@@ -1,4 +1,4 @@
-﻿using MessageRouter.Messages;
+﻿using MessageRouter.Packages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +13,23 @@ namespace MessageRouter.Receivers
     public struct RequestTask
     {
         /// <summary>
-        /// Stores a readonly reference to an incoming <see cref="Message"/>
+        /// Stores a readonly reference to an incoming <see cref="Package"/>
         /// </summary>
-        public readonly Message Request;
+        public readonly Package Request;
 
 
         /// <summary>
-        /// Stores a readonly reference to an action that will send a response <see cref="Message"/>
+        /// Stores a readonly reference to an action that will send a response <see cref="Package"/>
         /// </summary>
-        public readonly Action<Message> ResponseHandler;
+        public readonly Action<Package> ResponseHandler;
         
 
         /// <summary>
-        /// Initializes a new instance of a RequestTask composed of the supplied request <see cref="Message"/> and handler
+        /// Initializes a new instance of a RequestTask composed of the supplied request <see cref="Package"/> and handler
         /// </summary>
         /// <param name="request"></param>
         /// <param name="responseHandler"></param>
-        public RequestTask(Message request, Action<Message> responseHandler)
+        public RequestTask(Package request, Action<Package> responseHandler)
         {
             Request = request ?? throw new ArgumentNullException(nameof(request));
             ResponseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));

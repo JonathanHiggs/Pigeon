@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Receivers;
 using MessageRouter.Routing;
@@ -17,7 +17,7 @@ namespace MessageRouter.Senders
     {
         private readonly IRequestRouter requestRouter;
         private readonly IMonitorCache monitorCache;
-        private readonly IMessageFactory messageFactory;
+        private readonly IPackageFactory packageFactory;
         private readonly Dictionary<SenderRouting, ISender> senders = new Dictionary<SenderRouting, ISender>();
         private readonly Dictionary<Type, ISenderFactory> factories = new Dictionary<Type, ISenderFactory>();
 
@@ -33,12 +33,12 @@ namespace MessageRouter.Senders
         /// </summary>
         /// <param name="requestRouter">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="ISender"/></param>
-        /// <param name="messageFactory">Creates and extracts <see cref="Message"/>s that are sent over the wire</param>
-        public SenderCache(IRequestRouter requestRouter, IMonitorCache monitorCache, IMessageFactory messageFactory)
+        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are sent over the wire</param>
+        public SenderCache(IRequestRouter requestRouter, IMonitorCache monitorCache, IPackageFactory packageFactory)
         {
             this.requestRouter = requestRouter ?? throw new ArgumentNullException(nameof(requestRouter));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
-            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
+            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
 
 
@@ -115,9 +115,9 @@ namespace MessageRouter.Senders
                 throw new ArgumentNullException(nameof(request));
 
             var sender = SenderFor<TRequest>();
-            var requestMessage = messageFactory.CreateMessage(request);
+            var requestMessage = packageFactory.Pack(request);
             var responseMessage = await sender.SendAndReceive(requestMessage, timeout);
-            var response = messageFactory.ExtractMessage<TResponse>(responseMessage);
+            var response = packageFactory.Unpack<TResponse>(responseMessage);
             return response;
         }
     }

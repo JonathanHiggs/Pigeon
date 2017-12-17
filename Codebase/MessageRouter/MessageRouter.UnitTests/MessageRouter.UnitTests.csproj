@@ -54,10 +54,10 @@
   <ItemGroup>
     <Compile Include="Addresses\TcpAddressTests.cs" />
     <Compile Include="Helpers\RegexAssert.cs" />
-    <Compile Include="Messages\DataMessageTests.cs" />
-    <Compile Include="Messages\ExceptionMessageTests.cs" />
-    <Compile Include="Messages\GuidMessageIdTests.cs" />
-    <Compile Include="Messages\MessageFactoryTests.cs" />
+    <Compile Include="Packages\DataPackageTests.cs" />
+    <Compile Include="Packages\ExceptionPackageTests.cs" />
+    <Compile Include="Packages\GuidPackageIdTests.cs" />
+    <Compile Include="Packages\PackageFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publishers\PublisherCacheTests.cs" />
     <Compile Include="Receivers\ReceiverCacheTests.cs" />

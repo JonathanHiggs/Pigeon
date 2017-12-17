@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Publishers;
 using MessageRouter.Transport;
 using MessageRouter.Verbs;
@@ -25,7 +25,7 @@ namespace MessageRouter.Subscribers
 
         /// <summary>
         /// Adds the <see cref="IAddress"/> to the set of endpoints the <see cref="ISubscriber"/> will listen to
-        /// for incoming <see cref="Message"/>s
+        /// for incoming <see cref="Package"/>s
         /// </summary>
         /// <param name="address"></param>
         void AddAddress(IAddress address);
@@ -33,7 +33,7 @@ namespace MessageRouter.Subscribers
 
         /// <summary>
         /// Removes the <see cref="IAddress"/> from the set of endpoints the <see cref="ISubscriber"/> will listen to
-        /// for incoming <see cref="Message"/>s
+        /// for incoming <see cref="Package"/>s
         /// </summary>
         /// <param name="address"></param>
         void RemoveAddress(IAddress address);
@@ -41,7 +41,7 @@ namespace MessageRouter.Subscribers
 
         /// <summary>
         /// Removes all <see cref="IAddress"/> from the set of endpoints the <see cref="ISubscriber"/> will listen to
-        /// for incoming <see cref="Message"/>s
+        /// for incoming <see cref="Package"/>s
         /// </summary>
         void RemoveAllAddresses();
 

@@ -1,5 +1,5 @@
 ﻿using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.NetMQ.Senders;
 using MessageRouter.Serialization;
 using Moq;
@@ -36,8 +36,8 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
                 .Returns(new byte[0]);
 
             mockSerializer
-                .Setup(m => m.Deserialize<Message>(It.IsAny<byte[]>()))
-                .Returns(new DataMessage<string>(new GuidMessageId(), "Something"));
+                .Setup(m => m.Deserialize<Package>(It.IsAny<byte[]>()))
+                .Returns(new DataPackage<string>(new GuidPackageId(), "Something"));
 
             mockAsyncSocket
                 .Setup(m => m.SendAndReceive(It.IsAny<NetMQMessage>(), It.IsAny<TimeSpan>()))
@@ -211,14 +211,14 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var sender = new NetMQSender(asyncSocket, serializer);
-            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var package = new DataPackage<string>(new GuidPackageId(), "something");
             var timeout = TimeSpan.FromMinutes(1);
 
             // Act
-            var response = await sender.SendAndReceive(message, timeout);
+            var response = await sender.SendAndReceive(package, timeout);
 
             // Assert
-            mockSerializer.Verify(m => m.Serialize<Message>(It.IsIn(message)), Times.Once);
+            mockSerializer.Verify(m => m.Serialize<Package>(It.IsIn(package)), Times.Once);
         }
 
 
@@ -227,11 +227,11 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var sender = new NetMQSender(asyncSocket, serializer);
-            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var package = new DataPackage<string>(new GuidPackageId(), "something");
             var timeout = TimeSpan.FromMinutes(1);
 
             // Act
-            var response = await sender.SendAndReceive(message, timeout);
+            var response = await sender.SendAndReceive(package, timeout);
 
             // Assert
             mockAsyncSocket
@@ -248,14 +248,14 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             // Arrange
             var sender = new NetMQSender(asyncSocket, serializer);
-            var message = new DataMessage<string>(new GuidMessageId(), "something");
+            var package = new DataPackage<string>(new GuidPackageId(), "something");
             var timeout = TimeSpan.FromMinutes(1);
 
             // Act
-            var response = await sender.SendAndReceive(message, timeout);
+            var response = await sender.SendAndReceive(package, timeout);
 
             // Assert
-            mockSerializer.Verify(m => m.Deserialize<Message>(It.IsAny<byte[]>()), Times.Once);
+            mockSerializer.Verify(m => m.Deserialize<Package>(It.IsAny<byte[]>()), Times.Once);
         }
         #endregion
     }

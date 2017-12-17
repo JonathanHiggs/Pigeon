@@ -1,5 +1,5 @@
 ﻿using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Routing;
 using MessageRouter.Senders;
@@ -35,8 +35,8 @@ namespace MessageRouter.UnitTests.Senders
         private readonly Mock<IAddress> mockAddress = new Mock<IAddress>();
         private IAddress address;
 
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
+        private IPackageFactory packageFactory;
 
         private SenderRouting senderRouting;
 
@@ -52,7 +52,7 @@ namespace MessageRouter.UnitTests.Senders
             senderMonitor = mockSenderMonitor.Object;
             sender = mockSender.Object;
             address = mockAddress.Object;
-            messageFactory = mockMessageFactory.Object;
+            packageFactory = mockPackageFactory.Object;
             senderRouting = SenderRouting.For<ISender>(address);
 
             mockFactory
@@ -86,23 +86,23 @@ namespace MessageRouter.UnitTests.Senders
             mockSenderMonitor.Reset();
             mockSender.Reset();
             mockAddress.Reset();
-            mockMessageFactory.Reset();
+            mockPackageFactory.Reset();
         }
 
 
-        public void SetupMirroredResponse<TRequest>(SenderCache senderCache, TRequest response) where TRequest : class
+        public void SetupMirroredResponse<TMessage>(SenderCache senderCache, TMessage response) where TMessage : class
         {
-            mockMessageFactory
-                .Setup(m => m.CreateMessage(It.IsAny<TRequest>()))
-                .Returns<TRequest>(t => new DataMessage<TRequest>(new GuidMessageId(), t));
+            mockPackageFactory
+                .Setup(m => m.Pack(It.IsAny<TMessage>()))
+                .Returns<TMessage>(message => new DataPackage<TMessage>(new GuidPackageId(), message));
 
-            mockMessageFactory
-                .Setup(m => m.ExtractMessage<TRequest>(It.IsAny<Message>()))
-                .Returns<DataMessage<TRequest>>(m => m.Data);
+            mockPackageFactory
+                .Setup(m => m.Unpack<TMessage>(It.IsAny<Package>()))
+                .Returns<DataPackage<TMessage>>(package => package.Data);
             
             mockSender
-                .Setup(m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()))
-                .ReturnsAsync(new DataMessage<TRequest>(new GuidMessageId(), response));
+                .Setup(m => m.SendAndReceive(It.IsAny<Package>(), It.IsAny<TimeSpan>()))
+                .ReturnsAsync(new DataPackage<TMessage>(new GuidPackageId(), response));
 
             var senderRouting = SenderRouting.For<ISender>(address);
             mockRequestRouter
@@ -122,7 +122,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderCache_WithNullRequestRouter_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SenderCache(null, monitorCache, messageFactory);
+            TestDelegate construct = () => new SenderCache(null, monitorCache, packageFactory);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -133,7 +133,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderCache_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SenderCache(requestRouter, null, messageFactory);
+            TestDelegate construct = () => new SenderCache(requestRouter, null, packageFactory);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -141,7 +141,7 @@ namespace MessageRouter.UnitTests.Senders
 
 
         [Test]
-        public void SenderCache_WithNullMessageFactory_ThrowsArgumentNullException()
+        public void SenderCache_WithNullPackageFactory_ThrowsArgumentNullException()
         {
             // Act
             TestDelegate construct = () => new SenderCache(requestRouter, monitorCache, null);
@@ -157,7 +157,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithNullFactory_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
 
             // Act
             TestDelegate addFactory = () => cache.AddFactory(null);
@@ -171,7 +171,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithFactory_AddsToFactory()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
 
             // Act
             cache.AddFactory(factory);
@@ -185,7 +185,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithFactory_AddsSenderMonitorToMonitorCache()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
 
             // Act
             cache.AddFactory(factory);
@@ -199,7 +199,7 @@ namespace MessageRouter.UnitTests.Senders
         public void AddFactory_WithFactoryAlreadyRegistered_DoesNothing()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             cache.AddFactory(factory);
 
             // Act
@@ -217,7 +217,7 @@ namespace MessageRouter.UnitTests.Senders
         public async Task Send_WithSenderReturnRequestObject_ReceivesSameObject()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(cache, request);
 
@@ -233,7 +233,7 @@ namespace MessageRouter.UnitTests.Senders
         public async Task Send_WithRequest_CreatesRequestMessage()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(cache, request);
 
@@ -242,9 +242,9 @@ namespace MessageRouter.UnitTests.Senders
             var response = await cache.Send<string, string>(request);
 
             // Assert
-            mockMessageFactory
+            mockPackageFactory
                 .Verify(
-                    m => m.CreateMessage<object>(It.IsAny<object>()),
+                    m => m.Pack<object>(It.IsAny<object>()),
                     Times.Once);
         }
 
@@ -253,7 +253,7 @@ namespace MessageRouter.UnitTests.Senders
         public async Task Send_WithRequest_SendsMessage()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(cache, request);
 
@@ -263,7 +263,7 @@ namespace MessageRouter.UnitTests.Senders
             // Assert
             mockSender
                 .Verify(
-                    m => m.SendAndReceive(It.IsAny<Message>(), It.IsAny<TimeSpan>()),
+                    m => m.SendAndReceive(It.IsAny<Package>(), It.IsAny<TimeSpan>()),
                     Times.Once);
         }
 
@@ -272,7 +272,7 @@ namespace MessageRouter.UnitTests.Senders
         public async Task Send_WithRequest_ExtractsResponse()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var request = "Hello";
             SetupMirroredResponse<string>(cache, request);
 
@@ -280,9 +280,9 @@ namespace MessageRouter.UnitTests.Senders
             var response = await cache.Send<string, string>(request);
 
             // Assert
-            mockMessageFactory
+            mockPackageFactory
                 .Verify(
-                    m => m.ExtractMessage<string>(It.IsAny<Message>()),
+                    m => m.Unpack<string>(It.IsAny<Package>()),
                     Times.Once);
         }
 
@@ -291,7 +291,7 @@ namespace MessageRouter.UnitTests.Senders
         public void Send_WithNullRequestObject_ThrowsArgumentException()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
 
             // Act
             AsyncTestDelegate send = async () => await cache.Send<object, object>(null);
@@ -307,7 +307,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithNoRouting_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
 
             // Act
             TestDelegate senderFor = () => cache.SenderFor<object>();
@@ -321,7 +321,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithNoFactory_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var senderRouting = SenderRouting.For<ISender>(address);
 
             mockRequestRouter
@@ -340,7 +340,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithRoutingAndFactory_ReturnsSender()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             var senderRouting = SenderRouting.For<ISender>(address);
 
             mockRequestRouter
@@ -365,7 +365,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WithNoPreresolvedSender_AddsMonitorToMonitorCache()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             cache.AddFactory(factory);
 
             // Act
@@ -380,7 +380,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WhenCalledTwice_ReturnsTheSameInstance()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             cache.AddFactory(factory);
 
             // Act
@@ -396,7 +396,7 @@ namespace MessageRouter.UnitTests.Senders
         public void SenderFor_WhenCalledTwice_CallsFactoryOnce()
         {
             // Arrange
-            var cache = new SenderCache(requestRouter, monitorCache, messageFactory);
+            var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
             cache.AddFactory(factory);
 
             // Act

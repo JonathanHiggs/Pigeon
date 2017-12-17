@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Serialization;
 using NetMQ;
 using NetMQ.Sockets;
@@ -64,10 +64,10 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
-        public void Publish(Message message)
+        public void Publish(Package package)
         {
-            var topicName = message.Body.GetType().FullName;
-            var data = serializer.Serialize(message);
+            var topicName = package.Body.GetType().FullName;
+            var data = serializer.Serialize(package);
 
             socket.SendMoreFrame(topicName).SendFrame(data);
         }

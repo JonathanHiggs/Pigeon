@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Serialization;
 using NetMQ;
 using NetMQ.Sockets;
@@ -15,7 +15,7 @@ namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
     /// NetMQ implementation of <see cref="ISender"/> that wraps a <see cref="DealerSocket"/> that connects to 
-    /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Message"/>es
+    /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Package"/>es
     /// </summary>
     public class NetMQSender : INetMQSender
     {
@@ -45,7 +45,7 @@ namespace MessageRouter.NetMQ.Senders
         /// <summary>
         /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
-        /// <param name="asyncSocket">Inner socket that transports <see cref="Message"/>s</param>
+        /// <param name="asyncSocket">Inner socket that transports <see cref="Package"/>s</param>
         /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
         public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> serializer)
         {
@@ -104,27 +104,27 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Asynchronously dispatches a <see cref="Message"/> along the transport to the connected remote 
+        /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
         /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
         /// remote or when the one hour default timeout elapses
         /// </summary>
-        /// <param name="message"><see cref="Message"/> to send to the remote</param>
+        /// <param name="message"><see cref="Package"/> to send to the remote</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<Message> SendAndReceive(Message request)
+        public async Task<Package> SendAndReceive(Package request)
         {
             return await SendAndReceive(request, TimeSpan.FromHours(1));
         }
 
 
         /// <summary>
-        /// Asynchronously dispatches a <see cref="Message"/> along the transport to the connected remote 
+        /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
         /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
         /// remote or when the timeout elapses
         /// </summary>
-        /// <param name="message"><see cref="Message"/> to send to the remote</param>
+        /// <param name="request"><see cref="Package"/> to send to the remote</param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<Message> SendAndReceive(Message request, TimeSpan timeout)
+        public async Task<Package> SendAndReceive(Package request, TimeSpan timeout)
         {
             var message = new NetMQMessage();
             message.AppendEmptyFrame();
@@ -132,7 +132,7 @@ namespace MessageRouter.NetMQ.Senders
 
             var responseMessage = await asyncSocket.SendAndReceive(message, timeout);
 
-            return serializer.Deserialize<Message>(responseMessage[1].ToByteArray());
+            return serializer.Deserialize<Package>(responseMessage[1].ToByteArray());
         }
     }
 }

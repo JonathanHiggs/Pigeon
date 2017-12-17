@@ -1,5 +1,5 @@
 ﻿using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.NetMQ.Receivers;
 using MessageRouter.NetMQ.Senders;
 using MessageRouter.Serialization;
@@ -25,7 +25,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), serializer);
             var receiver = new NetMQReceiver(new RouterSocket(), serializer);
             var poller = new NetMQPoller();
-            var messageFactory = new MessageFactory();
+            var packageFactory = new PackageFactory();
 
             sender.AddAddress(TcpAddress.Localhost(5555));
             sender.ConnectAll();
@@ -34,9 +34,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
                         
             receiver.RequestReceived += (s, e) =>
             {
-                var requestMessage = messageFactory.ExtractMessage(e.Request);
+                var requestMessage = packageFactory.Unpack(e.Request);
                 var responseMessage = $"{requestMessage}, World!";
-                var responsePackage = messageFactory.CreateMessage(responseMessage);
+                var responsePackage = packageFactory.Pack(responseMessage);
                 e.ResponseHandler(responsePackage);
             };
 
@@ -44,10 +44,10 @@ namespace MessageRouter.NetMQ.IntegrationTests
             poller.Add(receiver.PollableSocket);
             poller.RunAsync();
 
-            var request = new DataMessage<string>(new GuidMessageId(), "Hello");
+            var package = new DataPackage<string>(new GuidPackageId(), "Hello");
 
             // Act
-            var response = await sender.SendAndReceive(request);
+            var response = await sender.SendAndReceive(package);
 
             // Cleanup
             poller.StopAsync();

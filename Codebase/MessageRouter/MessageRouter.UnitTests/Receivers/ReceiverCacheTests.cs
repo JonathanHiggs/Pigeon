@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Receivers;
 using MessageRouter.Requests;
@@ -18,8 +18,8 @@ namespace MessageRouter.UnitTests.Receivers
         private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
         private IMonitorCache monitorCache;
 
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
+        private IPackageFactory packageFactory;
 
         private readonly Mock<IRequestDispatcher> mockDispatcher = new Mock<IRequestDispatcher>();
         private IRequestDispatcher dispatcher;
@@ -41,7 +41,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void Setup()
         {
             monitorCache = mockMonitorCache.Object;
-            messageFactory = mockMessageFactory.Object;
+            packageFactory = mockPackageFactory.Object;
             dispatcher = mockDispatcher.Object;
             receiverFactory = mockReceiverFactory.Object;
             receiver = mockReceiver.Object;
@@ -66,7 +66,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void TearDown()
         {
             mockMonitorCache.Reset();
-            mockMessageFactory.Reset();
+            mockPackageFactory.Reset();
             mockDispatcher.Reset();
             mockReceiverFactory.Reset();
             mockReceiver.Reset();
@@ -80,7 +80,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void ReceiverCache_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new ReceiverCache(null, messageFactory, dispatcher);
+            TestDelegate construct = () => new ReceiverCache(null, packageFactory, dispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -88,7 +88,7 @@ namespace MessageRouter.UnitTests.Receivers
 
 
         [Test]
-        public void ReceiverCache_WithNullMessageFactory_ThrowsArgumentNullException()
+        public void ReceiverCache_WithNullPackageFactory_ThrowsArgumentNullException()
         {
             // Act
             TestDelegate construct = () => new ReceiverCache(monitorCache, null, dispatcher);
@@ -102,7 +102,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void ReceiverCache_WithNullRequestDispatcher_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new ReceiverCache(monitorCache, messageFactory, null);
+            TestDelegate construct = () => new ReceiverCache(monitorCache, packageFactory, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -115,7 +115,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddFactory_WithNullFactory_ThrowsArgumentNullExecption()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
 
             // Act
             TestDelegate addFactory = () => cache.AddFactory(null);
@@ -129,7 +129,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddFactory_WithFactory_AddsToFactoryCollection()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
 
             // Act
             cache.AddFactory(receiverFactory);
@@ -144,7 +144,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddFactory_WithFactory_AddsMonitorToMonitorCache()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
 
             // Act
             cache.AddFactory(receiverFactory);
@@ -158,7 +158,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddFactory_WithFactoryAlreadyAdded_DoesNothing()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
             cache.AddFactory(receiverFactory);
 
             // Act
@@ -177,7 +177,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddReceiver_WithNullAddress_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
 
             // Act
             TestDelegate addReceiver = () => cache.AddReceiver<IReceiver>(null);
@@ -191,7 +191,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddReceiver_WithNoMatchingFactory_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
 
             // Act
             TestDelegate addReceiver = () => cache.AddReceiver<IReceiver>(address);
@@ -205,7 +205,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void AddReceiver_WithFactory_CallsFactoryCreateReceiver()
         {
             // Arrange
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
             cache.AddFactory(receiverFactory);
 
             // Act
@@ -221,7 +221,7 @@ namespace MessageRouter.UnitTests.Receivers
         {
             // Arrange
             var address = TcpAddress.Wildcard(5555);
-            var cache = new ReceiverCache(monitorCache, messageFactory, dispatcher);
+            var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
             cache.AddFactory(receiverFactory);
             cache.AddReceiver<IReceiver>(address);
 

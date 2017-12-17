@@ -1,5 +1,5 @@
 ﻿using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Receivers;
 using MessageRouter.Serialization;
 using NetMQ;
@@ -14,7 +14,7 @@ namespace MessageRouter.NetMQ.Receivers
 {
     /// <summary>
     /// Implementation of <see cref="IReceiver"/> that wraps a NetMQ <see cref="RouterSocket"/>. Encapsulates a connection
-    /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Message"/>es from
+    /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/>es from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
     public class NetMQReceiver : INetMQReceiver, IDisposable
@@ -64,7 +64,7 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Message"/>s on
+        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Package"/>s on
         /// </summary>
         /// <param name="address"></param>
         public void AddAddress(IAddress address)
@@ -86,7 +86,7 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Message"/>s on
+        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Package"/>s on
         /// </summary>
         public void RemoveAllAddresses()
         {
@@ -98,7 +98,7 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Message"/>s on
+        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Package"/>s on
         /// </summary>
         /// <param name="address"></param>
         public void RemoveAddress(IAddress address)
@@ -114,7 +114,7 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Starts the receiver listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
+        /// Starts the receiver listening for incoming <see cref="Package"/>s  on all added <see cref="IAddress"/>es
         /// </summary>
         public void BindAll()
         {
@@ -134,7 +134,7 @@ namespace MessageRouter.NetMQ.Receivers
 
 
         /// <summary>
-        /// Stops the receiver listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
+        /// Stops the receiver listening for incoming <see cref="Package"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         public void UnbindAll()
         {
@@ -156,7 +156,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>
-        /// <param name="requestTask">Combination of the request <see cref="Message"/> and a response Action</param>
+        /// <param name="requestTask">Combination of the request <see cref="Package"/> and a response Action</param>
         /// <returns>Boolean flag indicating whether a request task was retrieved</returns>
         public bool TryReceive(out RequestTask requestTask)
         {
@@ -175,7 +175,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <summary>
         /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
         /// </summary>
-        /// <returns>Combination of the request <see cref="Message"/> and a response Action</returns>
+        /// <returns>Combination of the request <see cref="Package"/> and a response Action</returns>
         public RequestTask Receive()
         {
             var requestMessage = socket.ReceiveMultipartMessage();
@@ -192,7 +192,7 @@ namespace MessageRouter.NetMQ.Receivers
         #region Message Builders
         private RequestTask Handle(NetMQMessage requestMessage)
         {
-            var request = ExtractRequest(requestMessage);
+            var request = ExtractPackage(requestMessage);
 
             var requestTask = new RequestTask(request, (response) =>
             {
@@ -228,20 +228,20 @@ namespace MessageRouter.NetMQ.Receivers
         }
 
 
-        private Message ExtractRequest(NetMQMessage message)
+        private Package ExtractPackage(NetMQMessage message)
         {
             if (message.FrameCount == 3 || message.FrameCount == 4)
                 // Synchronous messages have request in slot 2
-                return serializer.Deserialize<Message>(message[2].ToByteArray());
+                return serializer.Deserialize<Package>(message[2].ToByteArray());
             else if (message.FrameCount == 5 || message.FrameCount == 6)
                 // Asynchronous messages have request in slot 4
-                return serializer.Deserialize<Message>(message[4].ToByteArray());
+                return serializer.Deserialize<Package>(message[4].ToByteArray());
             else
                 throw new InvalidOperationException("Request message has unexpected format");
         }
 
 
-        private NetMQMessage AddResponse(NetMQMessage responseMessage, Message response)
+        private NetMQMessage AddResponse(NetMQMessage responseMessage, Package response)
         {
             var data = serializer.Serialize(response);
             responseMessage.Append(data);

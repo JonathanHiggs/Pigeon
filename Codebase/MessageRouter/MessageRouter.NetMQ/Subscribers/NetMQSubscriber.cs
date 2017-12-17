@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Serialization;
 using MessageRouter.Subscribers;
 using NetMQ;
@@ -102,22 +102,13 @@ namespace MessageRouter.NetMQ.Subscribers
             socket.Unsubscribe(topicName);
         }
 
-
-        public void TryReceive()
-        {
-            var topicMessage = socket.ReceiveMultipartMessage();
-            var data = topicMessage[1].ToByteArray();
-            var message = serializer.Deserialize<Message>(data);
-            TopicMessageReceived?.Invoke(this, message);
-        }
-
-
+        
         private void OnMessageReceived(object sender, NetMQSocketEventArgs e)
         {
             var topicMessage = socket.ReceiveMultipartMessage();
-            var data = topicMessage[1].ToByteArray();
-            var message = serializer.Deserialize<Message>(data);
-            TopicMessageReceived?.Invoke(this, message);
+            var packageData = topicMessage[1].ToByteArray();
+            var package = serializer.Deserialize<Package>(packageData);
+            TopicMessageReceived?.Invoke(this, package);
         }
 
 

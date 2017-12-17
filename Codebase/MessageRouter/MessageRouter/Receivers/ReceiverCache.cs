@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Requests;
 using MessageRouter.Senders;
@@ -16,7 +16,7 @@ namespace MessageRouter.Receivers
     public class ReceiverCache : IReceiverCache
     {
         private readonly IMonitorCache monitorCache;
-        private readonly IMessageFactory messageFactory;
+        private readonly IPackageFactory packageFactory;
         private readonly IRequestDispatcher dispatcher;
         private readonly Dictionary<IAddress, IReceiver> receivers = new Dictionary<IAddress, IReceiver>();
         private readonly Dictionary<Type, IReceiverFactory> factories = new Dictionary<Type, IReceiverFactory>();
@@ -32,26 +32,26 @@ namespace MessageRouter.Receivers
         /// Initializes a new instance of <see cref="ReceiverCache"/>
         /// </summary>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="IReceiver"/>s</param>
-        /// <param name="messageFactory">Creates and extracts <see cref="Message"/>s that are received from remote <see cref="ISender"/>s</param>
+        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are received from remote <see cref="ISender"/>s</param>
         /// <param name="dispatcher">Maps request messages to registered handlers for processing</param>
-        public ReceiverCache(IMonitorCache monitorCache, IMessageFactory messageFactory, IRequestDispatcher dispatcher)
+        public ReceiverCache(IMonitorCache monitorCache, IPackageFactory packageFactory, IRequestDispatcher dispatcher)
         {
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
-            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
+            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
             this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         }
 
 
         /// <summary>
-        /// Processes an incoming <see cref="RequestTask"/> extracting the wrapped request from the <see cref="Message"/>
+        /// Processes an incoming <see cref="RequestTask"/> extracting the wrapped request from the <see cref="Package"/>
         /// and forwarding to the <see cref="IRequestDispatcher"/> to calculate a response that is sent back over the wire
         /// </summary>
         /// <param name="requestTask">Combined incoming message with method of returning a response</param>
         public void HandleRequest(RequestTask requestTask)
         {
-            var requestObject = messageFactory.ExtractMessage(requestTask.Request);
+            var requestObject = packageFactory.Unpack(requestTask.Request);
             var responseObject = dispatcher.Handle(requestObject);
-            var responseMessage = messageFactory.CreateMessage(responseObject);
+            var responseMessage = packageFactory.Pack(responseObject);
             requestTask.ResponseHandler(responseMessage);
         }
 

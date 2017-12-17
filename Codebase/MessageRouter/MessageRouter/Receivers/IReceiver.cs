@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Addresses;
 using MessageRouter.Transport;
 
@@ -28,33 +28,33 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
-        /// Adds the <see cref="IAddress"/> the set of endpoints the <see cref="IReceiver"/> will listening to incoming <see cref="Message"/>s on
+        /// Adds the <see cref="IAddress"/> the set of endpoints the <see cref="IReceiver"/> will listening to incoming <see cref="Package"/>s on
         /// </summary>
         /// <param name="address"></param>
         void AddAddress(IAddress address);
 
 
         /// <summary>
-        /// Removes all <see cref="IAddress"/>es the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
+        /// Removes all <see cref="IAddress"/>es the <see cref="IReceiver"/> will listen for incoming <see cref="Package"/>s on
         /// </summary>
         void RemoveAllAddresses();
 
 
         /// <summary>
-        /// Removes an <see cref="IAddress"/> the <see cref="IReceiver"/> will listen for incoming <see cref="Message"/>s on
+        /// Removes an <see cref="IAddress"/> the <see cref="IReceiver"/> will listen for incoming <see cref="Package"/>s on
         /// </summary>
         /// <param name="address"></param>
         void RemoveAddress(IAddress address);
 
         
         /// <summary>
-        /// Starts the <see cref="IReceiver"/> listening for incoming <see cref="Message"/>s  on all added <see cref="IAddress"/>es
+        /// Starts the <see cref="IReceiver"/> listening for incoming <see cref="Package"/>s  on all added <see cref="IAddress"/>es
         /// </summary>
         void BindAll();
 
 
         /// <summary>
-        /// Stops the <see cref="IReceiver"/> listening for incoming <see cref="Message"/>s on all added <see cref="IAddress"/>es
+        /// Stops the <see cref="IReceiver"/> listening for incoming <see cref="Package"/>s on all added <see cref="IAddress"/>es
         /// </summary>
         void UnbindAll();
     }

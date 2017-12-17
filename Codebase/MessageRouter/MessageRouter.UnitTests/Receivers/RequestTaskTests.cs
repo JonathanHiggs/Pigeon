@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Receivers;
 
 namespace MessageRouter.UnitTests.Receivers
@@ -12,14 +12,14 @@ namespace MessageRouter.UnitTests.Receivers
         public void RequestTask_WithAllRequiredFields_InitializesObject()
         {
             // Arrange
-            var request = new DataMessage<object>(new GuidMessageId(), new object());
-            Action<Message> handler = _ => { };
+            var package = new DataPackage<object>(new GuidPackageId(), new object());
+            Action<Package> handler = _ => { };
 
             // Act
-            var requestTask = new RequestTask(request, handler);
+            var requestTask = new RequestTask(package, handler);
 
             // Assert
-            Assert.AreSame(request, requestTask.Request);
+            Assert.AreSame(package, requestTask.Request);
             Assert.AreSame(handler, requestTask.ResponseHandler);
         }
 
@@ -28,7 +28,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void RequestTask_WithNullRequest_ThrowsArgumentNullException()
         {
             // Arrange
-            Action<Message> handler = _ => { };
+            Action<Package> handler = _ => { };
 
             // Act
             TestDelegate test = () => new RequestTask(null, handler);
@@ -42,10 +42,10 @@ namespace MessageRouter.UnitTests.Receivers
         public void RequestTask_WithNullRequestHandler_ThrowsArgumentNullException()
         {
             // Arrange
-            var request = new DataMessage<object>(new GuidMessageId(), new object());
+            var package = new DataPackage<object>(new GuidPackageId(), new object());
 
             // Act
-            TestDelegate test = () => new RequestTask(request, null);
+            TestDelegate test = () => new RequestTask(package, null);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);

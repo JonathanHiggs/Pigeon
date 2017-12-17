@@ -1,7 +1,7 @@
 ﻿using System;
 
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Publishers;
 using MessageRouter.Receivers;
@@ -20,7 +20,7 @@ namespace MessageRouter.Fluent
 
         private readonly TopicRouter topicRouter;
         private readonly RequestRouter requestRouter;
-        private readonly MessageFactory messageFactory;
+        private readonly PackageFactory packageFactory;
         private readonly TopicDispatcher topicDispatcher;
         private readonly RequestDispatcher requestDispatcher;
         private readonly SubscriptionsCache subscriptionsCache;
@@ -38,15 +38,15 @@ namespace MessageRouter.Fluent
             topicRouter = new TopicRouter();
             monitorCache = new MonitorCache();
             requestRouter = new RequestRouter();
-            messageFactory = new MessageFactory();
+            packageFactory = new PackageFactory();
             topicDispatcher = new TopicDispatcher();
             requestDispatcher = new RequestDispatcher();
             subscriptionsCache = new SubscriptionsCache();
 
-            senderCache = new SenderCache(requestRouter, monitorCache, messageFactory);
-            receiverCache = new ReceiverCache(monitorCache, messageFactory, requestDispatcher);
-            publisherCache = new PublisherCache(monitorCache, messageFactory);
-            subscriberCache = new SubscriberCache(topicRouter, monitorCache, messageFactory, topicDispatcher, subscriptionsCache);
+            senderCache = new SenderCache(requestRouter, monitorCache, packageFactory);
+            receiverCache = new ReceiverCache(monitorCache, packageFactory, requestDispatcher);
+            publisherCache = new PublisherCache(monitorCache, packageFactory);
+            subscriberCache = new SubscriberCache(topicRouter, monitorCache, packageFactory, topicDispatcher, subscriptionsCache);
         }
 
 

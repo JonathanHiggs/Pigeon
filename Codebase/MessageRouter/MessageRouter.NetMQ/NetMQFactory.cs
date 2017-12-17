@@ -1,7 +1,7 @@
 ﻿using System;
 
 using MessageRouter.Addresses;
-using MessageRouter.Messages;
+using MessageRouter.Packages;
 using MessageRouter.NetMQ.Publishers;
 using MessageRouter.NetMQ.Receivers;
 using MessageRouter.NetMQ.Senders;
@@ -26,7 +26,7 @@ namespace MessageRouter.NetMQ
         /// Initializes a new instance of <see cref="NetMQFactory"/>
         /// </summary>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
-        /// <param name="serializer"><see cref="ISerializer{TData}"/> that converts <see cref="Message"/> to binary for sending over the wire</param>
+        /// <param name="serializer"><see cref="ISerializer{TData}"/> that converts <see cref="Package"/> to binary for sending over the wire</param>
         public NetMQFactory(INetMQMonitor monitor, ISerializer<byte[]> serializer)
             : base(monitor, monitor, monitor, monitor)
         {

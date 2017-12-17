@@ -71,7 +71,7 @@
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
     <Compile Include="Transport\ITransportConfig.cs" />
-    <Compile Include="Messages\ExceptionMessage.cs" />
+    <Compile Include="Packages\ExceptionPackage.cs" />
     <Compile Include="Monitors\IMonitor.cs" />
     <Compile Include="Receivers\IReceiverCache.cs" />
     <Compile Include="Receivers\ReceiverCache.cs" />
@@ -82,11 +82,11 @@
     <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
     <Compile Include="Verbs\ISend.cs" />
     <Compile Include="Requests\RequestHandlerNotFoundException.cs" />
-    <Compile Include="Messages\DataMessage.cs" />
-    <Compile Include="Messages\GuidMessageId.cs" />
+    <Compile Include="Packages\DataPackage.cs" />
+    <Compile Include="Packages\GuidPackageId.cs" />
     <Compile Include="Addresses\IAddress.cs" />
-    <Compile Include="Messages\IMessageFactory.cs" />
-    <Compile Include="Messages\IMessageId.cs" />
+    <Compile Include="Packages\IPackageFactory.cs" />
+    <Compile Include="Packages\IPackageId.cs" />
     <Compile Include="Receivers\IReceiver.cs" />
     <Compile Include="Receivers\IReceiverFactory.cs" />
     <Compile Include="Receivers\IReceiverMonitor.cs" />
@@ -95,8 +95,8 @@
     <Compile Include="Routing\SenderRouting.cs" />
     <Compile Include="Monitors\IMonitorCache.cs" />
     <Compile Include="Senders\ISender.cs" />
-    <Compile Include="Messages\Message.cs" />
-    <Compile Include="Messages\MessageFactory.cs" />
+    <Compile Include="Packages\Package.cs" />
+    <Compile Include="Packages\PackageFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Receivers\RequestTask.cs" />
     <Compile Include="Senders\ISenderCache.cs" />
