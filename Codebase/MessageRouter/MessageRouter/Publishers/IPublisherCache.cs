@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Common;
 using MessageRouter.Verbs;
 
 namespace MessageRouter.Publishers
@@ -10,7 +11,7 @@ namespace MessageRouter.Publishers
     /// <summary>
     /// Manages the lifecycle of <see cref="IPublisher"/>s
     /// </summary>
-    public interface IPublisherCache : IPublish
+    public interface IPublisherCache : IPublish, ICache
     {
         /// <summary>
         /// Gets a readonly collection of <see cref="IPublisherFactory"/>s for creating <see cref="IPublisher"/>s at config-time

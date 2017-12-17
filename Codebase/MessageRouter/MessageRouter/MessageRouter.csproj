@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ICache.cs" />
+    <Compile Include="Diagnostics\MissingFactoryException.cs" />
     <Compile Include="Routing\ITopicRouter.cs" />
     <Compile Include="Routing\SubscriberRouting.cs" />
     <Compile Include="Routing\TopicRouter.cs" />
@@ -66,7 +68,7 @@
     <Compile Include="Topics\TopicHandlerDelegate.cs" />
     <Compile Include="Transport\TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
-    <Compile Include="Transport\IEndPoint.cs" />
+    <Compile Include="Common\IEndPoint.cs" />
     <Compile Include="Transport\ITransportFactory.cs" />
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />
@@ -79,7 +81,7 @@
     <Compile Include="RouterInfo.cs" />
     <Compile Include="Routing\IRequestRouter.cs" />
     <Compile Include="Diagnostics\MessageRouterException.cs" />
-    <Compile Include="Routing\RoutingAlreadyRegisteredException.cs" />
+    <Compile Include="Diagnostics\RoutingAlreadyRegisteredException.cs" />
     <Compile Include="Verbs\ISend.cs" />
     <Compile Include="Requests\RequestHandlerNotFoundException.cs" />
     <Compile Include="Packages\DataPackage.cs" />

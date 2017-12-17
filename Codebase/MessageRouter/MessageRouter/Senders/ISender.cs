@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.Common;
 using MessageRouter.Packages;
 using MessageRouter.Receivers;
 using MessageRouter.Serialization;

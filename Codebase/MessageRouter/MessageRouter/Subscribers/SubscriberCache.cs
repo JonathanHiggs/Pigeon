@@ -9,6 +9,7 @@ using MessageRouter.Monitors;
 using MessageRouter.Publishers;
 using MessageRouter.Routing;
 using MessageRouter.Topics;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.Subscribers
 {
@@ -93,7 +94,7 @@ namespace MessageRouter.Subscribers
             if (!subscribers.TryGetValue(routing, out var subscriber))
             {
                 if (!factories.TryGetValue(routing.SubscriberType, out var factory))
-                    throw new KeyNotFoundException($"No SubscriberFactory found for {routing.SubscriberType.Name} needed to subscribe to {typeof(TTopic).Name}");
+                    throw new MissingFactoryException(routing.SubscriberType, typeof(SubscriberCache));
 
                 subscriber = factory.CreateSubscriber(routing.Address);
                 subscriber.TopicMessageReceived += (s, e) => Task.Run(() => HandleSubscriptionEvent(e));

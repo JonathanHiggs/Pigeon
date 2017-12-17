@@ -7,6 +7,7 @@ using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Requests;
 using MessageRouter.Senders;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.Receivers
 {
@@ -87,8 +88,10 @@ namespace MessageRouter.Receivers
 
             if (receivers.ContainsKey(address))
                 throw new InvalidOperationException($"Cache already contains a {typeof(TReceiver).Name} for {address.ToString()}");
-            
-            var factory = factories[typeof(TReceiver)];
+
+            if (!factories.TryGetValue(typeof(TReceiver), out var factory))
+                throw MissingFactoryException.For<TReceiver, ReceiverCache>();
+
             var receiver = factory.CreateReceiver(address);
             receiver.RequestReceived += (s, e) => Task.Run(() => HandleRequest(e));
             receivers.Add(address, receiver);

@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.Diagnostics;
 using MessageRouter.Routing;
 using MessageRouter.Senders;
 using NUnit.Framework;

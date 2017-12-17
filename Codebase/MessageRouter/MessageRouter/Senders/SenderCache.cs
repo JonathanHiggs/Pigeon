@@ -7,6 +7,7 @@ using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Receivers;
 using MessageRouter.Routing;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.Senders
 {
@@ -55,7 +56,7 @@ namespace MessageRouter.Senders
             if (!senders.TryGetValue(senderRouting, out var sender))
             {
                 if (!factories.TryGetValue(senderRouting.SenderType, out var factory))
-                    throw new KeyNotFoundException($"No SenderFactory found for {senderRouting.SenderType.Name} needed for request type {typeof(TRequest).Name}");
+                    throw new MissingFactoryException(senderRouting.SenderType, typeof(SenderCache));
 
                 sender = factory.CreateSender(senderRouting.Address);  // SenderRouting.Address is not-null
                 senders.Add(senderRouting, sender);

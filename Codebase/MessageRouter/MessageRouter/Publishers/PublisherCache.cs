@@ -8,6 +8,7 @@ using MessageRouter.Packages;
 using MessageRouter.Monitors;
 using MessageRouter.Subscribers;
 using MessageRouter.Verbs;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.Publishers
 {
@@ -70,7 +71,9 @@ namespace MessageRouter.Publishers
             if (publishers.ContainsKey(address))
                 throw new InvalidOperationException(nameof(address));
 
-            var factory = factories[typeof(TPublisher)];
+            if (!factories.TryGetValue(typeof(TPublisher), out var factory))
+                throw MissingFactoryException.For<TPublisher, PublisherCache>();
+            
             var publisher = factory.CreatePublisher(address);
             publishers.Add(address, publisher);
         }

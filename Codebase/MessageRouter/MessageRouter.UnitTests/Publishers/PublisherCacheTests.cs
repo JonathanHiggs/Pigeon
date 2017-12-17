@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.UnitTests.Publishers
 {
@@ -183,7 +184,7 @@ namespace MessageRouter.UnitTests.Publishers
 
 
         [Test]
-        public void AddPublisher_WithNoFactory_ThrowsInvalidOperationException()
+        public void AddPublisher_WithNoFactory_ThrowsMissingFactoryException()
         {
             // Arrange
             var cache = new PublisherCache(monitorCache, packageFactory);
@@ -192,7 +193,7 @@ namespace MessageRouter.UnitTests.Publishers
             TestDelegate addPublisher = () => cache.AddPublisher<IPublisher>(address);
 
             // Assert
-            Assert.That(addPublisher, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(addPublisher, Throws.TypeOf<MissingFactoryException>());
         }
 
 

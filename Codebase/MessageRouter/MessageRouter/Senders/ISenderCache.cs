@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Common;
 using MessageRouter.Verbs;
 
 namespace MessageRouter.Senders
@@ -10,7 +11,7 @@ namespace MessageRouter.Senders
     /// <summary>
     /// Manages the resolution and lifecycle of <see cref="ISender"/>s
     /// </summary>
-    public interface ISenderCache : ISend
+    public interface ISenderCache : ISend, ICache
     {
         /// <summary>
         /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime

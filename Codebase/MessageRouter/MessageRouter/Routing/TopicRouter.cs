@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using MessageRouter.Addresses;
+using MessageRouter.Diagnostics;
 using MessageRouter.Publishers;
 using MessageRouter.Subscribers;
 

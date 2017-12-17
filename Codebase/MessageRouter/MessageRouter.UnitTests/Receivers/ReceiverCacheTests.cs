@@ -9,6 +9,7 @@ using MessageRouter.Requests;
 using Moq;
 
 using NUnit.Framework;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.UnitTests.Receivers
 {
@@ -188,7 +189,7 @@ namespace MessageRouter.UnitTests.Receivers
 
 
         [Test]
-        public void AddReceiver_WithNoMatchingFactory_ThrowsKeyNotFoundException()
+        public void AddReceiver_WithNoMatchingFactory_ThrowsMissingFactoryException()
         {
             // Arrange
             var cache = new ReceiverCache(monitorCache, packageFactory, dispatcher);
@@ -197,7 +198,7 @@ namespace MessageRouter.UnitTests.Receivers
             TestDelegate addReceiver = () => cache.AddReceiver<IReceiver>(address);
 
             // Assert
-            Assert.That(addReceiver, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(addReceiver, Throws.TypeOf<MissingFactoryException>());
         }
 
 

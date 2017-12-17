@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.UnitTests.Senders
 {
@@ -304,7 +305,7 @@ namespace MessageRouter.UnitTests.Senders
 
         #region SenderFor
         [Test]
-        public void SenderFor_WithNoRouting_ThrowsKeyNotFoundException()
+        public void SenderFor_WithNoRouting_ThrowsMissingFactoryException()
         {
             // Arrange
             var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
@@ -313,12 +314,12 @@ namespace MessageRouter.UnitTests.Senders
             TestDelegate senderFor = () => cache.SenderFor<object>();
 
             // Assert
-            Assert.That(senderFor, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(senderFor, Throws.TypeOf<MissingFactoryException>());
         }
 
 
         [Test]
-        public void SenderFor_WithNoFactory_ThrowsKeyNotFoundException()
+        public void SenderFor_WithNoFactory_ThrowsMissingFactoryException()
         {
             // Arrange
             var cache = new SenderCache(requestRouter, monitorCache, packageFactory);
@@ -332,7 +333,7 @@ namespace MessageRouter.UnitTests.Senders
             TestDelegate senderFor = () => cache.SenderFor<object>();
 
             // Assert
-            Assert.That(senderFor, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(senderFor, Throws.TypeOf<MissingFactoryException>());
         }
 
 

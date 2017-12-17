@@ -10,6 +10,7 @@ using MessageRouter.Topics;
 using Moq;
 
 using NUnit.Framework;
+using MessageRouter.Diagnostics;
 
 namespace MessageRouter.UnitTests.Subscribers
 {
@@ -227,7 +228,7 @@ namespace MessageRouter.UnitTests.Subscribers
 
 
         [Test]
-        public void SubscriberFor_WithNoFactory_ThrowsKeyNotFoundException()
+        public void SubscriberFor_WithNoFactory_ThrowsMissingFactoryException()
         {
             // Arrange
             var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
@@ -236,7 +237,7 @@ namespace MessageRouter.UnitTests.Subscribers
             TestDelegate subscriberFor = () => cache.SubscriberFor<Topic>();
 
             // Assert
-            Assert.That(subscriberFor, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(subscriberFor, Throws.TypeOf<MissingFactoryException>());
         }
 
 
@@ -304,7 +305,7 @@ namespace MessageRouter.UnitTests.Subscribers
 
 
         [Test]
-        public void Subscribe_WithNoFactory_ThrowsKeyNotFoundExcpetion()
+        public void Subscribe_WithNoFactory_ThrowsMissingFactoryExcpetion()
         {
             // Arrange
             var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
@@ -313,7 +314,7 @@ namespace MessageRouter.UnitTests.Subscribers
             TestDelegate subscriberFor = () => cache.Subscribe<Topic>();
 
             // Assert
-            Assert.That(subscriberFor, Throws.TypeOf<KeyNotFoundException>());
+            Assert.That(subscriberFor, Throws.TypeOf<MissingFactoryException>());
         }
 
 
