@@ -40,7 +40,7 @@ namespace MessageRouter.NetMQ
         /// <summary>
         /// Creates a new instance of a <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address">Address of local bound endpoint</param>
+        /// <param name="address">Address of local bound <see cref="MessageRouter.Common.IConnection"/></param>
         /// <returns>Receiver bound to the address</returns>
         protected override INetMQReceiver CreateNewReceiver(IAddress address)
         {
@@ -88,7 +88,7 @@ namespace MessageRouter.NetMQ
         /// <summary>
         /// Creates a new instance of a <see cref="INetMQSubscriber"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address"><see cref="IAddress"/> of the remote publishing endpoint</param>
+        /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="MessageRouter.Common.IConnection"/></param>
         /// <returns><see cref="INetMQSubscriber"/> connected to the <see cref="IAddress"/></returns>
         protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
         {

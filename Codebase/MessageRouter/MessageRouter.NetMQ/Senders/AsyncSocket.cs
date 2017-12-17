@@ -19,9 +19,9 @@ namespace MessageRouter.NetMQ.Senders
         private readonly Dictionary<int, NetMQTask> requests = new Dictionary<int, NetMQTask>();
         private int nextRequestId = 0;
         private object requestIdLockObj = new object();
+        
 
-
-        public ISocketPollable PollableSocket => socket;
+        public NetMQSocket Socket => socket;
 
 
         /// <summary>
@@ -75,17 +75,17 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Connects the socket to a remote at the <see cref="IAddress"/> endpoint
+        /// Connects the socket to the <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of the remote to connect to</param>
-        public void Connect(IAddress address) => socket.Connect(address.ToString());
+        public void Connect(string address) => socket.Connect(address);
 
 
         /// <summary>
-        /// Disconects the socket from the remote at the <see cref="IAddress"/> endpoint
+        /// Disconects the socket from the <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of the connected remote</param>
-        public void Disconnect(IAddress address) => socket.Disconnect(address.ToString());
+        public void Disconnect(string address) => socket.Disconnect(address);
 
 
         private ElapsedEventHandler TimeoutHandler(int requestId)

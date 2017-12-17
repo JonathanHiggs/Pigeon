@@ -184,7 +184,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
             var subscriber = new NetMQSubscriber(socket, serializer);
 
             // Act
-            TestDelegate connectAll = () => subscriber.ConnectAll();
+            TestDelegate connectAll = () => subscriber.InitializeConnection();
 
             // Assert
             Assert.That(connectAll, Throws.Nothing);
@@ -197,10 +197,10 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
             // Arrange
             var socket = new SubscriberSocket();
             var subscriber = new NetMQSubscriber(socket, serializer);
-            subscriber.ConnectAll();
+            subscriber.InitializeConnection();
 
             // Act
-            TestDelegate connectAll = () => subscriber.ConnectAll();
+            TestDelegate connectAll = () => subscriber.InitializeConnection();
 
             // Assert
             Assert.That(connectAll, Throws.Nothing);

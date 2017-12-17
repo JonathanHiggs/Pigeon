@@ -29,7 +29,7 @@ namespace MessageRouter.Subscribers
         /// Creates a new instance of a <see cref="ISubscriber"/> connected to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
-        /// <param name="address"><see cref="IAddress"/> of the remote publishing endpoint</param>
+        /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="IConnection"/></param>
         /// <returns><see cref="ISubscriber"/> connected to the <see cref="IAddress"/></returns>
         ISubscriber CreateSubscriber(IAddress address);
     }

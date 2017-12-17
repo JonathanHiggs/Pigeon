@@ -10,6 +10,7 @@ using MessageRouter.Packages;
 using MessageRouter.Serialization;
 using NetMQ;
 using NetMQ.Sockets;
+using MessageRouter.NetMQ.Common;
 
 namespace MessageRouter.NetMQ.Senders
 {
@@ -17,85 +18,22 @@ namespace MessageRouter.NetMQ.Senders
     /// NetMQ implementation of <see cref="ISender"/> that wraps a <see cref="DealerSocket"/> that connects to 
     /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Package"/>es
     /// </summary>
-    public class NetMQSender : INetMQSender
+    public class NetMQSender : NetMQConnection, INetMQSender
     {
-        private readonly List<IAddress> addresses = new List<IAddress>();
-        private readonly ISerializer<byte[]> serializer;
-        private readonly IAsyncSocket asyncSocket;
-
-
-        /// <summary>
-        /// Gets an eumerable of the <see cref="IAddress"/> for remotes that the sender is connected to
-        /// </summary>
-        public IEnumerable<IAddress> Addresses => addresses;
-
-
-        /// <summary>
-        /// Gets the inner pollable socket
-        /// </summary>
-        public ISocketPollable PollableSocket => asyncSocket.PollableSocket;
-
+        private readonly IAsyncSocket socket;
+        
 
         /// <summary>
         /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
-        /// <param name="asyncSocket">Inner <see cref="IAsyncSocket"/> that sends data to remotes</param>
+        /// <param name="socket">Inner <see cref="IAsyncSocket"/> that sends data to remotes</param>
         /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
-        public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> serializer)
+        public NetMQSender(IAsyncSocket socket, ISerializer<byte[]> serializer)
+            : base(socket, serializer)
         {
-            this.asyncSocket = asyncSocket ?? throw new ArgumentNullException(nameof(asyncSocket));
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
         }
-
-
-        /// <summary>
-        /// Adds an address to the collection of endpoints the <see cref="NetMQSender"/> connects to
-        /// </summary>
-        /// <param name="address">Address of the remote</param>
-        public void AddAddress(IAddress address)
-        {
-            if (null == address)
-                throw new ArgumentNullException(nameof(address));
-
-            if (addresses.Contains(address))
-                return;
-
-            addresses.Add(address);
-        }
-
-
-        /// <summary>
-        /// Removes an address from the collection of endpoints the <see cref="NetMQSender"/> connects to
-        /// </summary>
-        /// <param name="address"></param>
-        public void RemoveAddress(IAddress address)
-        {
-            if (null == address || !addresses.Contains(address))
-                return;
-
-            addresses.Remove(address);
-        }
-
-
-        /// <summary>
-        /// Initializes the connection to all added addresses
-        /// </summary>
-        public void ConnectAll()
-        {
-            foreach (var address in addresses)
-                asyncSocket.Connect(address);
-        }
-
-
-        /// <summary>
-        /// Terminates the connection to all added addresses
-        /// </summary>
-        public void DisconnectAll()
-        {
-            foreach (var address in addresses)
-                asyncSocket.Disconnect(address);
-        }
-
+        
 
         /// <summary>
         /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
@@ -124,9 +62,21 @@ namespace MessageRouter.NetMQ.Senders
             message.AppendEmptyFrame();
             message.Append(serializer.Serialize(request));
 
-            var responseMessage = await asyncSocket.SendAndReceive(message, timeout);
+            var responseMessage = await socket.SendAndReceive(message, timeout);
 
             return serializer.Deserialize<Package>(responseMessage[1].ToByteArray());
+        }
+
+
+        public override void SocketAdd(IAddress address)
+        {
+            socket.Connect(address.ToString());
+        }
+
+
+        public override void SocketRemove(IAddress address)
+        {
+            socket.Disconnect(address.ToString());
         }
     }
 }

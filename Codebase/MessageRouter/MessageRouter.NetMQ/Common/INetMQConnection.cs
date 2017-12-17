@@ -4,24 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MessageRouter.Addresses;
+using MessageRouter.Common;
 using NetMQ;
 
-namespace MessageRouter.NetMQ
+namespace MessageRouter.NetMQ.Common
 {
     /// <summary>
-    /// Common interface for all NetMQ implementations of <see cref="Common.IEndPoint"/>
+    /// Common interface for all NetMQ implementations of <see cref="MessageRouter.Common.IConnection"/>
     /// </summary>
-    public interface INetMQEndPoint
+    public interface INetMQConnection : IConnection
     {
         /// <summary>
         /// The NetMQ socket that a <see cref="NetMQPoller"/> will actively monitor for incoming requests
         /// </summary>
         ISocketPollable PollableSocket { get; }
-
-
-        /// <summary>
-        /// Gets an eumerable of the <see cref="IAddress"/> for remotes that the sender is connected to
-        /// </summary>
-        IEnumerable<IAddress> Addresses { get; }
     }
 }

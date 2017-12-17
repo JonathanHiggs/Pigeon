@@ -7,28 +7,22 @@ using System;
 namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
-    /// Socket interface for connecting, sending and receiving <see cref="NetMQMessage"/>s from a remote endpoint
+    /// Socket interface for connecting and asynchronously sending and receiving <see cref="NetMQMessage"/>s
     /// </summary>
-    public interface IAsyncSocket
+    public interface IAsyncSocket : ISocketPollable
     {
         /// <summary>
-        /// The NetMQ socket that a <see cref="NetMQPoller"/> will actively monitor for incoming requests
-        /// </summary>
-        ISocketPollable PollableSocket { get; }
-
-
-        /// <summary>
-        /// Connects the socket to a remote at the <see cref="IAddress"/> endpoint
+        /// Connects the socket to the <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of the remote to connect to</param>
-        void Connect(IAddress address);
+        void Connect(string address);
 
 
         /// <summary>
-        /// Disconects the socket from the remote at the <see cref="IAddress"/> endpoint
+        /// Disconects the socket from the <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of the connected remote</param>
-        void Disconnect(IAddress address);
+        void Disconnect(string address);
 
 
         /// <summary>

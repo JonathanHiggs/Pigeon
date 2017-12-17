@@ -68,7 +68,7 @@
     <Compile Include="Topics\TopicHandlerDelegate.cs" />
     <Compile Include="Transport\TransportFactory.cs" />
     <Compile Include="Fluent\RouterBuilder.cs" />
-    <Compile Include="Common\IEndPoint.cs" />
+    <Compile Include="Common\IConnection.cs" />
     <Compile Include="Transport\ITransportFactory.cs" />
     <Compile Include="IRouter.cs" />
     <Compile Include="IRouterInfo.cs" />

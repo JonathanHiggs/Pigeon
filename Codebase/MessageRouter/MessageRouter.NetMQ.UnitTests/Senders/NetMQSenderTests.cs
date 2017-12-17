@@ -149,10 +149,10 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             var sender = new NetMQSender(asyncSocket, serializer);
 
             // Act
-            sender.ConnectAll();
+            sender.InitializeConnection();
 
             // Assert
-            mockAsyncSocket.Verify(m => m.Connect(It.IsAny<IAddress>()), Times.Never);
+            mockAsyncSocket.Verify(m => m.Connect(It.IsAny<string>()), Times.Never);
         }
 
 
@@ -164,11 +164,11 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             sender.AddAddress(address);
 
             // Act
-            sender.ConnectAll();
+            sender.InitializeConnection();
 
             // Assert
-            mockAsyncSocket.Verify(m => m.Connect(It.IsIn(address)), Times.Once);
-            mockAsyncSocket.Verify(m => m.Connect(It.IsNotIn(address)), Times.Never);
+            mockAsyncSocket.Verify(m => m.Connect(It.IsIn(address.ToString())), Times.Once);
+            mockAsyncSocket.Verify(m => m.Connect(It.IsNotIn(address.ToString())), Times.Never);
         }
         #endregion
 
@@ -181,26 +181,10 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             var sender = new NetMQSender(asyncSocket, serializer);
 
             // Act
-            sender.DisconnectAll();
+            sender.TerminateConnection();
 
             // Assert
-            mockAsyncSocket.Verify(m => m.Disconnect(It.IsAny<IAddress>()), Times.Never);
-        }
-
-
-        [Test]
-        public void DisconnectAll_WithAddedAddress_CallsSocketDisconnect()
-        {
-            // Arrange
-            var sender = new NetMQSender(asyncSocket, serializer);
-            sender.AddAddress(address);
-
-            // Act
-            sender.DisconnectAll();
-
-            // Assert
-            mockAsyncSocket.Verify(m => m.Disconnect(It.IsIn(address)), Times.Once);
-            mockAsyncSocket.Verify(m => m.Disconnect(It.IsNotIn(address)), Times.Never);
+            mockAsyncSocket.Verify(m => m.Disconnect(It.IsAny<string>()), Times.Never);
         }
         #endregion
 

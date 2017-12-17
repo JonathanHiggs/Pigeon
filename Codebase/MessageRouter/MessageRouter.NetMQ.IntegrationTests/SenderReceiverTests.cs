@@ -28,9 +28,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var packageFactory = new PackageFactory();
 
             sender.AddAddress(TcpAddress.Localhost(5555));
-            sender.ConnectAll();
+            sender.InitializeConnection();
             receiver.AddAddress(TcpAddress.Wildcard(5555));
-            receiver.BindAll();
+            receiver.InitializeConnection();
                         
             receiver.RequestReceived += (s, e) =>
             {
@@ -51,8 +51,8 @@ namespace MessageRouter.NetMQ.IntegrationTests
 
             // Cleanup
             poller.StopAsync();
-            sender.DisconnectAll();
-            receiver.UnbindAll();
+            sender.TerminateConnection();
+            receiver.TerminateConnection();
 
             // Assert
             Assert.That(response.Body, Is.EqualTo("Hello, World!"));

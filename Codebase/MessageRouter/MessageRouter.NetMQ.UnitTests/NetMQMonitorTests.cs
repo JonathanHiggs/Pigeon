@@ -127,7 +127,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSender(sender);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Never);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
 
 
@@ -142,7 +142,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSender(sender);
 
             // Assert
-            mockSender.Verify(m => m.ConnectAll(), Times.Once);
+            mockSender.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -158,7 +158,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSender(sender);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Never);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
         #endregion
 
@@ -202,7 +202,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddReceiver(receiver);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Never);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
 
 
@@ -217,7 +217,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddReceiver(receiver);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Once);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -233,7 +233,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddReceiver(receiver);
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Never);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
         #endregion
 
@@ -277,7 +277,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddPublisher(publisher);
 
             // Assert
-            mockPublisher.Verify(m => m.BindAll(), Times.Never);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Never);
         }
 
 
@@ -292,7 +292,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddPublisher(publisher);
 
             // Assert
-            mockPublisher.Verify(m => m.BindAll(), Times.Once);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -308,7 +308,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddPublisher(publisher);
 
             // Assert
-            mockPublisher.Verify(m => m.BindAll(), Times.Never);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Never);
         }
         #endregion
 
@@ -352,7 +352,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSubscriber(subscriber);
 
             // Assert
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Never);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Never);
         }
 
 
@@ -367,7 +367,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSubscriber(subscriber);
 
             // Assert
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Once);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -383,7 +383,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.AddSubscriber(subscriber);
 
             // Assert
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Never);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Never);
         }
         #endregion
 
@@ -419,10 +419,10 @@ namespace MessageRouter.NetMQ.UnitTests
 
             // Assert
             mockPoller.Verify(m => m.RunAsync(), Times.Once);
-            mockSender.Verify(m => m.ConnectAll(), Times.Once);
-            mockReceiver.Verify(m => m.BindAll(), Times.Once);
-            mockPublisher.Verify(m => m.BindAll(), Times.Once);
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Once);
+            mockSender.Verify(m => m.InitializeConnection(), Times.Once);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Once);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Once);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -437,7 +437,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StartMonitoring();
 
             // Assert
-            mockSender.Verify(m => m.ConnectAll(), Times.Once);
+            mockSender.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -452,7 +452,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StartMonitoring();
 
             // Assert
-            mockReceiver.Verify(m => m.BindAll(), Times.Once);
+            mockReceiver.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -467,7 +467,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StartMonitoring();
 
             // Assert
-            mockPublisher.Verify(m => m.BindAll(), Times.Once);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Once);
         }
 
 
@@ -482,7 +482,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StartMonitoring();
 
             // Assert
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Once);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Once);
         }
         #endregion
 
@@ -503,10 +503,10 @@ namespace MessageRouter.NetMQ.UnitTests
 
             // Assert
             mockPoller.Verify(m => m.StopAsync(), Times.Never);
-            mockSender.Verify(m => m.DisconnectAll(), Times.Never);
-            mockReceiver.Verify(m => m.UnbindAll(), Times.Never);
-            mockPublisher.Verify(m => m.BindAll(), Times.Never);
-            mockSubscriber.Verify(m => m.ConnectAll(), Times.Never);
+            mockSender.Verify(m => m.TerminateConnection(), Times.Never);
+            mockReceiver.Verify(m => m.TerminateConnection(), Times.Never);
+            mockPublisher.Verify(m => m.InitializeConnection(), Times.Never);
+            mockSubscriber.Verify(m => m.InitializeConnection(), Times.Never);
         }
 
 
@@ -537,7 +537,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StopMonitoring();
 
             // Assert
-            mockSender.Verify(m => m.DisconnectAll(), Times.Once);
+            mockSender.Verify(m => m.TerminateConnection(), Times.Once);
         }
 
 
@@ -553,7 +553,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StopMonitoring();
 
             // Assert
-            mockReceiver.Verify(m => m.UnbindAll(), Times.Once);
+            mockReceiver.Verify(m => m.TerminateConnection(), Times.Once);
         }
 
 
@@ -569,7 +569,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StopMonitoring();
 
             // Assert
-            mockPublisher.Verify(m => m.UnbindAll(), Times.Once);
+            mockPublisher.Verify(m => m.TerminateConnection(), Times.Once);
         }
 
 
@@ -585,7 +585,7 @@ namespace MessageRouter.NetMQ.UnitTests
             monitor.StopMonitoring();
 
             // Assert
-            mockSubscriber.Verify(m => m.DisconnectAll(), Times.Once);
+            mockSubscriber.Verify(m => m.TerminateConnection(), Times.Once);
         }
         #endregion
     }

@@ -17,7 +17,7 @@ namespace MessageRouter.NetMQ
 {
     /// <summary>
     /// Internally connects up all dependencies for NetMQ transport and is used to supply <see cref="Router"/> with all
-    /// factories and monitors to create and run NetMQ endpoints 
+    /// factories and monitors to create and run <see cref="Common.INetMQConnection"/>s
     /// </summary>
     public class NetMQConfig : ITransportConfig
     {

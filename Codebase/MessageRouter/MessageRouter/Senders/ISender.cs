@@ -15,34 +15,8 @@ namespace MessageRouter.Senders
     /// <summary>
     /// Interface encapsulates a connection to a remote that is able to be sent and receive <see cref="Package"/>s
     /// </summary>
-    public interface ISender : IEndPoint
+    public interface ISender : IConnection
     {
-        /// <summary>
-        /// Adds an <see cref="IAddress"/> to the collection of endpoints the <see cref="ISender"/> connects to
-        /// </summary>
-        /// <param name="address">Address of the remote</param>
-        void AddAddress(IAddress address);
-
-        
-        /// <summary>
-        /// Removes an <see cref="IAddress"/> from the collection of endpoints the <see cref="ISender"/> connects to
-        /// </summary>
-        /// <param name="address"></param>
-        void RemoveAddress(IAddress address);
-
-
-        /// <summary>
-        /// Initializes the connections to all added addresses
-        /// </summary>
-        void ConnectAll();
-
-
-        /// <summary>
-        /// Terminates the connections to all added addresses
-        /// </summary>
-        void DisconnectAll();
-
-
         /// <summary>
         /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
         /// <see cref="IReceiver"/> and returns a task that will complete when a response is returned from the

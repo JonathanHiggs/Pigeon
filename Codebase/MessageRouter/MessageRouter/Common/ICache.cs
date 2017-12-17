@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace MessageRouter.Common
 {
     /// <summary>
-    /// Common interface for <see cref="IEndPoint"/> caches
+    /// Common interface for <see cref="IConnection"/> caches
     /// </summary>
-    /// <typeparam name="TEndPoint"></typeparam>
-    public interface ICache<TEndPoint> where TEndPoint : IEndPoint
+    /// <typeparam name="TConnection"></typeparam>
+    public interface ICache<TConnection> where TConnection : IConnection
     { }
 }

@@ -12,7 +12,7 @@ namespace MessageRouter.Transport
 {
     /// <summary>
     /// Used to configure a <see cref="Router"/> with the necessary factories to resolve transport end points when
-    /// required. If an endpoint is not supported by the transport the factory getter will return null
+    /// required. If an <see cref="IConnection"/> is not supported by the transport the factory getter will return null
     /// </summary>
     public interface ITransportConfig
     {

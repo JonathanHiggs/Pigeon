@@ -130,7 +130,7 @@ namespace MessageRouter.Transport
         /// <summary>
         /// Creates a new instance of a <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address">Address of local bound endpoint</param>
+        /// <param name="address">Address of local bound <see cref="Common.IConnection"/></param>
         /// <returns>Receiver bound to the address</returns>
         public IReceiver CreateReceiver(IAddress address)
         {
@@ -141,7 +141,7 @@ namespace MessageRouter.Transport
         /// <summary>
         /// Creates a new instance of a <see cref="TReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
-        /// <param name="address">Address of local bound endpoint</param>
+        /// <param name="address">Address of local bound <see cref="Common.IConnection"/></param>
         /// <returns>Receiver bound to the address</returns>
         protected abstract TReceiver CreateNewReceiver(IAddress address);
 
@@ -189,7 +189,7 @@ namespace MessageRouter.Transport
         /// Creates a new instance of a <see cref="ISubscriber"/> connected to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
-        /// <param name="address"><see cref="IAddress"/> of the remote publishing endpoint</param>
+        /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="Common.IConnection"/></param>
         /// <returns><see cref="ISubscriber"/> connected to the <see cref="IAddress"/></returns>
         public ISubscriber CreateSubscriber(IAddress address)
         {
@@ -201,7 +201,7 @@ namespace MessageRouter.Transport
         /// Creates a new instance of a <see cref="TSubscriber"/> connected to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
-        /// <param name="address"><see cref="IAddress"/> of the remote publishing endpoint</param>
+        /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="Common.IConnection"/></param>
         /// <returns><see cref="TSubscriber"/> connected to the <see cref="IAddress"/></returns>
         protected abstract TSubscriber CreateNewSubscriber(IAddress address);
 

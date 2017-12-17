@@ -30,7 +30,7 @@ namespace MessageRouter.Receivers
         /// Creates a new instance of a <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
-        /// <param name="address"><see cref="IAddress"/> of local bound endpoint</param>
+        /// <param name="address"><see cref="IAddress"/> of local bound <see cref="IConnection"/></param>
         /// <returns><see cref="IReceiver"/> bound to the <see cref="IAddress"/></returns>
         IReceiver CreateReceiver(IAddress address);
     }

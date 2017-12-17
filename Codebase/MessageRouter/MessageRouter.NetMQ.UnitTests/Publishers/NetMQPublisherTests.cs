@@ -184,7 +184,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
             var publisher = new NetMQPublisher(socket, serializer);
 
             // Act
-            TestDelegate bindAll = () => publisher.BindAll();
+            TestDelegate bindAll = () => publisher.InitializeConnection();
 
             // Assert
             Assert.That(bindAll, Throws.Nothing);
@@ -197,10 +197,10 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
             // Arrange
             var socket = new PublisherSocket();
             var publisher = new NetMQPublisher(socket, serializer);
-            publisher.BindAll();
+            publisher.InitializeConnection();
 
             // Act
-            TestDelegate bindAll = () => publisher.BindAll();
+            TestDelegate bindAll = () => publisher.InitializeConnection();
 
             // Assert
             Assert.That(bindAll, Throws.Nothing);

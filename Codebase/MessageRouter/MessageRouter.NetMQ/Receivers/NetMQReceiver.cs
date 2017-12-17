@@ -1,4 +1,5 @@
 ﻿using MessageRouter.Addresses;
+using MessageRouter.NetMQ.Common;
 using MessageRouter.Packages;
 using MessageRouter.Receivers;
 using MessageRouter.Serialization;
@@ -17,30 +18,9 @@ namespace MessageRouter.NetMQ.Receivers
     /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/>es from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQReceiver : INetMQReceiver, IDisposable
+    public class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
     {
-        private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
-        private readonly ISerializer<byte[]> serializer;
         private RouterSocket socket;
-        private bool isBound = false;
-
-
-        /// <summary>
-        /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
-        /// </summary>
-        public IEnumerable<IAddress> Addresses => boundStatusByAddress.Keys;
-
-
-        /// <summary>
-        /// Gets a bool status flag indicating whether the receiver is bound to its <see cref="IAddress"/> and is listening to incoming messages
-        /// </summary>
-        public bool IsBound => isBound;
-
-
-        /// <summary>
-        /// Gets the inner pollable socket
-        /// </summary>
-        public ISocketPollable PollableSocket => socket;
 
 
         /// <summary>
@@ -55,103 +35,12 @@ namespace MessageRouter.NetMQ.Receivers
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
         public NetMQReceiver(RouterSocket socket, ISerializer<byte[]> serializer)
+            : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(socket));
-
             socket.ReceiveReady += OnRequestReceived;
         }
-
-
-        /// <summary>
-        /// Adds an <see cref="IAddress"/> the receiver will listening to incoming <see cref="Package"/>s on
-        /// </summary>
-        /// <param name="address"></param>
-        public void AddAddress(IAddress address)
-        {
-            if (null == address)
-                throw new ArgumentNullException(nameof(address));
-
-            if (boundStatusByAddress.ContainsKey(address))
-                return;
-
-            boundStatusByAddress.Add(address, false);
-
-            if (isBound)
-            {
-                socket.Bind(address.ToString());
-                boundStatusByAddress[address] = true;
-            }
-        }
-
-
-        /// <summary>
-        /// Removes all <see cref="IAddress"/>es the receiver will listen for incoming <see cref="Package"/>s on
-        /// </summary>
-        public void RemoveAllAddresses()
-        {
-            if (isBound)
-                UnbindAll();
-
-            boundStatusByAddress.Clear();
-        }
-
-
-        /// <summary>
-        /// Removes an <see cref="IAddress"/> the receiver will listen for incoming <see cref="Package"/>s on
-        /// </summary>
-        /// <param name="address"></param>
-        public void RemoveAddress(IAddress address)
-        {
-            if (null == address || !boundStatusByAddress.ContainsKey(address))
-                return;
-
-            if (isBound && !boundStatusByAddress[address])
-                Unbind(address);
-
-            boundStatusByAddress.Remove(address);
-        }
-
-
-        /// <summary>
-        /// Starts the receiver listening for incoming <see cref="Package"/>s  on all added <see cref="IAddress"/>es
-        /// </summary>
-        public void BindAll()
-        {
-            if (isBound)
-                return;
-
-            foreach (var address in (from address in Addresses
-                                    where !IsAddedAndBound(address)
-                                    select address).ToList())
-            {
-                socket.Bind(address.ToString());
-                boundStatusByAddress[address] = true;
-            }
-
-            isBound = true;
-        }
-
-
-        /// <summary>
-        /// Stops the receiver listening for incoming <see cref="Package"/>s on all added <see cref="IAddress"/>es
-        /// </summary>
-        public void UnbindAll()
-        {
-            if (!isBound)
-                return;
-
-            foreach (var address in (from address in Addresses
-                                    where IsAddedAndBound(address)
-                                    select address).ToList())
-            {
-                socket.Unbind(address.ToString());
-                boundStatusByAddress[address] = false;
-            }
-
-            isBound = false;
-        }
-
+        
 
         /// <summary>
         /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
@@ -180,6 +69,18 @@ namespace MessageRouter.NetMQ.Receivers
         {
             var requestMessage = socket.ReceiveMultipartMessage();
             return Handle(requestMessage);
+        }
+
+
+        public override void SocketAdd(IAddress address)
+        {
+            socket.Bind(address.ToString());
+        }
+
+
+        public override void SocketRemove(IAddress address)
+        {
+            socket.Unbind(address.ToString());
         }
 
 
@@ -248,29 +149,7 @@ namespace MessageRouter.NetMQ.Receivers
             return responseMessage;
         }
         #endregion
-
-
-        #region Binding Helpers
-        private bool IsAddedAndBound(IAddress address)
-        {
-            return boundStatusByAddress.TryGetValue(address, out var bound) && bound;
-        }
         
-
-        private void Unbind(IAddress address)
-        {
-            if (!isBound)
-                return;
-
-            if (!IsAddedAndBound(address))
-                return;
-
-            socket.Unbind(address.ToString());
-            boundStatusByAddress[address] = false;
-        }
-
-        #endregion
-
         
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -282,7 +161,7 @@ namespace MessageRouter.NetMQ.Receivers
             {
                 if (disposing)
                 {
-                    UnbindAll();
+                    TerminateConnection();
                     socket.ReceiveReady -= OnRequestReceived;
                     socket.Dispose();
                     socket = null;

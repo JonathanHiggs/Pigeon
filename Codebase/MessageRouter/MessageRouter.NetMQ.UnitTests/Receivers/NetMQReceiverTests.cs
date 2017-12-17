@@ -51,52 +51,52 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         #endregion
 
 
-        #region IsBound
+        #region IsConnected
         [Test]
-        public void IsBound_BeforeBindIsCalled_IsFalse()
+        public void IsConnected_BeforeBindIsCalled_IsFalse()
         {
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            var isBound = receiver.IsBound;
+            var isConnected = receiver.IsConnected;
 
             // Assert
-            Assert.That(isBound, Is.False);
+            Assert.That(isConnected, Is.False);
         }
 
 
         [Test]
-        public void IsBound_OnceBindIsCalled_IsTrue()
+        public void IsConnected_OnceBindIsCalled_IsTrue()
         {
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.BindAll();
+            receiver.InitializeConnection();
 
             // Act
-            var isBound = receiver.IsBound;
+            var isConnected = receiver.IsConnected;
 
             // Assert
-            Assert.That(isBound, Is.True);
+            Assert.That(isConnected, Is.True);
         }
 
 
         [Test]
-        public void IsBound_OnceUnbindAllIsCalled_IsFalse()
+        public void IsConnected_OnceUnbindAllIsCalled_IsFalse()
         {
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.BindAll();
-            receiver.UnbindAll();
+            receiver.InitializeConnection();
+            receiver.TerminateConnection();
 
             // Act
-            var isBound = receiver.IsBound;
+            var isConnected = receiver.IsConnected;
 
             // Assert
-            Assert.That(isBound, Is.False);
+            Assert.That(isConnected, Is.False);
         }
         #endregion
 
@@ -173,9 +173,9 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         #endregion
 
 
-        #region RemoveAll
+        #region RemoveAllAddresses
         [Test]
-        public void RemoveAll_WithAddedAddresses_ClearsAddresses()
+        public void RemoveAllAddresses_WithAddedAddresses_ClearsAddresses()
         {
             // Arrange
             var routerSocket = new RouterSocket();
@@ -191,18 +191,18 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
 
 
         [Test]
-        public void RemoveAll_WhenBound_Unbinds()
+        public void RemoveAllAddresses_WhenBound_Unbinds()
         {
             // Arrange
             var routerSocket = new RouterSocket();
             var receiver = new NetMQReceiver(routerSocket, serializer);
-            receiver.BindAll();
+            receiver.InitializeConnection();
 
             // Act
             receiver.RemoveAllAddresses();
 
             // Assert
-            Assert.That(receiver.IsBound, Is.False);
+            Assert.That(receiver.IsConnected, Is.False);
         }
         #endregion
 
@@ -250,7 +250,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            TestDelegate test = () => receiver.BindAll();
+            TestDelegate test = () => receiver.InitializeConnection();
 
             // Assert
             Assert.That(test, Throws.Nothing);
@@ -265,10 +265,10 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            receiver.BindAll();
+            receiver.InitializeConnection();
 
             // Assert
-            Assert.That(receiver.IsBound, Is.True);
+            Assert.That(receiver.IsConnected, Is.True);
         }
         #endregion
 
@@ -282,7 +282,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var receiver = new NetMQReceiver(routerSocket, serializer);
 
             // Act
-            TestDelegate test = () => receiver.UnbindAll();
+            TestDelegate test = () => receiver.TerminateConnection();
 
             // Assert
             Assert.That(test, Throws.Nothing);
