@@ -6,6 +6,8 @@ using MessageRouter.NetMQ.Senders;
 using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
+using MessageRouter.Publishers;
+using MessageRouter.Subscribers;
 
 using NetMQ;
 
@@ -37,38 +39,31 @@ namespace MessageRouter.NetMQ
 
 
         /// <summary>
-        /// Adds a <see cref="INetMQSender"/> to the internal cache of monitored senders
+        /// Adds a <see cref="INetMQSender"/> to the internal cache of monitored <see cref="ISender"/>s
         /// </summary>
+        /// <param name="sender"><see cref="INetMQSender"/> to add to the monitored cache of <see cref="ISender"/>s</param>
         public void AddSender(INetMQSender sender) => Add(sender, senders, s => s.ConnectAll());
 
 
         /// <summary>
-        /// Adds a <see cref="INetMQReceiver"/> to the internal cache of monitored receivers
+        /// Adds a <see cref="INetMQReceiver"/> to the internal cache of monitored <see cref="IReceiver"/>s
         /// </summary>
+        /// <param name="receiver"><see cref="INetMQReceiver"/> to add to the cache of monitored <see cref="IReceiver"/>s</param>
         public void AddReceiver(INetMQReceiver receiver) => Add(receiver, receivers, r => r.BindAll());
 
 
+        /// <summary>
+        /// Adds a <see cref="INetMQPublisher"/> to the internal cache of monitored <see cref="IPublisher"/>s
+        /// </summary>
+        /// <param name="publisher"><see cref="INetMQPublisher"/> to add to the cache of monitored <see cref="IPublisher"/>s</param>
         public void AddPublisher(INetMQPublisher publisher) => Add(publisher, publishers, p => p.BindAll());
 
 
+        /// <summary>
+        /// Adds a <see cref="INetMQSubscriber"/> to the internal cache of monitored <see cref="ISubscriber"/>s
+        /// </summary>
+        /// <param name="subscriber"><see cref="INetMQSubscriber"/> to add to the cache of monitored <see cref="ISubscriber"/>s</param>
         public void AddSubscriber(INetMQSubscriber subscriber) => Add(subscriber, subscribers, s => s.ConnectAll());
-
-
-        private void Add<TEndPoint>(TEndPoint endPoint, HashSet<TEndPoint> set, Action<TEndPoint> runningAction)
-            where TEndPoint : INetMQEndPoint
-        {
-            if (null == endPoint)
-                return;
-
-            poller.Add(endPoint.PollableSocket);
-            set.Add(endPoint);
-
-            lock(lockObj)
-            {
-                if (running)
-                    runningAction(endPoint);
-            }
-        }
 
 
         /// <summary>
@@ -125,6 +120,23 @@ namespace MessageRouter.NetMQ
                     subscriber.DisconnectAll();
 
                 running = false;
+            }
+        }
+
+
+        private void Add<TEndPoint>(TEndPoint endPoint, HashSet<TEndPoint> set, Action<TEndPoint> runningAction)
+            where TEndPoint : INetMQEndPoint
+        {
+            if (null == endPoint)
+                return;
+
+            poller.Add(endPoint.PollableSocket);
+            set.Add(endPoint);
+
+            lock(lockObj)
+            {
+                if (running)
+                    runningAction(endPoint);
             }
         }
     }

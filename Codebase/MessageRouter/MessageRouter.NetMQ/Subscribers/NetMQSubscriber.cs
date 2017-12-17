@@ -103,6 +103,15 @@ namespace MessageRouter.NetMQ.Subscribers
         }
 
 
+        public void TryReceive()
+        {
+            var topicMessage = socket.ReceiveMultipartMessage();
+            var data = topicMessage[1].ToByteArray();
+            var message = serializer.Deserialize<Message>(data);
+            TopicMessageReceived?.Invoke(this, message);
+        }
+
+
         private void OnMessageReceived(object sender, NetMQSocketEventArgs e)
         {
             var topicMessage = socket.ReceiveMultipartMessage();
