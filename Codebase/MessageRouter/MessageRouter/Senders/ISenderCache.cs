@@ -11,7 +11,7 @@ namespace MessageRouter.Senders
     /// <summary>
     /// Manages the resolution and lifecycle of <see cref="ISender"/>s
     /// </summary>
-    public interface ISenderCache : ISend, ICache
+    public interface ISenderCache : ISend, ICache<ISender>
     {
         /// <summary>
         /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime

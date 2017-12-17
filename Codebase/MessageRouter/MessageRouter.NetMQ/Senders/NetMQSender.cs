@@ -31,12 +31,6 @@ namespace MessageRouter.NetMQ.Senders
 
 
         /// <summary>
-        /// Gets the type of the message <see cref="ISerializer<>"/> the sender uses
-        /// </summary>
-        public Type SerializerType => typeof(ISerializer<byte[]>);
-
-
-        /// <summary>
         /// Gets the inner pollable socket
         /// </summary>
         public ISocketPollable PollableSocket => asyncSocket.PollableSocket;
@@ -45,8 +39,8 @@ namespace MessageRouter.NetMQ.Senders
         /// <summary>
         /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
-        /// <param name="asyncSocket">Inner socket that transports <see cref="Package"/>s</param>
-        /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
+        /// <param name="asyncSocket">Inner <see cref="IAsyncSocket"/> that sends data to remotes</param>
+        /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
         public NetMQSender(IAsyncSocket asyncSocket, ISerializer<byte[]> serializer)
         {
             this.asyncSocket = asyncSocket ?? throw new ArgumentNullException(nameof(asyncSocket));

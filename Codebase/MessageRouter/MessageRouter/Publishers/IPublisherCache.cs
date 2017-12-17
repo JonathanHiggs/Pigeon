@@ -11,7 +11,7 @@ namespace MessageRouter.Publishers
     /// <summary>
     /// Manages the lifecycle of <see cref="IPublisher"/>s
     /// </summary>
-    public interface IPublisherCache : IPublish, ICache
+    public interface IPublisherCache : IPublish, ICache<IPublisher>
     {
         /// <summary>
         /// Gets a readonly collection of <see cref="IPublisherFactory"/>s for creating <see cref="IPublisher"/>s at config-time

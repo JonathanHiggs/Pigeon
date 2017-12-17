@@ -18,12 +18,6 @@ namespace MessageRouter.Senders
     public interface ISender : IEndPoint
     {
         /// <summary>
-        /// Gets the type of the message <see cref="ISerializer<>"/> the sender uses
-        /// </summary>
-        Type SerializerType { get; }
-
-        
-        /// <summary>
         /// Adds an <see cref="IAddress"/> to the collection of endpoints the <see cref="ISender"/> connects to
         /// </summary>
         /// <param name="address">Address of the remote</param>

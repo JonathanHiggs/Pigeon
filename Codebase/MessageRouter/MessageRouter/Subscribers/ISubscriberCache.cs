@@ -11,7 +11,7 @@ namespace MessageRouter.Subscribers
     /// <summary>
     /// Manages the state and lifecycle of <see cref="ISubscriber"/>s
     /// </summary>
-    public interface ISubscriberCache : ISubscribe, ICache
+    public interface ISubscriberCache : ISubscribe, ICache<ISubscriber>
     {
         /// <summary>
         /// Gets a readonly collection of all registered <see cref="ISubscriberFactory"/>s for creating <see cref="ISubscriber"/>s at runtime

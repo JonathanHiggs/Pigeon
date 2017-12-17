@@ -11,6 +11,10 @@ using NetMQ.Sockets;
 
 namespace MessageRouter.NetMQ.Publishers
 {
+    /// <summary>
+    /// NetMQ imlementation of <see cref="MessageRouter.Publishers.IPublisher"/> that wraps a <see cref="PublisherSocket"/>
+    /// that connects to remote <see cref="Subscribers.INetMQSubscriber"/>s to publish <see cref="Package"/>s
+    /// </summary>
     public class NetMQPublisher : INetMQPublisher
     {
         private readonly Dictionary<IAddress, bool> boundStatusByAddress = new Dictionary<IAddress, bool>();
@@ -19,12 +23,23 @@ namespace MessageRouter.NetMQ.Publishers
         private bool isBound = false;
 
 
+        /// <summary>
+        /// The NetMQ socket that a <see cref="NetMQPoller"/> will actively monitor for incoming requests
+        /// </summary>
         public ISocketPollable PollableSocket => socket;
 
 
+        /// <summary>
+        /// Gets an eumerable of the <see cref="IAddress"/> for remotes that the sender is connected to
+        /// </summary>
         public IEnumerable<IAddress> Addresses => boundStatusByAddress.Keys;
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQPublisher"/>
+        /// </summary>
+        /// <param name="socket">Inner <see cref="PublisherSocket"/> that sends data to remotes</param>
+        /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
         public NetMQPublisher(PublisherSocket socket, ISerializer<byte[]> serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
@@ -32,6 +47,10 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
+        /// <summary>
+        /// Adds an <see cref="IAddress"/> to the collection of endpoints to which the <see cref="IPublisher"/> publishes <see cref="Package"/>s
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be added</param>
         public void AddAddress(IAddress address)
         {
             if (boundStatusByAddress.ContainsKey(address))
@@ -47,6 +66,9 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
+        /// <summary>
+        /// Initializes the bindings to which the <see cref="IPublisher"/> publishes <see cref="Package"/>s allowing <see cref="ISubscribers"/>s to receive them
+        /// </summary>
         public void BindAll()
         {
             if (isBound)
@@ -64,6 +86,10 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
+        /// <summary>
+        /// Transmits the <see cref="Package"/> to all connected <see cref="ISubscriber"/>s
+        /// </summary>
+        /// <param name="package"><see cref="Package"/> to be sent to all remote <see cref="Subscribers.ISubscriber"/>s</param>
         public void Publish(Package package)
         {
             var topicName = package.Body.GetType().FullName;
@@ -73,6 +99,11 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
+        /// <summary>
+        /// Removes an <see cref="IAddress"/> from the collection of endpoints to which the <see cref="MessageRouter.Publishers.IPublisher"/> 
+        /// publishes <see cref="Package"/>s
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public void RemoveAddress(IAddress address)
         {
             if (null == address || !boundStatusByAddress.ContainsKey(address))
@@ -88,6 +119,10 @@ namespace MessageRouter.NetMQ.Publishers
         }
 
 
+        /// <summary>
+        /// Terminates the bindings to which the <see cref="MessageRouter.Publishers.IPublisher"/> publishes 
+        /// <see cref="Package"/>s preventing <see cref="MessageRouter.Subscribers.ISubscriber"/>s from receiving them
+        /// </summary>
         public void UnbindAll()
         {
             if (!isBound)

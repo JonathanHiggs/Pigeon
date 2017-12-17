@@ -28,7 +28,7 @@ namespace MessageRouter.Subscribers
         /// Adds the <see cref="IAddress"/> to the set of endpoints the <see cref="ISubscriber"/> will listen to
         /// for incoming <see cref="Package"/>s
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address"><see cref="IAddress"/> to add</param>
         void AddAddress(IAddress address);
 
 
@@ -36,7 +36,7 @@ namespace MessageRouter.Subscribers
         /// Removes the <see cref="IAddress"/> from the set of endpoints the <see cref="ISubscriber"/> will listen to
         /// for incoming <see cref="Package"/>s
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address"><see cref="IAddress"/> to remove</param>
         void RemoveAddress(IAddress address);
 
 
@@ -59,9 +59,16 @@ namespace MessageRouter.Subscribers
         void DisconnectAll();
 
 
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
         void Subscribe<TTopic>();
 
 
+        /// <summary>
+        /// Terminates a subscription to the topic message stream
+        /// </summary>
         void Unsubscribe<TTopic>();
     }
 }

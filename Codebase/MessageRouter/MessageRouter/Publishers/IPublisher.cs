@@ -19,14 +19,14 @@ namespace MessageRouter.Publishers
         /// <summary>
         /// Adds an <see cref="IAddress"/> to the collection of endpoints to which the <see cref="IPublisher"/> publishes <see cref="Package"/>s
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address"><see cref="IAddress"/> to be added</param>
         void AddAddress(IAddress address);
 
 
         /// <summary>
         /// Removes an <see cref="IAddress"/> from the collection of endpoints to which the <see cref="IPublisher"/> publishes <see cref="Package"/>s
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address"><see cref="IAddress"/> to be removed</param>
         void RemoveAddress(IAddress address);
 
 
@@ -45,7 +45,7 @@ namespace MessageRouter.Publishers
         /// <summary>
         /// Transmits the <see cref="Package"/> to all connected <see cref="ISubscriber"/>s
         /// </summary>
-        /// <param name="package"></param>
+        /// <param name="package"><see cref="Package"/> to be sent to all remote <see cref="Subscribers.ISubscriber"/>s</param>
         void Publish(Package package);
     }
 }
