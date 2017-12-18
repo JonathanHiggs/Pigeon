@@ -15,8 +15,8 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
     [TestFixture]
     public class NetMQPublisherTests
     {
-        private readonly Mock<ISerializer<byte[]>> mockSerializer = new Mock<ISerializer<byte[]>>();
-        private ISerializer<byte[]> serializer;
+        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
+        private ISerializer serializer;
 
         private readonly IAddress address = TcpAddress.Wildcard(5555);
         

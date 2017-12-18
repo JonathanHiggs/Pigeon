@@ -46,6 +46,10 @@
     <Compile Include="Routing\ITopicRouter.cs" />
     <Compile Include="Routing\SubscriberRouting.cs" />
     <Compile Include="Routing\TopicRouter.cs" />
+    <Compile Include="Serialization\ISerializerCache.cs" />
+    <Compile Include="Serialization\SerializationDescriptor.cs" />
+    <Compile Include="Serialization\SerializerCache.cs" />
+    <Compile Include="Serialization\SerializerComparer.cs" />
     <Compile Include="Subscribers\ISubscriptionsCache.cs" />
     <Compile Include="Subscribers\Subscription.cs" />
     <Compile Include="Subscribers\SubscriptionsCache.cs" />
@@ -106,7 +110,7 @@
     <Compile Include="Senders\ISenderMonitor.cs" />
     <Compile Include="Monitors\MonitorCache.cs" />
     <Compile Include="Senders\SenderCache.cs" />
-    <Compile Include="Serialization\BinarySerializer.cs" />
+    <Compile Include="Serialization\DotNetSerializer.cs" />
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Requests\IRequestDispatcher.cs" />
     <Compile Include="Requests\IRequestHandler.cs" />

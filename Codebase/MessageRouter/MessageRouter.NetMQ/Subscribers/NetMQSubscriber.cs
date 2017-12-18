@@ -34,7 +34,7 @@ namespace MessageRouter.NetMQ.Subscribers
         /// </summary>
         /// <param name="socket">Inner <see cref="SubscriberSocket"/> that receives data from remotes</param>
         /// <param name="serializer">A serializer that will convert published data from binary</param>
-        public NetMQSubscriber(SubscriberSocket socket, ISerializer<byte[]> serializer)
+        public NetMQSubscriber(SubscriberSocket socket, ISerializer serializer)
             : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));

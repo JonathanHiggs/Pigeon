@@ -34,7 +34,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// </summary>
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
-        public NetMQReceiver(RouterSocket socket, ISerializer<byte[]> serializer)
+        public NetMQReceiver(RouterSocket socket, ISerializer serializer)
             : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));

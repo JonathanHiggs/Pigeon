@@ -9,16 +9,21 @@ namespace MessageRouter.Serialization
     /// <summary>
     /// Interface defining transforming objects to data and back
     /// </summary>
-    /// <typeparam name="TData">Type of serializer output data</typeparam>
-    public interface ISerializer<TData>
+    public interface ISerializer
     {
+        /// <summary>
+        /// Gets the serialization description
+        /// </summary>
+        SerializationDescriptor Descriptor { get; }
+
+
         /// <summary>
         /// Transforms the supplied object to the serializer output data type
         /// </summary>
         /// <typeparam name="TObj">Type of object to be serialized</typeparam>
         /// <param name="obj">Object to be serialized</param>
         /// <returns>Serialized data</returns>
-        TData Serialize<TObj>(TObj obj);
+        byte[] Serialize<TObj>(TObj obj);
 
 
         /// <summary>
@@ -27,6 +32,6 @@ namespace MessageRouter.Serialization
         /// <typeparam name="TObj">Type of object to reconstruct</typeparam>
         /// <param name="data">Data to be deserialized</param>
         /// <returns>Deserialized object</returns>
-        TObj Deserialize<TObj>(TData data);
+        TObj Deserialize<TObj>(byte[] data);
     }
 }

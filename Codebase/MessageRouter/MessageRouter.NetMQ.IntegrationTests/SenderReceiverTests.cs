@@ -21,7 +21,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
         public async Task SenderReceiver_WhenBoundAndConnected_PassesMessage()
         {
             // Arrange
-            var serializer = new BinarySerializer();
+            var serializer = new DotNetSerializer();
             var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), serializer);
             var receiver = new NetMQReceiver(new RouterSocket(), serializer);
             var poller = new NetMQPoller();

@@ -15,7 +15,7 @@ namespace MessageRouter.NetMQ.Common
     public abstract class NetMQConnection : INetMQConnection
     {
         private readonly ISocketPollable pollableSocket;
-        protected readonly ISerializer<byte[]> serializer;
+        protected readonly ISerializer serializer;
         private readonly HashSet<IAddress> addresses = new HashSet<IAddress>();
         private bool isConnected = false;
 
@@ -43,7 +43,7 @@ namespace MessageRouter.NetMQ.Common
         /// </summary>
         /// <param name="pollableSocket">Inner socket connection that is monitored by <see cref="INetMQPoller"/></param>
         /// <param name="serializer">A serializer that will convert data into a binary format for transmission</param>
-        public NetMQConnection(ISocketPollable pollableSocket, ISerializer<byte[]> serializer)
+        public NetMQConnection(ISocketPollable pollableSocket, ISerializer serializer)
         {
             this.pollableSocket = pollableSocket ?? throw new ArgumentNullException(nameof(pollableSocket));
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));

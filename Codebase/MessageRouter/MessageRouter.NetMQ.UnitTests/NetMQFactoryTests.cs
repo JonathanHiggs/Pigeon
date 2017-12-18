@@ -22,8 +22,8 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<INetMQMonitor> mockMonitor = new Mock<INetMQMonitor>();
         private INetMQMonitor monitor;
         
-        private readonly Mock<ISerializer<byte[]>> mockSerializer = new Mock<ISerializer<byte[]>>();
-        private ISerializer<byte[]> serializer;
+        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
+        private ISerializer serializer;
 
 
         [SetUp]

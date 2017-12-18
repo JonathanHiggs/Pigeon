@@ -19,8 +19,8 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         private readonly Mock<IAsyncSocket> mockAsyncSocket = new Mock<IAsyncSocket>();
         private IAsyncSocket asyncSocket;
 
-        private readonly Mock<ISerializer<byte[]>> mockSerializer = new Mock<ISerializer<byte[]>>();
-        private ISerializer<byte[]> serializer;
+        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
+        private ISerializer serializer;
         
         private IAddress address = TcpAddress.Wildcard(5555);
         

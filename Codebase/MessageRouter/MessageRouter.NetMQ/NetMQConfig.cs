@@ -21,7 +21,7 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQConfig : ITransportConfig
     {
-        private readonly NetMQFactory factory = new NetMQFactory(new NetMQMonitor(new NetMQPoller()), new BinarySerializer());
+        private readonly NetMQFactory factory = new NetMQFactory(new NetMQMonitor(new NetMQPoller()), new DotNetSerializer());
         
 
         /// <summary>

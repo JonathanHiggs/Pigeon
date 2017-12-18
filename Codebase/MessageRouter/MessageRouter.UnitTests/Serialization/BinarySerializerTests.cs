@@ -15,7 +15,7 @@ namespace MessageRouter.UnitTests.Serialization
         public void Serialize_WithString_ProducesByteArray()
         {
             // Arrange
-            var serializer = new BinarySerializer();
+            var serializer = new DotNetSerializer();
             var str = "Some string";
 
             // Act
@@ -31,7 +31,7 @@ namespace MessageRouter.UnitTests.Serialization
         public void Deserialize_WithStringData_ReproducesString()
         {
             // Arrange
-            var serializer = new BinarySerializer();
+            var serializer = new DotNetSerializer();
             var str = "Some string";
             var bytes = serializer.Serialize<string>(str);
 

@@ -71,6 +71,7 @@
     <Compile Include="Routing\SenderRoutingTests.cs" />
     <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Requests\RequestDispatcherTests.cs" />
+    <Compile Include="Serialization\SerializerCacheTests.cs" />
     <Compile Include="Subscribers\SubscriberCacheTests.cs" />
     <Compile Include="Subscribers\SubscriptionsCacheTests.cs" />
     <Compile Include="Subscribers\SubscriptionTests.cs" />

@@ -26,7 +26,7 @@ namespace MessageRouter.NetMQ.Publishers
         /// </summary>
         /// <param name="socket">Inner <see cref="PublisherSocket"/> that sends data to remotes</param>
         /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
-        public NetMQPublisher(PublisherSocket socket, ISerializer<byte[]> serializer)
+        public NetMQPublisher(PublisherSocket socket, ISerializer serializer)
             : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));

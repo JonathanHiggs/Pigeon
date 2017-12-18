@@ -19,15 +19,15 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
     {
-        private readonly ISerializer<byte[]> serializer;
+        private readonly ISerializer serializer;
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQFactory"/>
         /// </summary>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
-        /// <param name="serializer"><see cref="ISerializer{TData}"/> that converts <see cref="Package"/> to binary for sending over the wire</param>
-        public NetMQFactory(INetMQMonitor monitor, ISerializer<byte[]> serializer)
+        /// <param name="serializer"><see cref="ISerializer"/> that converts <see cref="Package"/> to binary for sending over the wire</param>
+        public NetMQFactory(INetMQMonitor monitor, ISerializer serializer)
             : base(monitor, monitor, monitor, monitor)
         {
             if (null == monitor)

@@ -12,16 +12,22 @@ namespace MessageRouter.Serialization
     /// Default data serializer to transform object to byte arrays
     /// Uses .Net interal BinaryFormatter and requires all types have the Serializable attribute
     /// </summary>
-    public class BinarySerializer : ISerializer<byte[]>
+    public class DotNetSerializer : ISerializer
     {
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
 
         /// <summary>
-        /// Initializes a BinarySerializer
+        /// Initializes a new instance of <see cref="DotNetSerializer"/>
         /// </summary>
-        public BinarySerializer()
+        public DotNetSerializer()
         { }
+
+        
+        /// <summary>
+        /// Gets the serialization description
+        /// </summary>
+        public SerializationDescriptor Descriptor => SerializationDescriptor.DotNet;
 
 
         /// <summary>
