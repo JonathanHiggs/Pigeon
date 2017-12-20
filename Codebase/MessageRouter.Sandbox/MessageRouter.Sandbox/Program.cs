@@ -35,6 +35,10 @@ namespace MessageRouter.Sandbox
                         Subscriber.Run();
                         break;
 
+                    case "WebServer":
+                        WebServer.Run();
+                        break;
+
                     case "Clear":
                         Console.Clear();
                         break;
@@ -46,6 +50,8 @@ namespace MessageRouter.Sandbox
                         Console.WriteLine($"Subprogram not recognised");
                         break;
                 }
+
+                Console.WriteLine();
             }
         }
     }
