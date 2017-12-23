@@ -36,7 +36,7 @@ namespace MessageRouter.Serialization
         public bool SerializerFor(string name, out ISerializer serializer)
         {
             serializer = serializers.SingleOrDefault(s => s.Descriptor.Name == name);
-            return null == serializer;
+            return null != serializer;
         }
     }
 }
