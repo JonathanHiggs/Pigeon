@@ -75,7 +75,7 @@ namespace Pigeon.Addresses
         /// </summary>
         /// <param name="other">The address to compare to this instance</param>
         /// <returns></returns>
-        public bool Equals(IAddress other) => this.ToString() == other.ToString();
+        public bool Equals(IAddress other) => !(other is null) && other is TcpAddress && ToString() == other.ToString();
 
 
         /// <summary>
