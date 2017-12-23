@@ -24,6 +24,8 @@ namespace MessageRouter.NetMQ.UnitTests
         
         private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
         private ISerializer serializer;
+        
+        private readonly RequestTaskHandler handler = (rec, task) => { };
 
 
         [SetUp]
@@ -199,7 +201,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
+            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), handler);
 
             // Assert
             Assert.That(receiver, Is.Not.Null);

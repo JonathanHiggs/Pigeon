@@ -72,12 +72,20 @@ namespace MessageRouter.NetMQ.Subscribers
         }
 
 
+        /// <summary>
+        /// Add <see cref="IAddress"/> to the socket
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
             socket.Connect(address.ToString());
         }
 
 
+        /// <summary>
+        /// Remote <see cref="IAddress"/> from the socket
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
             socket.Disconnect(address.ToString());

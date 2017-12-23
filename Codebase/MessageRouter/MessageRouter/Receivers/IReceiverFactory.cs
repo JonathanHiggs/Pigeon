@@ -31,8 +31,10 @@ namespace MessageRouter.Receivers
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of local bound <see cref="IConnection"/></param>
+        /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
+        /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns><see cref="IReceiver"/> bound to the <see cref="IAddress"/></returns>
-        IReceiver CreateReceiver(IAddress address);
+        IReceiver CreateReceiver(IAddress address, RequestTaskHandler requestTaskHandler);
     }
 
 

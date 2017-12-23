@@ -30,6 +30,13 @@ namespace MessageRouter.Receivers
 
 
         /// <summary>
+        /// <see cref="RequestTaskHandler"/> delegate that is passed to <see cref="IReceiver"/>s upon construction and called
+        /// when an incoming request is received
+        /// </summary>
+        public RequestTaskHandler Handler => HandleRequest;
+
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ReceiverCache"/>
         /// </summary>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="IReceiver"/>s</param>
@@ -47,8 +54,9 @@ namespace MessageRouter.Receivers
         /// Processes an incoming <see cref="RequestTask"/> extracting the wrapped request from the <see cref="Package"/>
         /// and forwarding to the <see cref="IRequestDispatcher"/> to calculate a response that is sent back over the wire
         /// </summary>
+        /// <param name="receiver">The <see cref="IReceiver"/> that is invoking the handler</param>
         /// <param name="requestTask">Combined incoming message with method of returning a response</param>
-        public void HandleRequest(RequestTask requestTask)
+        public void HandleRequest(IReceiver receiver, RequestTask requestTask)
         {
             var requestObject = packageFactory.Unpack(requestTask.Request);
             var responseObject = dispatcher.Handle(requestObject);
@@ -92,8 +100,7 @@ namespace MessageRouter.Receivers
             if (!factories.TryGetValue(typeof(TReceiver), out var factory))
                 throw MissingFactoryException.For<TReceiver, ReceiverCache>();
 
-            var receiver = factory.CreateReceiver(address);
-            receiver.RequestReceived += (s, e) => Task.Run(() => HandleRequest(e));
+            var receiver = factory.CreateReceiver(address, Handler);
             receivers.Add(address, receiver);
         }
     }

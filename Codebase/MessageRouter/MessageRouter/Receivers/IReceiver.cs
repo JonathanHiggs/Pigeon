@@ -17,8 +17,9 @@ namespace MessageRouter.Receivers
     public interface IReceiver : IConnection
     {
         /// <summary>
-        /// Raised when an incoming message is received
+        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
+        /// an incoming message is received
         /// </summary>
-        event RequestTaskHandler RequestReceived;
+        RequestTaskHandler Handler { get; }
     }
 }

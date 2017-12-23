@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Receivers;
 
 namespace MessageRouter.NetMQ.IntegrationTests
 {
@@ -21,25 +22,26 @@ namespace MessageRouter.NetMQ.IntegrationTests
         public async Task SenderReceiver_WhenBoundAndConnected_PassesMessage()
         {
             // Arrange
+            var packageFactory = new PackageFactory();
+
+            RequestTaskHandler handler = (rec, task) =>
+            {
+                var requestMessage = packageFactory.Unpack(task.Request);
+                var responseMessage = $"{requestMessage}, World!";
+                var responsePackage = packageFactory.Pack(responseMessage);
+                task.ResponseHandler(responsePackage);
+            };
+
             var serializer = new DotNetSerializer();
             var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), serializer);
-            var receiver = new NetMQReceiver(new RouterSocket(), serializer);
+            var receiver = new NetMQReceiver(new RouterSocket(), serializer, handler);
             var poller = new NetMQPoller();
-            var packageFactory = new PackageFactory();
 
             sender.AddAddress(TcpAddress.Localhost(5555));
             sender.InitializeConnection();
             receiver.AddAddress(TcpAddress.Wildcard(5555));
             receiver.InitializeConnection();
-                        
-            receiver.RequestReceived += (s, e) =>
-            {
-                var requestMessage = packageFactory.Unpack(e.Request);
-                var responseMessage = $"{requestMessage}, World!";
-                var responsePackage = packageFactory.Pack(responseMessage);
-                e.ResponseHandler(responsePackage);
-            };
-
+                       
             poller.Add(sender.PollableSocket);
             poller.Add(receiver.PollableSocket);
             poller.RunAsync();
@@ -47,7 +49,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var package = new DataPackage<string>(new GuidPackageId(), "Hello");
 
             // Act
-            var response = await sender.SendAndReceive(package);
+            var response = await sender.SendAndReceive(package, TimeSpan.FromSeconds(5));
 
             // Cleanup
             poller.StopAsync();

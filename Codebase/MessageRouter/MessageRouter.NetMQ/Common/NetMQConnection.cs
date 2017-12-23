@@ -131,9 +131,17 @@ namespace MessageRouter.NetMQ.Common
         }
 
 
+        /// <summary>
+        /// Add <see cref="IAddress"/> to the socket
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be added</param>
         public abstract void SocketAdd(IAddress address);
 
 
+        /// <summary>
+        /// Remote <see cref="IAddress"/> from the socket
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public abstract void SocketRemove(IAddress address);
     }
 }

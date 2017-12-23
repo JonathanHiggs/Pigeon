@@ -41,11 +41,13 @@ namespace MessageRouter.NetMQ
         /// Creates a new instance of a <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="MessageRouter.Common.IConnection"/></param>
+        /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
+        /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns>Receiver bound to the address</returns>
-        protected override INetMQReceiver CreateNewReceiver(IAddress address)
+        protected override INetMQReceiver CreateNewReceiver(IAddress address, RequestTaskHandler handler)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, serializer);
+            var receiver = new NetMQReceiver(socket, serializer, handler);
 
             receiver.AddAddress(address);
 

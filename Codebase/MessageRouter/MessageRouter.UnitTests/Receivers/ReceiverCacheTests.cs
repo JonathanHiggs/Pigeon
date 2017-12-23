@@ -36,6 +36,8 @@ namespace MessageRouter.UnitTests.Receivers
 
         private readonly Mock<IReceiverMonitor<IReceiver>> mockReceiverMonitor = new Mock<IReceiverMonitor<IReceiver>>();
         private IReceiverMonitor<IReceiver> receiverMonitor;
+
+        private readonly RequestTaskHandler handler = (rec, task) => { };
         
         
         [SetUp]
@@ -50,7 +52,7 @@ namespace MessageRouter.UnitTests.Receivers
             receiverMonitor = mockReceiverMonitor.Object;
 
             mockReceiverFactory
-                .Setup(m => m.CreateReceiver(It.IsAny<IAddress>()))
+                .Setup(m => m.CreateReceiver(It.IsAny<IAddress>(), It.IsAny<RequestTaskHandler>()))
                 .Returns(receiver);
 
             mockReceiverFactory
@@ -213,7 +215,7 @@ namespace MessageRouter.UnitTests.Receivers
             cache.AddReceiver<IReceiver>(address);
 
             // Assert
-            mockReceiverFactory.Verify(m => m.CreateReceiver(It.IsIn(address)), Times.Once);
+            mockReceiverFactory.Verify(m => m.CreateReceiver(It.IsIn(address), It.IsIn(cache.Handler)), Times.Once);
         }
 
 

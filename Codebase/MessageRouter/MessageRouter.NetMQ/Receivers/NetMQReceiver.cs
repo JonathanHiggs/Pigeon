@@ -21,12 +21,14 @@ namespace MessageRouter.NetMQ.Receivers
     public class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
     {
         private RouterSocket socket;
+        private readonly RequestTaskHandler handler;
 
 
         /// <summary>
-        /// Raised when an incoming message is received
+        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
+        /// an incoming message is received
         /// </summary>
-        public event RequestTaskHandler RequestReceived;
+        public RequestTaskHandler Handler => handler;
 
 
         /// <summary>
@@ -34,10 +36,13 @@ namespace MessageRouter.NetMQ.Receivers
         /// </summary>
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
-        public NetMQReceiver(RouterSocket socket, ISerializer serializer)
+        /// <param name="handler"><see cref="RequestTaskHandler"/> is called when an incoming message is received</param>
+        public NetMQReceiver(RouterSocket socket, ISerializer serializer, RequestTaskHandler handler)
             : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+
             socket.ReceiveReady += OnRequestReceived;
         }
         
@@ -56,28 +61,25 @@ namespace MessageRouter.NetMQ.Receivers
                 return false;
             }
 
-            requestTask = Handle(message);
+            requestTask = ExtractTaskFromMessage(message);
             return true;
         }
 
 
         /// <summary>
-        /// Synchronously retrieves a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
+        /// Add <see cref="IAddress"/> to the socket
         /// </summary>
-        /// <returns>Combination of the request <see cref="Package"/> and a response Action</returns>
-        public RequestTask Receive()
-        {
-            var requestMessage = socket.ReceiveMultipartMessage();
-            return Handle(requestMessage);
-        }
-
-
+        /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
             socket.Bind(address.ToString());
         }
 
 
+        /// <summary>
+        /// Remote <see cref="IAddress"/> from the socket
+        /// </summary>
+        /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
             socket.Unbind(address.ToString());
@@ -86,12 +88,19 @@ namespace MessageRouter.NetMQ.Receivers
 
         private void OnRequestReceived(object sender, NetMQSocketEventArgs e)
         {
-            RequestReceived?.Invoke(this, Receive());
+            // Move handling request off NetMQPoller thread and onto TaskPool as soon as possible
+            Task.Run(() =>
+            {
+                if (!TryReceive(out var requestTask))
+                    return;
+
+                handler(this, requestTask);
+            });
         }
 
 
         #region Message Builders
-        private RequestTask Handle(NetMQMessage requestMessage)
+        private RequestTask ExtractTaskFromMessage(NetMQMessage requestMessage)
         {
             var request = ExtractPackage(requestMessage);
 
