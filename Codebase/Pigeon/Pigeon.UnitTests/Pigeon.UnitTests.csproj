@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addresses\HttpAddressTests.cs" />
     <Compile Include="Addresses\TcpAddressTests.cs" />
     <Compile Include="Helpers\RegexAssert.cs" />
     <Compile Include="Packages\DataPackageTests.cs" />

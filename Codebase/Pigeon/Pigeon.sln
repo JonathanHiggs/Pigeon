@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Annotations", "Pigeo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Web", "Pigeon.Web\Pigeon.Web.csproj", "{CBA34AEC-CFCC-48FC-A106-EDE32A2B5DF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Web.UnitTests", "Pigeon.Web.UnitTests\Pigeon.Web.UnitTests.csproj", "{3D156390-17A1-4670-B0BA-8922792A6149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{CBA34AEC-CFCC-48FC-A106-EDE32A2B5DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBA34AEC-CFCC-48FC-A106-EDE32A2B5DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBA34AEC-CFCC-48FC-A106-EDE32A2B5DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D156390-17A1-4670-B0BA-8922792A6149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D156390-17A1-4670-B0BA-8922792A6149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D156390-17A1-4670-B0BA-8922792A6149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D156390-17A1-4670-B0BA-8922792A6149}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,6 +139,7 @@ Global
 		{5C09A630-230F-43DB-842A-4A3C3CB00147} = {1646E197-0464-416A-B99F-D9E621E3141D}
 		{48250117-5AEB-46F3-A615-BAD0D0BD7B6C} = {1646E197-0464-416A-B99F-D9E621E3141D}
 		{2D30C29C-F993-4D41-978A-0220632FDC2C} = {1646E197-0464-416A-B99F-D9E621E3141D}
+		{3D156390-17A1-4670-B0BA-8922792A6149} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9795E1F7-EDC1-4B4C-AADF-5BB529187C83}

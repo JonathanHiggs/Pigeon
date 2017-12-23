@@ -78,10 +78,77 @@ namespace Pigeon.UnitTests.Addresses
             var a2 = FromNameAndPort(name, port);
 
             // Act
-            var equals = a1.Equals(a2);
+            var equal1 = a1.Equals(a2);
+            var equal2 = a2.Equals(a1);
 
             // Assert
-            Assert.That(equals, Is.True);
+            Assert.That(equal1, Is.True);
+            Assert.That(equal2, Is.True);
+        }
+
+
+        [Test]
+        public void Equals_WithDifferentName_IsFalse()
+        {
+            // Arrange
+            var a1 = FromNameAndPort("name", 5555);
+            var a2 = FromNameAndPort("othername", 5555);
+
+            // Act
+            var equal1 = a1.Equals(a2);
+            var equal2 = a2.Equals(a1);
+
+            // Assert
+            Assert.That(equal1, Is.False);
+            Assert.That(equal2, Is.False);
+        }
+
+
+        [Test]
+        public void Equals_WithDifferentPort_IsFalse()
+        {
+            // Arrange
+            var a1 = FromNameAndPort("name", 5555);
+            var a2 = FromNameAndPort("name", 5556);
+
+            // Act
+            var equal1 = a1.Equals(a2);
+            var equal2 = a2.Equals(a1);
+
+            // Assert
+            Assert.That(equal1, Is.False);
+            Assert.That(equal2, Is.False);
+        }
+
+
+        [Test]
+        public void Equals_WithHttpAddress_IsFalse()
+        {
+            // Arrange
+            var a1 = HttpAddress.Named("google.com");
+            var a2 = FromNameAndPort("google.com", 80);
+
+            // Act
+            var equal1 = a1.Equals(a2);
+            var equal2 = a2.Equals(a1);
+
+            // Assert
+            Assert.That(equal1, Is.False);
+            Assert.That(equal2, Is.False);
+        }
+
+
+        [Test]
+        public void Equals_WithNull_IsFalse()
+        {
+            // Arrange
+            var address = FromNameAndPort("name", 5555);
+
+            // Act
+            var equals = address.Equals(null);
+
+            // Assert
+            Assert.That(equals, Is.False);
         }
     }
 }

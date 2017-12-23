@@ -10,5 +10,11 @@ namespace Pigeon.NetMQ.Receivers
     /// to receive and reply to incoming messages from remote <see cref="ISender"/>
     /// </summary>
     public interface INetMQReceiver : IReceiver, INetMQConnection
-    { }
+    {
+        /// <summary>
+        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="INetMQReceiver"/> calls when
+        /// an incoming request message is received
+        /// </summary>
+        RequestTaskHandler Handler { get; }
+    }
 }
