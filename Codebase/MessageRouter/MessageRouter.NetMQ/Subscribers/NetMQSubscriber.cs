@@ -21,12 +21,13 @@ namespace MessageRouter.NetMQ.Subscribers
     public class NetMQSubscriber : NetMQConnection, INetMQSubscriber, IDisposable
     {
         private SubscriberSocket socket;
+        private TopicEventHandler handler;
 
-        
+
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        public event TopicEventHandler TopicMessageReceived;
+        public TopicEventHandler Handler => handler;
 
 
         /// <summary>
@@ -34,10 +35,13 @@ namespace MessageRouter.NetMQ.Subscribers
         /// </summary>
         /// <param name="socket">Inner <see cref="SubscriberSocket"/> that receives data from remotes</param>
         /// <param name="serializer">A serializer that will convert published data from binary</param>
-        public NetMQSubscriber(SubscriberSocket socket, ISerializer serializer)
+        /// <param name="handler"><see cref="TopicEventHandler"/> delegate that is called when an incoming topic message is received</param>
+        public NetMQSubscriber(SubscriberSocket socket, ISerializer serializer, TopicEventHandler handler)
             : base(socket, serializer)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+
             socket.ReceiveReady += OnMessageReceived;
         }
         
@@ -65,10 +69,18 @@ namespace MessageRouter.NetMQ.Subscribers
         
         private void OnMessageReceived(object sender, NetMQSocketEventArgs e)
         {
-            var topicMessage = socket.ReceiveMultipartMessage();
-            var packageData = topicMessage[1].ToByteArray();
-            var package = serializer.Deserialize<Package>(packageData);
-            TopicMessageReceived?.Invoke(this, package);
+            // Move handling request off NetMQPoller thread and onto TaskPool as soon as possible
+            Task.Run(() =>
+            {
+                NetMQMessage message = default(NetMQMessage);
+
+                if (!socket.TryReceiveMultipartMessage(ref message, 2))
+                    return;
+                
+                var packageData = message[1].ToByteArray();
+                var package = serializer.Deserialize<Package>(packageData);
+                Handler(this, package);
+            });
         }
 
 
@@ -106,6 +118,7 @@ namespace MessageRouter.NetMQ.Subscribers
                     socket.ReceiveReady -= OnMessageReceived;
                     socket.Dispose();
                     socket = null;
+                    handler = null;
                 }
                 
                 disposedValue = true;

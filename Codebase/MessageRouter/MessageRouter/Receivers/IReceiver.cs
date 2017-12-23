@@ -18,7 +18,7 @@ namespace MessageRouter.Receivers
     {
         /// <summary>
         /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
-        /// an incoming message is received
+        /// an incoming request message is received
         /// </summary>
         RequestTaskHandler Handler { get; }
     }

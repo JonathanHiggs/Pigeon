@@ -21,7 +21,7 @@ namespace MessageRouter.NetMQ.Receivers
     public class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
     {
         private RouterSocket socket;
-        private readonly RequestTaskHandler handler;
+        private RequestTaskHandler handler;
 
 
         /// <summary>
@@ -174,6 +174,7 @@ namespace MessageRouter.NetMQ.Receivers
                     socket.ReceiveReady -= OnRequestReceived;
                     socket.Dispose();
                     socket = null;
+                    handler = null;
                 }
                 
                 disposedValue = true;

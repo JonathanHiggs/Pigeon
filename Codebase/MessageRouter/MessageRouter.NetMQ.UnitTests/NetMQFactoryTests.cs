@@ -6,6 +6,7 @@ using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
+using MessageRouter.Subscribers;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -25,8 +26,8 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
         private ISerializer serializer;
         
-        private readonly RequestTaskHandler handler = (rec, task) => { };
-
+        private readonly RequestTaskHandler requestHandler = (rec, task) => { };
+        private readonly TopicEventHandler topicHandler = (sub, topic) => { };
 
         [SetUp]
         public void Setup()
@@ -201,10 +202,24 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), handler);
+            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), requestHandler);
 
             // Assert
             Assert.That(receiver, Is.Not.Null);
+        }
+
+
+        [Test]
+        public void CreateNewReceiver_WithHandler_ReceiverHandlerIsSame()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), requestHandler);
+
+            // Assert
+            Assert.That(receiver.Handler, Is.SameAs(requestHandler));
         }
 
 
@@ -229,10 +244,24 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));
+            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555), topicHandler);
 
             // Assert
             Assert.That(subscriber, Is.Not.Null);
+        }
+
+
+        [Test]
+        public void CreateNewSubscriber_WithHandler_SusbcriberHandlerIsSame()
+        {
+            // Arrange
+            var factory = new NetMQFactory(monitor, serializer);
+
+            // Act
+            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555), topicHandler);
+
+            // Assert
+            Assert.That(subscriber.Handler, Is.SameAs(topicHandler));
         }
     }
 }

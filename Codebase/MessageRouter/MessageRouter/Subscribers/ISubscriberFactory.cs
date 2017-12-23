@@ -30,8 +30,10 @@ namespace MessageRouter.Subscribers
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="IConnection"/></param>
+        /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="ISubscriber"/> calls upon
+        /// receiving a new topic message</param>
         /// <returns><see cref="ISubscriber"/> connected to the <see cref="IAddress"/></returns>
-        ISubscriber CreateSubscriber(IAddress address);
+        ISubscriber CreateSubscriber(IAddress address, TopicEventHandler topicEventHandler);
     }
 
 

@@ -46,6 +46,7 @@ namespace MessageRouter.UnitTests.Subscribers
 
         private IAddress address;
         private SubscriberRouting routing;
+        private TopicEventHandler handler = (sub, topic) => { };
 
 
         [SetUp]
@@ -67,7 +68,7 @@ namespace MessageRouter.UnitTests.Subscribers
                 .Returns(true);
 
             mockSubscriberFactory
-                .Setup(m => m.CreateSubscriber(It.IsAny<IAddress>()))
+                .Setup(m => m.CreateSubscriber(It.IsAny<IAddress>(), It.IsAny<TopicEventHandler>()))
                 .Returns(subscriber);
 
             mockSubscriberFactory
@@ -252,7 +253,7 @@ namespace MessageRouter.UnitTests.Subscribers
             var subscriber = cache.SubscriberFor<Topic>();
 
             // Assert
-            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address)), Times.Once);
+            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address), It.IsIn(cache.Handler)), Times.Once);
         }
 
 
@@ -268,7 +269,7 @@ namespace MessageRouter.UnitTests.Subscribers
             cache.SubscriberFor<Topic>();
 
             // Assert
-            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address)), Times.Once);
+            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address), It.IsIn(cache.Handler)), Times.Once);
         }
         #endregion
 

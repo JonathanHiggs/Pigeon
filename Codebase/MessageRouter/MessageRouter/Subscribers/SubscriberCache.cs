@@ -34,6 +34,12 @@ namespace MessageRouter.Subscribers
 
 
         /// <summary>
+        /// Gets the <see cref="TopicEventHandler"/> that <see cref="ISubscriber"/>s call upon receiving a topic message
+        /// </summary>
+        public TopicEventHandler Handler => HandleSubscriptionEvent;
+
+
+        /// <summary>
         /// Initializes a new instance of <see cref="SubscriberCache"/>
         /// </summary>
         /// <param name="topicRouter"></param>
@@ -55,7 +61,7 @@ namespace MessageRouter.Subscribers
         /// Processes an incoming <see cref="Package"/> extracting the wrapped subscription event message 
         /// </summary>
         /// <param name="package">Incoming wrapped subscription event message</param>
-        public void HandleSubscriptionEvent(Package package)
+        public void HandleSubscriptionEvent(ISubscriber subscriber, Package package)
         {
             var subscriptionMessage = packageFactory.Unpack(package);
             dispatcher.Handle(subscriptionMessage);
@@ -96,8 +102,7 @@ namespace MessageRouter.Subscribers
                 if (!factories.TryGetValue(routing.SubscriberType, out var factory))
                     throw new MissingFactoryException(routing.SubscriberType, typeof(SubscriberCache));
 
-                subscriber = factory.CreateSubscriber(routing.Address);
-                subscriber.TopicMessageReceived += (s, e) => Task.Run(() => HandleSubscriptionEvent(e));
+                subscriber = factory.CreateSubscriber(routing.Address, HandleSubscriptionEvent);
                 subscribers.Add(routing, subscriber);
             }
 

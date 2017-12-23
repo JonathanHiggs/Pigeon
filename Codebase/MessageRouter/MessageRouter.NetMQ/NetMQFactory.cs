@@ -11,6 +11,7 @@ using MessageRouter.Senders;
 using MessageRouter.Serialization;
 using MessageRouter.Transport;
 using NetMQ.Sockets;
+using MessageRouter.Subscribers;
 
 namespace MessageRouter.NetMQ
 {
@@ -91,11 +92,13 @@ namespace MessageRouter.NetMQ
         /// Creates a new instance of a <see cref="INetMQSubscriber"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="MessageRouter.Common.IConnection"/></param>
+        /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="INetMQSubscriber"/> will call
+        /// upon receiving a topic message</param>
         /// <returns><see cref="INetMQSubscriber"/> connected to the <see cref="IAddress"/></returns>
-        protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
+        protected override INetMQSubscriber CreateNewSubscriber(IAddress address, TopicEventHandler topicEventHandler)
         {
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, topicEventHandler);
 
             subscriber.AddAddress(address);
 

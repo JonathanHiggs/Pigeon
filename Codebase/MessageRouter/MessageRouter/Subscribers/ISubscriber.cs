@@ -19,9 +19,10 @@ namespace MessageRouter.Subscribers
     public interface ISubscriber : IConnection
     {
         /// <summary>
-        /// Raised when an incoming message is received
+        /// Gets the <see cref="TopicEventHandler"/> delegate the <see cref="ISubscriber"/> calls when an
+        /// incoming topic message is received
         /// </summary>
-        event TopicEventHandler TopicMessageReceived;
+        TopicEventHandler Handler { get; }
 
 
         /// <summary>

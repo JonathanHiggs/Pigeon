@@ -1,6 +1,7 @@
 ﻿using MessageRouter.Addresses;
 using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Serialization;
+using MessageRouter.Subscribers;
 using Moq;
 using NetMQ.Sockets;
 using NUnit.Framework;
@@ -19,6 +20,8 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         private ISerializer serializer;
 
         private readonly IAddress address = TcpAddress.Localhost(5555);
+
+        private readonly TopicEventHandler handler = (sub, task) => { };
 
 
         [SetUp]
@@ -40,7 +43,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         public void NetMQSubscriber_WithNullSubscriberSocket_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQSubscriber(null, serializer);
+            TestDelegate construct = () => new NetMQSubscriber(null, serializer, handler);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -54,10 +57,38 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
             var socket = new SubscriberSocket();
 
             // Act
-            TestDelegate construct = () => new NetMQSubscriber(socket, null);
+            TestDelegate construct = () => new NetMQSubscriber(socket, null, handler);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void NetMQSubscriber_WithNullHandler_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+
+            // Act
+            TestDelegate construct = () => new NetMQSubscriber(socket, serializer, null);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void NetMQSubscriber_WithHandler_SubscriberHandlerPropertyReturnsSameHandler()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+
+            // Act
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
+
+            // Assert
+            Assert.That(subscriber.Handler, Is.SameAs(handler));
         }
         #endregion
 
@@ -68,7 +99,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             var any = subscriber.Addresses.Any();
@@ -85,7 +116,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             TestDelegate addAddress = () => subscriber.AddAddress(null);
@@ -100,7 +131,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             subscriber.AddAddress(address);
@@ -115,7 +146,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             subscriber.AddAddress(address);
@@ -133,7 +164,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             TestDelegate removeAddress = () => subscriber.RemoveAddress(null);
@@ -148,7 +179,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             TestDelegate removeAddress = () => subscriber.RemoveAddress(address);
@@ -163,7 +194,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
             subscriber.AddAddress(address);
 
             // Act
@@ -181,7 +212,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
 
             // Act
             TestDelegate connectAll = () => subscriber.InitializeConnection();
@@ -196,7 +227,7 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer);
+            var subscriber = new NetMQSubscriber(socket, serializer, handler);
             subscriber.InitializeConnection();
 
             // Act
