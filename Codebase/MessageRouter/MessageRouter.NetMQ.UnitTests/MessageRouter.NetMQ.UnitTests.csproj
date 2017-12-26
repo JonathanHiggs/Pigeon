@@ -60,6 +60,7 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageFactoryTests.cs" />
     <Compile Include="NetMQConfigTests.cs" />
     <Compile Include="NetMQFactoryTests.cs" />
     <Compile Include="NetMQMonitorTests.cs" />

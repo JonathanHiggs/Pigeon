@@ -21,15 +21,15 @@ namespace MessageRouter.NetMQ.Senders
     public class NetMQSender : NetMQConnection, INetMQSender
     {
         private readonly IAsyncSocket socket;
-        
+
 
         /// <summary>
         /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
         /// <param name="socket">Inner <see cref="IAsyncSocket"/> that sends data to remotes</param>
-        /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
-        public NetMQSender(IAsyncSocket socket, ISerializer serializer)
-            : base(socket, serializer)
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
+        public NetMQSender(IAsyncSocket socket, IMessageFactory messageFactory)
+            : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
         }
@@ -58,13 +58,9 @@ namespace MessageRouter.NetMQ.Senders
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
         public async Task<Package> SendAndReceive(Package request, TimeSpan timeout)
         {
-            var message = new NetMQMessage();
-            message.AppendEmptyFrame();
-            message.Append(serializer.Serialize(request));
-
-            var responseMessage = await socket.SendAndReceive(message, timeout);
-
-            return serializer.Deserialize<Package>(responseMessage[1].ToByteArray());
+            var requestMessage = messageFactory.CreateRequestMessage(request);
+            var responseMessage = await socket.SendAndReceive(requestMessage, timeout);
+            return messageFactory.ExtractResponsePackage(responseMessage);
         }
 
 

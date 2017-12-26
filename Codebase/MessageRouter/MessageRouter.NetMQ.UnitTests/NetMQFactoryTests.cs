@@ -23,8 +23,8 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<INetMQMonitor> mockMonitor = new Mock<INetMQMonitor>();
         private INetMQMonitor monitor;
         
-        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
-        private ISerializer serializer;
+        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
+        private IMessageFactory messageFactory;
         
         private readonly RequestTaskHandler requestHandler = (rec, task) => { };
         private readonly TopicEventHandler topicHandler = (sub, topic) => { };
@@ -34,7 +34,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void Setup()
         {
             monitor = mockMonitor.Object;
-            serializer = mockSerializer.Object;
+            messageFactory = mockMessageFactory.Object;
 
             mockMonitor
                 .SetupGet(m => m.RequestHandler)
@@ -50,7 +50,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void TearDown()
         {
             mockMonitor.Reset();
-            mockSerializer.Reset();
+            mockMessageFactory.Reset();
         }
 
 
@@ -59,7 +59,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void NetMQFactory_WithNullMonitor_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQFactory(null, serializer);
+            TestDelegate construct = () => new NetMQFactory(null, messageFactory);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -82,7 +82,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SenderMonitor_ReturnsSuppliedMonitor()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var senderMonitor = factory.SenderMonitor;
@@ -96,7 +96,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void ReceiverMonitor_ReturnsSuppliedMonitor()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var receiverMonitor = factory.ReceiverMonitor;
@@ -110,7 +110,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void PublisherMonitor_ReturnsSuppliedMonitor()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var publisherMonitor = factory.PublisherMonitor;
@@ -124,7 +124,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SubscriberMonitor_ReturnsSuppliedMonitor()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var subscriberMonitor = factory.SubscriberMonitor;
@@ -138,7 +138,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SenderType_ReturnsINetMQSender()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var senderType = factory.SenderType;
@@ -152,7 +152,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void ReceiverType_ReturnsINetMQReceiver()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var receiverType = factory.ReceiverType;
@@ -166,7 +166,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void PublisherType_ReturnsINetMQPublisher()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var publisherType = factory.PublisherType;
@@ -180,7 +180,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SubscriberType_ReturnsINetMQSubscriber()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var subscriberType = factory.SubscriberType;
@@ -194,7 +194,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewSender_ReturnsSender()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var sender = factory.CreateSender(TcpAddress.Localhost(5555));
@@ -208,7 +208,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewReceiver_ReturnsReceiver()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
@@ -222,7 +222,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewReceiver_WithHandler_ReceiverHandlerIsSame()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
@@ -236,7 +236,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewPublisher_ReturnsPublisher()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var publisher = factory.CreatePublisher(TcpAddress.Wildcard(5555));
@@ -250,7 +250,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewSubscriber_ReturnsSubscriber()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));
@@ -264,7 +264,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void CreateNewSubscriber_WithHandler_SusbcriberHandlerIsSame()
         {
             // Arrange
-            var factory = new NetMQFactory(monitor, serializer);
+            var factory = new NetMQFactory(monitor, messageFactory);
 
             // Act
             var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));

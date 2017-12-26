@@ -34,10 +34,10 @@ namespace MessageRouter.NetMQ.Subscribers
         /// Initializes a new instance of <see cref="NetMQSubscriber"/>
         /// </summary>
         /// <param name="socket">Inner <see cref="SubscriberSocket"/> that receives data from remotes</param>
-        /// <param name="serializer">A serializer that will convert published data from binary</param>
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
         /// <param name="handler"><see cref="TopicEventHandler"/> delegate that is called when an incoming topic message is received</param>
-        public NetMQSubscriber(SubscriberSocket socket, ISerializer serializer, TopicEventHandler handler)
-            : base(socket, serializer)
+        public NetMQSubscriber(SubscriberSocket socket, IMessageFactory messageFactory, TopicEventHandler handler)
+            : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
             this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
@@ -77,8 +77,7 @@ namespace MessageRouter.NetMQ.Subscribers
                 if (!socket.TryReceiveMultipartMessage(ref message, 2))
                     return;
                 
-                var packageData = message[1].ToByteArray();
-                var package = serializer.Deserialize<Package>(packageData);
+                var package = messageFactory.ExtractTopicPackage(message);
                 Handler(this, package);
             });
         }

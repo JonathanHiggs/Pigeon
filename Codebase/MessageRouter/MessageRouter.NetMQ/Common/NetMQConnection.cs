@@ -15,7 +15,7 @@ namespace MessageRouter.NetMQ.Common
     public abstract class NetMQConnection : INetMQConnection
     {
         private readonly ISocketPollable pollableSocket;
-        protected readonly ISerializer serializer;
+        protected readonly IMessageFactory messageFactory;
         private readonly HashSet<IAddress> addresses = new HashSet<IAddress>();
         private bool isConnected = false;
 
@@ -42,11 +42,11 @@ namespace MessageRouter.NetMQ.Common
         /// Initializes a new instance of <see cref="NetMQConnection"/>
         /// </summary>
         /// <param name="pollableSocket">Inner socket connection that is monitored by <see cref="INetMQPoller"/></param>
-        /// <param name="serializer">A serializer that will convert data into a binary format for transmission</param>
-        public NetMQConnection(ISocketPollable pollableSocket, ISerializer serializer)
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
+        public NetMQConnection(ISocketPollable pollableSocket, IMessageFactory messageFactory)
         {
             this.pollableSocket = pollableSocket ?? throw new ArgumentNullException(nameof(pollableSocket));
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
         }
 
 

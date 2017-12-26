@@ -25,9 +25,9 @@ namespace MessageRouter.NetMQ.Publishers
         /// Initializes a new instance of <see cref="NetMQPublisher"/>
         /// </summary>
         /// <param name="socket">Inner <see cref="PublisherSocket"/> that sends data to remotes</param>
-        /// <param name="serializer">A serializer that will convert request and response data to a binary format to be sent to a remote</param>
-        public NetMQPublisher(PublisherSocket socket, ISerializer serializer)
-            : base(socket, serializer)
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
+        public NetMQPublisher(PublisherSocket socket, IMessageFactory messageFactory)
+            : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
         }
@@ -39,10 +39,7 @@ namespace MessageRouter.NetMQ.Publishers
         /// <param name="package"><see cref="Package"/> to be sent to all remote <see cref="Subscribers.INetMQSubscriber"/>s</param>
         public void Publish(Package package)
         {
-            var topicName = package.Body.GetType().FullName;
-            var data = serializer.Serialize(package);
-
-            socket.SendMoreFrame(topicName).SendFrame(data);
+            socket.SendMultipartMessage(messageFactory.CreateTopicMessage(package));
         }
 
 

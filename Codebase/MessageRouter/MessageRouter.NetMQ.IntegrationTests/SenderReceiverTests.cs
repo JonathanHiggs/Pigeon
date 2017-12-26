@@ -37,8 +37,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
             };
 
             var serializer = new DotNetSerializer();
-            var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), serializer);
-            var receiver = new NetMQReceiver(new RouterSocket(), serializer, handler);
+            var messageFactory = new MessageFactory(serializer);
+            var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), messageFactory);
+            var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, handler);
             var poller = new NetMQPoller();
 
             sender.AddAddress(TcpAddress.Localhost(port));

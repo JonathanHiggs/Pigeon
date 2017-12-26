@@ -16,8 +16,8 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
     [TestFixture]
     public class NetMQReceiverTests
     {
-        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
-        private ISerializer serializer;
+        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
+        private IMessageFactory messageFactory;
 
         private readonly RequestTaskHandler handler = (rec, task) => { };
 
@@ -25,7 +25,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         [SetUp]
         public void Setup()
         {
-            serializer = mockSerializer.Object;
+            messageFactory = mockMessageFactory.Object;
         }
 
 
@@ -34,7 +34,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         public void NetMQReceiver_WithNullRouterSocket_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new NetMQReceiver(null, serializer, handler);
+            TestDelegate test = () => new NetMQReceiver(null, messageFactory, handler);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -62,7 +62,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var routerSocket = new RouterSocket();
 
             // Act
-            TestDelegate construct = () => new NetMQReceiver(routerSocket, serializer, null);
+            TestDelegate construct = () => new NetMQReceiver(routerSocket, messageFactory, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -76,7 +76,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
             var routerSocket = new RouterSocket();
 
             // Act
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Assert
             Assert.That(receiver.Handler, Is.SameAs(handler));
@@ -90,7 +90,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             var isConnected = receiver.IsConnected;
@@ -105,7 +105,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             receiver.InitializeConnection();
 
             // Act
@@ -121,7 +121,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             receiver.InitializeConnection();
             receiver.TerminateConnection();
 
@@ -140,7 +140,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             var any = receiver.Addresses.Any();
@@ -157,7 +157,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             TestDelegate addAddress = () => receiver.AddAddress(null);
@@ -172,7 +172,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             var address = TcpAddress.Wildcard(5555);
 
             // Act
@@ -188,7 +188,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -212,7 +212,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -230,7 +230,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -247,7 +247,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         { 
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             TestDelegate test = () => receiver.RemoveAddress(TcpAddress.Wildcard(5555));
@@ -264,7 +264,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             TestDelegate test = () => receiver.InitializeConnection();
@@ -279,7 +279,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             receiver.InitializeConnection();
@@ -296,7 +296,7 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, serializer, handler);
+            var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
 
             // Act
             TestDelegate test = () => receiver.TerminateConnection();

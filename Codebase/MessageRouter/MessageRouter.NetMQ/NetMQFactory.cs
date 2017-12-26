@@ -10,6 +10,7 @@ using MessageRouter.Receivers;
 using MessageRouter.Senders;
 using MessageRouter.Serialization;
 using MessageRouter.Transport;
+using NetMQ;
 using NetMQ.Sockets;
 using MessageRouter.Subscribers;
 
@@ -20,7 +21,7 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, ITransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
     {
-        private readonly ISerializer serializer;
+        private readonly IMessageFactory messageFactory;
         private readonly INetMQMonitor monitor;
 
 
@@ -28,14 +29,14 @@ namespace MessageRouter.NetMQ
         /// Initializes a new instance of <see cref="NetMQFactory"/>
         /// </summary>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
-        /// <param name="serializer"><see cref="ISerializer"/> that converts <see cref="Package"/> to binary for sending over the wire</param>
-        public NetMQFactory(INetMQMonitor monitor, ISerializer serializer)
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
+        public NetMQFactory(INetMQMonitor monitor, IMessageFactory messageFactory)
             : base(monitor, monitor, monitor, monitor)
         {
             if (null == monitor)
                 throw new ArgumentNullException(nameof(monitor));
 
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
 
@@ -48,7 +49,7 @@ namespace MessageRouter.NetMQ
         protected override INetMQReceiver CreateNewReceiver(IAddress address)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, serializer, monitor.RequestHandler);
+            var receiver = new NetMQReceiver(socket, messageFactory, monitor.RequestHandler);
 
             receiver.AddAddress(address);
 
@@ -64,7 +65,7 @@ namespace MessageRouter.NetMQ
         protected override INetMQSender CreateNewSender(IAddress address)
         {
             var socket = new AsyncSocket(new DealerSocket());
-            var sender = new NetMQSender(socket, serializer);
+            var sender = new NetMQSender(socket, messageFactory);
 
             sender.AddAddress(address);
 
@@ -80,7 +81,7 @@ namespace MessageRouter.NetMQ
         protected override INetMQPublisher CreateNewPublisher(IAddress address)
         {
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             publisher.AddAddress(address);
 
@@ -98,7 +99,7 @@ namespace MessageRouter.NetMQ
         protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
         {
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer, monitor.TopicHandler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, monitor.TopicHandler);
 
             subscriber.AddAddress(address);
 

@@ -35,34 +35,15 @@ namespace MessageRouter.NetMQ.Receivers
         /// Initializes a new instance of <see cref="NetMQReceiver"/>
         /// </summary>
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
-        /// <param name="serializer">A serializer that will convert request and response messages to a binary format for transport along the wire</param>
+        /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
         /// <param name="handler"><see cref="RequestTaskHandler"/> is called when an incoming message is received</param>
-        public NetMQReceiver(RouterSocket socket, ISerializer serializer, RequestTaskHandler handler)
-            : base(socket, serializer)
+        public NetMQReceiver(RouterSocket socket, IMessageFactory messageFactory, RequestTaskHandler handler)
+            : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
             this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
             socket.ReceiveReady += OnRequestReceived;
-        }
-        
-
-        /// <summary>
-        /// Synchronously trys receiving a <see cref="RequestTask"/> from a connected <see cref="ISender"/>
-        /// </summary>
-        /// <param name="requestTask">Combination of the request <see cref="Package"/> and a response Action</param>
-        /// <returns>Boolean flag indicating whether a request task was retrieved</returns>
-        public bool TryReceive(out RequestTask requestTask)
-        {
-            NetMQMessage message = default(NetMQMessage);
-            if (!socket.TryReceiveMultipartMessage(ref message))
-            {
-                requestTask = default(RequestTask);
-                return false;
-            }
-
-            requestTask = ExtractTaskFromMessage(message);
-            return true;
         }
 
 
@@ -91,73 +72,21 @@ namespace MessageRouter.NetMQ.Receivers
             // Move handling request off NetMQPoller thread and onto TaskPool as soon as possible
             Task.Run(() =>
             {
-                if (!TryReceive(out var requestTask))
+                NetMQMessage requestMessage = default(NetMQMessage);
+                if (!socket.TryReceiveMultipartMessage(ref requestMessage) && messageFactory.ValidRequestMessage(requestMessage))
                     return;
+
+                var request = messageFactory.ExtractRequestPackage(requestMessage);
+
+                var requestTask = new RequestTask(request, (response) =>
+                {
+                    var message = messageFactory.CreateResponseMessage(response, requestMessage);
+                    socket.SendMultipartMessage(message);
+                });
 
                 handler(this, requestTask);
             });
         }
-
-
-        #region Message Builders
-        private RequestTask ExtractTaskFromMessage(NetMQMessage requestMessage)
-        {
-            var request = ExtractPackage(requestMessage);
-
-            var requestTask = new RequestTask(request, (response) =>
-            {
-                var message = new NetMQMessage();
-                AddAddress(message, requestMessage);
-                AddRequestId(message, requestMessage);
-                AddResponse(message, response);
-                socket.SendMultipartMessage(message);
-            });
-
-            return requestTask;
-        }
-
-
-        private NetMQMessage AddAddress(NetMQMessage responseMessage, NetMQMessage requestMessage)
-        {
-            responseMessage.Append(requestMessage[0]);
-            responseMessage.AppendEmptyFrame();
-            return responseMessage;
-        }
-
-
-        private NetMQMessage AddRequestId(NetMQMessage responseMessage, NetMQMessage requestMessage)
-        {
-            // Check for non-asynchronous messages
-            if (requestMessage.FrameCount != 5)
-                return responseMessage;
-
-            // Asynchronous messages have the request id in slot 2
-            responseMessage.Append(requestMessage[2]);
-            responseMessage.AppendEmptyFrame();
-            return responseMessage;
-        }
-
-
-        private Package ExtractPackage(NetMQMessage message)
-        {
-            if (message.FrameCount == 3 || message.FrameCount == 4)
-                // Synchronous messages have request in slot 2
-                return serializer.Deserialize<Package>(message[2].ToByteArray());
-            else if (message.FrameCount == 5 || message.FrameCount == 6)
-                // Asynchronous messages have request in slot 4
-                return serializer.Deserialize<Package>(message[4].ToByteArray());
-            else
-                throw new InvalidOperationException("Request message has unexpected format");
-        }
-
-
-        private NetMQMessage AddResponse(NetMQMessage responseMessage, Package response)
-        {
-            var data = serializer.Serialize(response);
-            responseMessage.Append(data);
-            return responseMessage;
-        }
-        #endregion
         
         
         #region IDisposable Support

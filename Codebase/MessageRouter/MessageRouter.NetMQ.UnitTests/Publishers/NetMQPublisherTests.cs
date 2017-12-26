@@ -15,8 +15,8 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
     [TestFixture]
     public class NetMQPublisherTests
     {
-        private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
-        private ISerializer serializer;
+        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
+        private IMessageFactory messageFactory;
 
         private readonly IAddress address = TcpAddress.Wildcard(5555);
         
@@ -24,14 +24,14 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         [SetUp]
         public void Setup()
         {
-            serializer = mockSerializer.Object;
+            messageFactory = mockMessageFactory.Object;
         }
 
 
         [TearDown]
         public void Teardown()
         {
-            mockSerializer.Reset();
+            mockMessageFactory.Reset();
         }
 
 
@@ -40,7 +40,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         public void NetMQPublisher_WithNullPublisherSocket_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQPublisher(null, serializer);
+            TestDelegate construct = () => new NetMQPublisher(null, messageFactory);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -68,7 +68,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             var any = publisher.Addresses.Any();
@@ -85,7 +85,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             TestDelegate addAddress = () => publisher.AddAddress(null);
@@ -100,7 +100,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             publisher.AddAddress(address);
@@ -115,7 +115,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
             publisher.AddAddress(address);
 
             // Act
@@ -133,7 +133,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             TestDelegate removeAddress = () => publisher.RemoveAddress(null);
@@ -148,7 +148,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             TestDelegate removeAddress = () => publisher.RemoveAddress(address);
@@ -163,7 +163,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
             publisher.AddAddress(address);
 
             // Act
@@ -181,7 +181,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
 
             // Act
             TestDelegate bindAll = () => publisher.InitializeConnection();
@@ -196,7 +196,7 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
         {
             // Arrange
             var socket = new PublisherSocket();
-            var publisher = new NetMQPublisher(socket, serializer);
+            var publisher = new NetMQPublisher(socket, messageFactory);
             publisher.InitializeConnection();
 
             // Act
