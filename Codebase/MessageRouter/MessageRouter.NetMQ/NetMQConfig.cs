@@ -21,8 +21,18 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQConfig : ITransportConfig
     {
-        private readonly NetMQFactory factory = new NetMQFactory(new NetMQMonitor(new NetMQPoller()), new DotNetSerializer());
+        private readonly INetMQFactory factory;
         
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQConfig"/>
+        /// </summary>
+        /// <param name="factory">Factory for <see cref="Common.INetMQConnection"/>s</param>
+        public NetMQConfig(INetMQFactory factory)
+        {
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        }
+
 
         /// <summary>
         /// Gets a factory for creating <see cref="INetMQSender"/>s if available, otherwise null

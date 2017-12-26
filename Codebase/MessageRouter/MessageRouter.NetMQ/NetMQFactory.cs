@@ -16,11 +16,12 @@ using MessageRouter.Subscribers;
 namespace MessageRouter.NetMQ
 {
     /// <summary>
-    /// Combined factory for NetMQ specific implementations of <see cref="INetMQSender"/>s and <see cref="INetMQReceiver"/>s
+    /// Combined factory for NetMQ specific implementations of <see cref="Common.INetMQConnection"/>s
     /// </summary>
-    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
+    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, ITransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
     {
         private readonly ISerializer serializer;
+        private readonly INetMQMonitor monitor;
 
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace MessageRouter.NetMQ
                 throw new ArgumentNullException(nameof(monitor));
 
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
 
 
@@ -42,13 +44,11 @@ namespace MessageRouter.NetMQ
         /// Creates a new instance of a <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="MessageRouter.Common.IConnection"/></param>
-        /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
-        /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns>Receiver bound to the address</returns>
-        protected override INetMQReceiver CreateNewReceiver(IAddress address, RequestTaskHandler handler)
+        protected override INetMQReceiver CreateNewReceiver(IAddress address)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, serializer, handler);
+            var receiver = new NetMQReceiver(socket, serializer, monitor.RequestHandler);
 
             receiver.AddAddress(address);
 

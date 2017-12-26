@@ -133,12 +133,11 @@ namespace MessageRouter.Transport
         /// Creates a new instance of a <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="Common.IConnection"/></param>
-        /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
         /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns>Receiver bound to the address</returns>
-        public IReceiver CreateReceiver(IAddress address, RequestTaskHandler requestTaskHandler)
+        public IReceiver CreateReceiver(IAddress address)
         {
-            return CreateAndAddReceiver(address, requestTaskHandler);
+            return CreateAndAddReceiver(address);
         }
 
 
@@ -146,15 +145,14 @@ namespace MessageRouter.Transport
         /// Creates a new instance of a <see cref="TReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="Common.IConnection"/></param>
-        /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
         /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns>Receiver bound to the address</returns>
-        protected abstract TReceiver CreateNewReceiver(IAddress address, RequestTaskHandler requestTaskHandler);
+        protected abstract TReceiver CreateNewReceiver(IAddress address);
 
 
-        private TReceiver CreateAndAddReceiver(IAddress address, RequestTaskHandler requestTaskHandler)
+        private TReceiver CreateAndAddReceiver(IAddress address)
         {
-            var receiver = CreateNewReceiver(address, requestTaskHandler);
+            var receiver = CreateNewReceiver(address);
             receiverMonitor.AddReceiver(receiver);
             return receiver;
         }

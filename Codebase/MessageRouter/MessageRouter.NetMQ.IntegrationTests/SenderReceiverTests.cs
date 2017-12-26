@@ -22,13 +22,16 @@ namespace MessageRouter.NetMQ.IntegrationTests
         public async Task SenderReceiver_WhenBoundAndConnected_PassesMessage()
         {
             // Arrange
-            var packageFactory = new PackageFactory();
+            var responseStr = "Hello, World!";
+            var requestStr = "Hello";
+            var receivedRequest = String.Empty;
+            var called = false;
 
             RequestTaskHandler handler = (rec, task) =>
             {
-                var requestMessage = packageFactory.Unpack(task.Request);
-                var responseMessage = $"{requestMessage}, World!";
-                var responsePackage = packageFactory.Pack(responseMessage);
+                called = true;
+                receivedRequest = (string)task.Request.Body;
+                var responsePackage = new DataPackage<string>(new GuidPackageId(), responseStr);
                 task.ResponseHandler(responsePackage);
             };
 
@@ -46,7 +49,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             poller.Add(receiver.PollableSocket);
             poller.RunAsync();
 
-            var package = new DataPackage<string>(new GuidPackageId(), "Hello");
+            var package = new DataPackage<string>(new GuidPackageId(), requestStr);
 
             // Act
             var response = await sender.SendAndReceive(package, TimeSpan.FromSeconds(5));
@@ -57,7 +60,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
             receiver.TerminateConnection();
 
             // Assert
-            Assert.That(response.Body, Is.EqualTo("Hello, World!"));
+            Assert.That(called, Is.True);
+            Assert.That(receivedRequest, Is.EqualTo(requestStr));
+            Assert.That((string)response.Body, Is.EqualTo(responseStr));
         }
     }
 }

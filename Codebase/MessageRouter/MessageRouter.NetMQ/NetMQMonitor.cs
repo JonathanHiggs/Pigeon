@@ -11,6 +11,8 @@ using MessageRouter.Subscribers;
 
 using NetMQ;
 using MessageRouter.NetMQ.Common;
+using MessageRouter.Requests;
+using MessageRouter.Packages;
 
 namespace MessageRouter.NetMQ
 {
@@ -21,6 +23,8 @@ namespace MessageRouter.NetMQ
     public class NetMQMonitor : INetMQMonitor
     {
         private readonly INetMQPoller poller;
+        private readonly IPackageFactory packageFactory;
+        private readonly IRequestDispatcher requestDispatcher;
         private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
         private readonly HashSet<INetMQPublisher> publishers = new HashSet<INetMQPublisher>();
@@ -30,12 +34,22 @@ namespace MessageRouter.NetMQ
 
 
         /// <summary>
+        /// Gets a handler delegate for incoming requests
+        /// </summary>
+        public RequestTaskHandler RequestHandler => HandleRequest;
+
+
+        /// <summary>
         /// Initializes a new instance of <see cref="NetMQMonitor"/>
         /// </summary>
         /// <param name="poller">The <see cref="INetMQPoller"/> polls the sender and receiver connections for incoming messages</param>
-        public NetMQMonitor(INetMQPoller poller)
+        /// <param name="requestDispatcher">Delegates handling of incoming requests to registered handlers</param>
+        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are received from remote connections</param>
+        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, IPackageFactory packageFactory)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
+            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
+            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
 
 
@@ -139,6 +153,15 @@ namespace MessageRouter.NetMQ
                 if (running)
                     runningAction(connection);
             }
+        }
+
+        
+        private void HandleRequest(IReceiver receiver, RequestTask requestTask)
+        {
+            var requestObject = packageFactory.Unpack(requestTask.Request);
+            var responseObject = requestDispatcher.Handle(requestObject);
+            var responseMessage = packageFactory.Pack(responseObject);
+            requestTask.ResponseHandler(responseMessage);
         }
     }
 }

@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Common\INetMQConnection.cs" />
     <Compile Include="Common\NetMQConnection.cs" />
+    <Compile Include="INetMQFactory.cs" />
     <Compile Include="INetMQMonitor.cs" />
     <Compile Include="NetMQMonitor.cs" />
     <Compile Include="NetMQFactory.cs" />

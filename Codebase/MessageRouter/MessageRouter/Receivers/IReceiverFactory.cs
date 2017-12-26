@@ -34,7 +34,7 @@ namespace MessageRouter.Receivers
         /// <param name="requestTaskHandler"><see cref="RequestTaskHandler"/> delegate that is called when by the 
         /// <see cref="IReceiver"/> when an incoming message is received</param>
         /// <returns><see cref="IReceiver"/> bound to the <see cref="IAddress"/></returns>
-        IReceiver CreateReceiver(IAddress address, RequestTaskHandler requestTaskHandler);
+        IReceiver CreateReceiver(IAddress address);
     }
 
 

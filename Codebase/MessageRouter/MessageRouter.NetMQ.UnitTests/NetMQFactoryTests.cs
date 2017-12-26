@@ -29,11 +29,16 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly RequestTaskHandler requestHandler = (rec, task) => { };
         private readonly TopicEventHandler topicHandler = (sub, topic) => { };
 
+
         [SetUp]
         public void Setup()
         {
             monitor = mockMonitor.Object;
             serializer = mockSerializer.Object;
+
+            mockMonitor
+                .SetupGet(m => m.RequestHandler)
+                .Returns(requestHandler);
         }
 
 
@@ -202,7 +207,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), requestHandler);
+            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
 
             // Assert
             Assert.That(receiver, Is.Not.Null);
@@ -216,7 +221,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555), requestHandler);
+            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
 
             // Assert
             Assert.That(receiver.Handler, Is.SameAs(requestHandler));

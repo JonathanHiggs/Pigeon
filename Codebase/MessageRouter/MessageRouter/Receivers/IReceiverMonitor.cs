@@ -16,6 +16,12 @@ namespace MessageRouter.Receivers
     public interface IReceiverMonitor<TReceiver> : IMonitor where TReceiver : IReceiver
     {
         /// <summary>
+        /// Gets a handler delegate for incoming requests
+        /// </summary>
+        RequestTaskHandler RequestHandler { get; }
+
+
+        /// <summary>
         /// Adds a <see cref="TReceiver"/> to the internal cache of monitored <see cref="IReceiver"/>s
         /// </summary>
         /// <param name="receiver"><see cref="TReceiver"/> to add to the cache of monitored <see cref="IReceiver"/>s</param>
