@@ -167,9 +167,15 @@ namespace MessageRouter
         }
 
 
-        public static RouterBuilder Builder(string name)
+        public static IFluentBuilder Builder(string name)
         {
-            return new RouterBuilder(name);
+            return new SimpleBuilder(name);
+        }
+
+
+        public static IFluentBuilder Builder(string name, IContainer container)
+        {
+            return new DependencyInjectionBuilder(name, container);
         }
     }
 }

@@ -10,13 +10,14 @@ using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Publishers;
 using MessageRouter.Sandbox.Contracts;
+using MessageRouter.Unity;
+using Unity;
 
 namespace MessageRouter.Sandbox.Programs
 {
     public class Publisher
     {
         private readonly Router router;
-        //private readonly Timer timer;
 
         private Random random = new Random();
         private double price = 100.0;
@@ -30,18 +31,10 @@ namespace MessageRouter.Sandbox.Programs
 
         public Publisher()
         {
-            router = Router.Builder("Publisher")
-                           .WithTransport<NetMQConfig>()
-                           .WithPublisher<INetMQPublisher>(TcpAddress.Wildcard(5556))
-                           .Build();
-
-            //timer = new Timer
-            //{
-            //    AutoReset = true,
-            //    Interval = 1.0,
-            //};
-
-            //timer.Elapsed += Publish;
+            router = UnityBuilder.WithName("Publisher")
+                                 .WithTransport<NetMQConfig>()
+                                 .WithPublisher<INetMQPublisher>(TcpAddress.Wildcard(5556))
+                                 .Build();
         }
 
         private void Publish(object sender, ElapsedEventArgs e)

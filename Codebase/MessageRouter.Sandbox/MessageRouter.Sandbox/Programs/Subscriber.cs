@@ -7,6 +7,8 @@ using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Subscribers;
 using MessageRouter.Sandbox.Contracts;
+using MessageRouter.Unity;
+using Unity;
 
 namespace MessageRouter.Sandbox.Programs
 {
@@ -18,11 +20,11 @@ namespace MessageRouter.Sandbox.Programs
 
         public Subscriber()
         {
-            router = Router.Builder("Subscriber")
-                           .WithTransport<NetMQConfig>()
-                           .WithSubscriber<INetMQSubscriber, Observation>(TcpAddress.Localhost(5556))
-                           .WithTopicHandler<Observation>(Handler)
-                           .Build();
+            router = UnityBuilder.WithName("Subscriber")
+                                 .WithTransport<NetMQConfig>()
+                                 .WithSubscriber<INetMQSubscriber, Observation>(TcpAddress.Localhost(5556))
+                                 .WithTopicHandler<Observation>(Handler)
+                                 .Build();
         }
 
 

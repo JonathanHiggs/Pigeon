@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MessageRouter.Addresses;
+using MessageRouter.Subscribers;
 
 namespace MessageRouter.Routing
 {
@@ -27,5 +29,15 @@ namespace MessageRouter.Routing
         /// <returns>True if the <see cref="ITopicRouter"/> has a <see cref="SubscriberRouting"/> for the topic message
         /// type; otherwise false</returns>
         bool RoutingFor<TTopic>(out SubscriberRouting routing);
+
+
+        /// <summary>
+        /// Adds to the routing table
+        /// </summary>
+        /// <typeparam name="TTopic">Topic message type</typeparam>
+        /// <typeparam name="TSubscriber">Transport specific <see cref="ISubscriber"/> type</typeparam>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IPublisher"/> for this
+        /// <see cref="ISubscriber"/></param>
+        void AddTopicRouting<TTopic, TSubscriber>(IAddress address) where TSubscriber : ISubscriber;
     }
 }

@@ -27,8 +27,20 @@ namespace MessageRouter.NetMQ
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQConfig"/>
         /// </summary>
-        /// <param name="factory">Factory for <see cref="Common.INetMQConnection"/>s</param>
-        public NetMQConfig(INetMQFactory factory)
+        /// <param name="container">DI Container to wire up dependencies</param>
+        public NetMQConfig(IContainer container)
+        {
+            container.Register<ISerializer, DotNetSerializer>(true);
+            container.Register<IMessageFactory, MessageFactory>(true);
+            container.Register<INetMQPoller, NetMQPoller>(true);
+            container.Register<INetMQMonitor, NetMQMonitor>(true);
+            container.Register<INetMQFactory, NetMQFactory>(true);
+            
+            factory = container.Resolve<INetMQFactory>();
+        }
+
+
+        private NetMQConfig(INetMQFactory factory)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
@@ -56,5 +68,11 @@ namespace MessageRouter.NetMQ
         /// Gets a factory for creating <see cref="INetMQSubscriber"/>s if available, otherwise null
         /// </summary>
         public ISubscriberFactory SubscriberFactory => factory;
+
+
+        public static NetMQConfig Create(INetMQFactory factory)
+        {
+            return new NetMQConfig(factory);
+        }
     }
 }

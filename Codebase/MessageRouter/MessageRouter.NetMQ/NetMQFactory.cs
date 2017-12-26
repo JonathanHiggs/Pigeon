@@ -19,7 +19,7 @@ namespace MessageRouter.NetMQ
     /// <summary>
     /// Combined factory for NetMQ specific implementations of <see cref="Common.INetMQConnection"/>s
     /// </summary>
-    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, ITransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>
+    public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, INetMQFactory
     {
         private readonly IMessageFactory messageFactory;
         private readonly INetMQMonitor monitor;

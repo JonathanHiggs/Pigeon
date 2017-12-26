@@ -16,5 +16,23 @@ namespace MessageRouter.Topics
         /// </summary>
         /// <param name="message">The message published by a remote source to be handled</param>
         void Handle(object message);
+
+
+        /// <summary>
+        /// Registeres a <see cref="ITopicHandler{TEvent}"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
+        TopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler);
+
+
+        /// <summary>
+        /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
+        TopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
     }
 }

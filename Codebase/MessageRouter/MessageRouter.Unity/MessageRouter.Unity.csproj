@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{25A9DB45-8465-4D37-95D5-3222AF20B1FA}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>MessageRouter.Sandbox</RootNamespace>
-    <AssemblyName>MessageRouter.Sandbox</AssemblyName>
+    <ProjectGuid>{89C03F24-7E90-4F20-B438-B9587E060F64}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MessageRouter.Unity</RootNamespace>
+    <AssemblyName>MessageRouter.Unity</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,25 +29,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>MessageRouter.Sandbox.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AsyncIO, Version=0.1.25.0, Culture=neutral, PublicKeyToken=44a94435bd6f33f8, processorArchitecture=MSIL">
-      <HintPath>..\packages\AsyncIO.0.1.26.0\lib\net40\AsyncIO.dll</HintPath>
-    </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\CommonServiceLocator.dll</HintPath>
-    </Reference>
-    <Reference Include="NetMQ, Version=4.0.0.1, Culture=neutral, PublicKeyToken=a6decef4ddc58b3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\NetMQ.4.0.0.1\lib\net40\NetMQ.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,57 +42,40 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Unity.Abstractions, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Configuration, Version=5.1.2.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.Configuration.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Container, Version=5.5.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.Container.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Interception, Version=5.2.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.Interception.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Interception.Configuration, Version=5.1.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.Interception.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RegistrationByConvention, Version=2.1.3.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ServiceLocation, Version=2.0.10.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\MessageRouter\packages\Unity.5.5.0\lib\net47\Unity.ServiceLocation.dll</HintPath>
+      <HintPath>..\packages\Unity.5.5.0\lib\net47\Unity.ServiceLocation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contracts\Observation.cs" />
-    <Compile Include="Programs\Client.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Programs\Publisher.cs" />
-    <Compile Include="Programs\Subscriber.cs" />
-    <Compile Include="Programs\WebServer.cs" />
+    <Compile Include="UnityBuilder.cs" />
+    <Compile Include="UnityContainerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Programs\SenderReceiver.cs" />
-    <Compile Include="Programs\Server.cs" />
-    <Compile Include="Contracts\TestMessage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="app.manifest" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MessageRouter\MessageRouter.NetMQ\MessageRouter.NetMQ.csproj">
-      <Project>{8e603ba1-ceb3-4af7-92f4-d49eb2e76599}</Project>
-      <Name>MessageRouter.NetMQ</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MessageRouter\MessageRouter.Unity\MessageRouter.Unity.csproj">
-      <Project>{89c03f24-7e90-4f20-b438-b9587e060f64}</Project>
-      <Name>MessageRouter.Unity</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MessageRouter\MessageRouter\MessageRouter.csproj">
+    <ProjectReference Include="..\MessageRouter\MessageRouter.csproj">
       <Project>{c2a46fa7-da9e-4f04-8d00-58cdd401d5f2}</Project>
       <Name>MessageRouter</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

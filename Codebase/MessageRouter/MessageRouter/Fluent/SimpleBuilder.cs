@@ -14,7 +14,7 @@ using MessageRouter.Transport;
 
 namespace MessageRouter.Fluent
 {
-    public class RouterBuilder
+    public class SimpleBuilder : IFluentBuilder
     {
         private string name;
 
@@ -32,7 +32,7 @@ namespace MessageRouter.Fluent
         private readonly SubscriberCache subscriberCache;
 
 
-        public RouterBuilder(string name)
+        public SimpleBuilder(string name)
         {
             this.name = name;
             topicRouter = new TopicRouter();
@@ -50,7 +50,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithTransport<TTransport>()
+        public IFluentBuilder WithTransport<TTransport>()
             where TTransport : ITransportConfig
         {
             var transport = Activator.CreateInstance<TTransport>();
@@ -71,7 +71,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
+        public IFluentBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
             where TSender : ISender
             where TRequest : class
         {
@@ -80,7 +80,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithReceiver<TReceiver>(IAddress address)
+        public IFluentBuilder WithReceiver<TReceiver>(IAddress address)
             where TReceiver : IReceiver
         {
             receiverCache.AddReceiver<TReceiver>(address);
@@ -88,7 +88,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithPublisher<TPublisher>(IAddress address)
+        public IFluentBuilder WithPublisher<TPublisher>(IAddress address)
             where TPublisher : IPublisher
         {
             publisherCache.AddPublisher<TPublisher>(address);
@@ -96,7 +96,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
+        public IFluentBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
             topicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
@@ -104,7 +104,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -113,7 +113,7 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -122,14 +122,14 @@ namespace MessageRouter.Fluent
         }
 
 
-        public RouterBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
+        public IFluentBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;
         }
 
 
-        public RouterBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        public IFluentBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;

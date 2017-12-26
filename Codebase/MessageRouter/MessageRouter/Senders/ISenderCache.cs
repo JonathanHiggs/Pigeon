@@ -25,5 +25,12 @@ namespace MessageRouter.Senders
         /// <typeparam name="TRequest">Request type</typeparam>
         /// <returns>Matching <see cref="ISender"/> for the given request type</returns>
         ISender SenderFor<TRequest>();
+
+
+        /// <summary>
+        /// Adds a <see cref="ISenderFactory{TSender}"/> to the registered factories
+        /// </summary>
+        /// <param name="factory">Factory used to create <see cref="ISender"/>s at when required to send first message to remote <see cref="IReceiver"/></param>
+        void AddFactory(ISenderFactory factory);
     }
 }

@@ -44,7 +44,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SenderFactory_ReturnsFactory()
         {
             // Arrange
-            var config = new NetMQConfig(factory);
+            var config = NetMQConfig.Create(factory);
 
             // Act
             var senderFactory = config.SenderFactory;
@@ -58,7 +58,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void ReceiverFactory_ReturnsFactory()
         {
             // Arrange
-            var config = new NetMQConfig(factory);
+            var config = NetMQConfig.Create(factory);
 
             // Act
             var receiverFactory = config.ReceiverFactory;
@@ -72,7 +72,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void PublisherFactory_ReturnsFactory()
         {
             // Arrange
-            var config = new NetMQConfig(factory);
+            var config = NetMQConfig.Create(factory);
 
             // Act
             var publisherFactory = config.PublisherFactory;
@@ -86,7 +86,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void SubscriberFactory_ReturnsRactory()
         {
             // Arrange
-            var config = new NetMQConfig(factory);
+            var config = NetMQConfig.Create(factory);
 
             // Act
             var subscriberFactory = config.SubscriberFactory;

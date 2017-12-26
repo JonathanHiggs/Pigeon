@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Include="Common\ICache.cs" />
     <Compile Include="Diagnostics\MissingFactoryException.cs" />
+    <Compile Include="Fluent\IFluentBuilder.cs" />
+    <Compile Include="Fluent\DependencyInjectionBuilder.cs" />
+    <Compile Include="IContainer.cs" />
     <Compile Include="Routing\ITopicRouter.cs" />
     <Compile Include="Routing\SubscriberRouting.cs" />
     <Compile Include="Routing\TopicRouter.cs" />
@@ -71,7 +74,7 @@
     <Compile Include="Topics\TopicHandlerFunction.cs" />
     <Compile Include="Topics\TopicHandlerDelegate.cs" />
     <Compile Include="Transport\TransportFactory.cs" />
-    <Compile Include="Fluent\RouterBuilder.cs" />
+    <Compile Include="Fluent\SimpleBuilder.cs" />
     <Compile Include="Common\IConnection.cs" />
     <Compile Include="Transport\ITransportFactory.cs" />
     <Compile Include="IRouter.cs" />

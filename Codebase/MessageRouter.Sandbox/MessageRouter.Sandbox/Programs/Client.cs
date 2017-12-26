@@ -5,6 +5,9 @@ using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Senders;
 using MessageRouter.Sandbox.Contracts;
+using MessageRouter.Unity;
+using Microsoft.Practices.Unity;
+using Unity;
 
 namespace MessageRouter.Sandbox.Programs
 {
@@ -44,11 +47,10 @@ namespace MessageRouter.Sandbox.Programs
             Console.Write("Enter server name: ");
             var serverName = Console.ReadLine();
 
-            var router = 
-                Router.Builder("TestClient")
-                      .WithTransport<NetMQConfig>()
-                      .WithSenderRouting<INetMQSender, TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555))
-                      .BuildAndStart();
+            var router = UnityBuilder.WithName("TestClient")
+                                     .WithTransport<NetMQConfig>()
+                                     .WithSenderRouting<INetMQSender, TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555))
+                                     .BuildAndStart();
 
             var client = new Client(router);
             client.Start();

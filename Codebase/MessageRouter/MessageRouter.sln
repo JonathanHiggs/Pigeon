@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter", "MessageRouter\MessageRouter.csproj", "{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}"
 EndProject
@@ -12,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter.NetMQ.IntegrationTests", "MessageRouter.NetMQ.IntegrationTests\MessageRouter.NetMQ.IntegrationTests.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter.NetMQ.UnitTests", "MessageRouter.NetMQ.UnitTests\MessageRouter.NetMQ.UnitTests.csproj", "{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter.Sandbox", "..\MessageRouter.Sandbox\MessageRouter.Sandbox\MessageRouter.Sandbox.csproj", "{25A9DB45-8465-4D37-95D5-3222AF20B1FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageRouter.Unity", "MessageRouter.Unity\MessageRouter.Unity.csproj", "{89C03F24-7E90-4F20-B438-B9587E060F64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

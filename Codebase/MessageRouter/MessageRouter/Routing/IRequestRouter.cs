@@ -26,5 +26,14 @@ namespace MessageRouter.Routing
         /// <see cref="IRequestRouter"/> has one added</param>
         /// <returns>True if the <see cref="IRequestRouter"/> has a <see cref="SenderRouting"/> for the request type; otherwise, false</returns>
         bool RoutingFor<TRequest>(out SenderRouting routing);
+
+
+        /// <summary>
+        /// Adds to the routing table
+        /// </summary>
+        /// <typeparam name="TRequest">Request message type</typeparam>
+        /// <typeparam name="TSender">Transport specific <see cref="ISender"/> type</typeparam>
+        /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/> for this <see cref="ISender"/></param>
+        void AddRequestRouting<TRequest, TSender>(IAddress address) where TSender : ISender;
     }
 }

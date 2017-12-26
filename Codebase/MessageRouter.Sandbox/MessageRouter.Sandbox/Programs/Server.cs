@@ -5,6 +5,8 @@ using MessageRouter.Addresses;
 using MessageRouter.NetMQ;
 using MessageRouter.NetMQ.Receivers;
 using MessageRouter.Sandbox.Contracts;
+using MessageRouter.Unity;
+using Unity;
 
 namespace MessageRouter.Sandbox.Programs
 {
@@ -12,12 +14,11 @@ namespace MessageRouter.Sandbox.Programs
     {
         public static void Run()
         {
-            var router =
-                Router.Builder("TestServer")
-                      .WithTransport<NetMQConfig>()
-                      .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
-                      .WithRequestHandler<TestMessage, TestMessage>(Handler)
-                      .BuildAndStart();
+            var router = UnityBuilder.WithName("TestServer")
+                                     .WithTransport<NetMQConfig>()
+                                     .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
+                                     .WithRequestHandler<TestMessage, TestMessage>(Handler)
+                                     .BuildAndStart();
             
             Console.WriteLine("Press enter to stop server");
             Console.ReadLine();
