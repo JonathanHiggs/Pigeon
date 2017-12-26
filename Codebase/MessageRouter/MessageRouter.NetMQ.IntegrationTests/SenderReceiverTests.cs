@@ -25,6 +25,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var responseStr = "Hello, World!";
             var requestStr = "Hello";
             var receivedRequest = String.Empty;
+            ushort port = 6555;
             var called = false;
 
             RequestTaskHandler handler = (rec, task) =>
@@ -40,9 +41,9 @@ namespace MessageRouter.NetMQ.IntegrationTests
             var receiver = new NetMQReceiver(new RouterSocket(), serializer, handler);
             var poller = new NetMQPoller();
 
-            sender.AddAddress(TcpAddress.Localhost(5555));
+            sender.AddAddress(TcpAddress.Localhost(port));
             sender.InitializeConnection();
-            receiver.AddAddress(TcpAddress.Wildcard(5555));
+            receiver.AddAddress(TcpAddress.Wildcard(port));
             receiver.InitializeConnection();
                        
             poller.Add(sender.PollableSocket);

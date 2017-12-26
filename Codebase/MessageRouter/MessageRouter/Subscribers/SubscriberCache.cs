@@ -20,8 +20,6 @@ namespace MessageRouter.Subscribers
     {
         private readonly ITopicRouter topicRouter;
         private readonly IMonitorCache monitorCache;
-        private readonly IPackageFactory packageFactory;
-        private readonly ITopicDispatcher dispatcher;
         private readonly ISubscriptionsCache subscriptions;
         private readonly Dictionary<SubscriberRouting, ISubscriber> subscribers = new Dictionary<SubscriberRouting, ISubscriber>();
         private readonly Dictionary<Type, ISubscriberFactory> factories = new Dictionary<Type, ISubscriberFactory>();
@@ -34,37 +32,16 @@ namespace MessageRouter.Subscribers
 
 
         /// <summary>
-        /// Gets the <see cref="TopicEventHandler"/> that <see cref="ISubscriber"/>s call upon receiving a topic message
-        /// </summary>
-        public TopicEventHandler Handler => HandleSubscriptionEvent;
-
-
-        /// <summary>
         /// Initializes a new instance of <see cref="SubscriberCache"/>
         /// </summary>
         /// <param name="topicRouter"></param>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="ISubscriber"/>s</param>
-        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are received from remote <see cref="IPublisher"/>s</param>
-        /// <param name="dispatcher">Maps request messages to registered handlers for processing</param>
         /// <param name="subscriptions"></param>
-        public SubscriberCache(ITopicRouter topicRouter, IMonitorCache monitorCache, IPackageFactory packageFactory, ITopicDispatcher dispatcher, ISubscriptionsCache subscriptions)
+        public SubscriberCache(ITopicRouter topicRouter, IMonitorCache monitorCache, ISubscriptionsCache subscriptions)
         {
             this.topicRouter = topicRouter ?? throw new ArgumentNullException(nameof(topicRouter));
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
-            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
-            this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
             this.subscriptions = subscriptions ?? throw new ArgumentNullException(nameof(subscriptions));
-        }
-
-
-        /// <summary>
-        /// Processes an incoming <see cref="Package"/> extracting the wrapped subscription event message 
-        /// </summary>
-        /// <param name="package">Incoming wrapped subscription event message</param>
-        public void HandleSubscriptionEvent(ISubscriber subscriber, Package package)
-        {
-            var subscriptionMessage = packageFactory.Unpack(package);
-            dispatcher.Handle(subscriptionMessage);
         }
 
 
@@ -102,7 +79,7 @@ namespace MessageRouter.Subscribers
                 if (!factories.TryGetValue(routing.SubscriberType, out var factory))
                     throw new MissingFactoryException(routing.SubscriberType, typeof(SubscriberCache));
 
-                subscriber = factory.CreateSubscriber(routing.Address, HandleSubscriptionEvent);
+                subscriber = factory.CreateSubscriber(routing.Address);
                 subscribers.Add(routing, subscriber);
             }
 

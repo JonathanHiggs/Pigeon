@@ -13,6 +13,7 @@ using NetMQ;
 using MessageRouter.NetMQ.Common;
 using MessageRouter.Requests;
 using MessageRouter.Packages;
+using MessageRouter.Topics;
 
 namespace MessageRouter.NetMQ
 {
@@ -25,6 +26,7 @@ namespace MessageRouter.NetMQ
         private readonly INetMQPoller poller;
         private readonly IPackageFactory packageFactory;
         private readonly IRequestDispatcher requestDispatcher;
+        private readonly ITopicDispatcher topicDispatcher;
         private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
         private readonly HashSet<INetMQPublisher> publishers = new HashSet<INetMQPublisher>();
@@ -38,6 +40,12 @@ namespace MessageRouter.NetMQ
         /// </summary>
         public RequestTaskHandler RequestHandler => HandleRequest;
 
+        
+        /// <summary>
+        /// Gets a handler delegate for incoming published topic events
+        /// </summary>
+        public TopicEventHandler TopicHandler => HandleTopic;
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQMonitor"/>
@@ -45,11 +53,12 @@ namespace MessageRouter.NetMQ
         /// <param name="poller">The <see cref="INetMQPoller"/> polls the sender and receiver connections for incoming messages</param>
         /// <param name="requestDispatcher">Delegates handling of incoming requests to registered handlers</param>
         /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are received from remote connections</param>
-        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, IPackageFactory packageFactory)
+        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, IPackageFactory packageFactory, ITopicDispatcher topicDispatcher)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
             this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
             this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
+            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
         }
 
 
@@ -162,6 +171,13 @@ namespace MessageRouter.NetMQ
             var responseObject = requestDispatcher.Handle(requestObject);
             var responseMessage = packageFactory.Pack(responseObject);
             requestTask.ResponseHandler(responseMessage);
+        }
+
+
+        private void HandleTopic(ISubscriber subscriber, Package topic)
+        {
+            var subscriptionMessage = packageFactory.Unpack(topic);
+            topicDispatcher.Handle(subscriptionMessage);
         }
     }
 }

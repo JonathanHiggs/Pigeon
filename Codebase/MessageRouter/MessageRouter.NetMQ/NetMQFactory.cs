@@ -95,10 +95,10 @@ namespace MessageRouter.NetMQ
         /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="INetMQSubscriber"/> will call
         /// upon receiving a topic message</param>
         /// <returns><see cref="INetMQSubscriber"/> connected to the <see cref="IAddress"/></returns>
-        protected override INetMQSubscriber CreateNewSubscriber(IAddress address, TopicEventHandler topicEventHandler)
+        protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
         {
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, serializer, topicEventHandler);
+            var subscriber = new NetMQSubscriber(socket, serializer, monitor.TopicHandler);
 
             subscriber.AddAddress(address);
 

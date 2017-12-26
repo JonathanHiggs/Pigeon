@@ -39,6 +39,10 @@ namespace MessageRouter.NetMQ.UnitTests
             mockMonitor
                 .SetupGet(m => m.RequestHandler)
                 .Returns(requestHandler);
+
+            mockMonitor
+                .SetupGet(m => m.TopicHandler)
+                .Returns(topicHandler);
         }
 
 
@@ -249,7 +253,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555), topicHandler);
+            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));
 
             // Assert
             Assert.That(subscriber, Is.Not.Null);
@@ -263,7 +267,7 @@ namespace MessageRouter.NetMQ.UnitTests
             var factory = new NetMQFactory(monitor, serializer);
 
             // Act
-            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555), topicHandler);
+            var subscriber = factory.CreateSubscriber(TcpAddress.Localhost(5555));
 
             // Assert
             Assert.That(subscriber.Handler, Is.SameAs(topicHandler));

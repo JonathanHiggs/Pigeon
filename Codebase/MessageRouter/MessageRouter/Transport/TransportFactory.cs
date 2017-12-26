@@ -194,12 +194,10 @@ namespace MessageRouter.Transport
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="Common.IConnection"/></param>
-        /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="ISubscriber"/> will
-        /// call upon receiving a new topic message</param>
         /// <returns><see cref="ISubscriber"/> connected to the <see cref="IAddress"/></returns>
-        public ISubscriber CreateSubscriber(IAddress address, TopicEventHandler topicEventHandler)
+        public ISubscriber CreateSubscriber(IAddress address)
         {
-            return CreateAndAddSubscriber(address, topicEventHandler);
+            return CreateAndAddSubscriber(address);
         }
 
 
@@ -208,15 +206,13 @@ namespace MessageRouter.Transport
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="Common.IConnection"/></param>
-        /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="ISubscriber"/> will
-        /// call upon receiving a new topic message</param>
         /// <returns><see cref="TSubscriber"/> connected to the <see cref="IAddress"/></returns>
-        protected abstract TSubscriber CreateNewSubscriber(IAddress address, TopicEventHandler topicEventHandler);
+        protected abstract TSubscriber CreateNewSubscriber(IAddress address);
 
 
-        private TSubscriber CreateAndAddSubscriber(IAddress address, TopicEventHandler topicEventHandler)
+        private TSubscriber CreateAndAddSubscriber(IAddress address)
         {
-            var subscriber = CreateNewSubscriber(address, topicEventHandler);
+            var subscriber = CreateNewSubscriber(address);
             subscriberMonitor.AddSubscriber(subscriber);
             return subscriber;
         }

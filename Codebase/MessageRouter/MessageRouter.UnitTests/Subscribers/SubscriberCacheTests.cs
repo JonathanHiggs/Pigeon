@@ -26,12 +26,6 @@ namespace MessageRouter.UnitTests.Subscribers
         private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
         private IMonitorCache monitorCache;
 
-        private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
-        private IPackageFactory packageFactory;
-
-        private readonly Mock<ITopicDispatcher> mockDispatcher = new Mock<ITopicDispatcher>();
-        private ITopicDispatcher dispatcher;
-
         private readonly Mock<ISubscriptionsCache> mockSubscriptionsCache = new Mock<ISubscriptionsCache>();
         private ISubscriptionsCache subscriptionsCache;
         
@@ -54,8 +48,6 @@ namespace MessageRouter.UnitTests.Subscribers
         {
             topicRouter = mockTopicRouter.Object;
             monitorCache = mockMonitorCache.Object;
-            packageFactory = mockPackageFactory.Object;
-            dispatcher = mockDispatcher.Object;
             subscriptionsCache = mockSubscriptionsCache.Object;
             subscriberFactory = mockSubscriberFactory.Object;
             subscriber = mockSubscriber.Object;
@@ -68,7 +60,7 @@ namespace MessageRouter.UnitTests.Subscribers
                 .Returns(true);
 
             mockSubscriberFactory
-                .Setup(m => m.CreateSubscriber(It.IsAny<IAddress>(), It.IsAny<TopicEventHandler>()))
+                .Setup(m => m.CreateSubscriber(It.IsAny<IAddress>()))
                 .Returns(subscriber);
 
             mockSubscriberFactory
@@ -85,11 +77,9 @@ namespace MessageRouter.UnitTests.Subscribers
         public void TearDown()
         {
             mockMonitor.Reset();
-            mockDispatcher.Reset();
             mockSubscriber.Reset();
             mockTopicRouter.Reset();
             mockMonitorCache.Reset();
-            mockPackageFactory.Reset();
             mockSubscriberFactory.Reset();
             mockSubscriptionsCache.Reset();
         }
@@ -100,7 +90,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberCache_WithNullTopicRouter_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SubscriberCache(null, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            TestDelegate construct = () => new SubscriberCache(null, monitorCache, subscriptionsCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -110,29 +100,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberCache_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SubscriberCache(topicRouter, null, packageFactory, dispatcher, subscriptionsCache);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void SubscriberCache_WithNullPackageFactory_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new SubscriberCache(topicRouter, monitorCache, null, dispatcher, subscriptionsCache);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void SubscriberCache_WithNullSubscriptionEventDispatcher_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new SubscriberCache(topicRouter, monitorCache, packageFactory, null, subscriptionsCache);
+            TestDelegate construct = () => new SubscriberCache(topicRouter, null, subscriptionsCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -143,7 +111,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberCache_WithNullSubscriptionsCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, null);
+            TestDelegate construct = () => new SubscriberCache(topicRouter, monitorCache, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -156,7 +124,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void AddFactory_WithNullFactory_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             TestDelegate addFactory = () => cache.AddFactory(null);
@@ -170,7 +138,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void AddFactory_WithFactory_AddsToFactoriesCollection()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             cache.AddFactory(subscriberFactory);
@@ -185,7 +153,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void AddFactory_WithFactory_AddsMonitorToMonitorCache()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             cache.AddFactory(subscriberFactory);
@@ -199,7 +167,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void AddFactory_WithFactoryAlreadyAdded_DoesNothing()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
 
             // Act
@@ -218,7 +186,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberFor_WithNoRouting_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             TestDelegate subscriberFor = () => cache.SubscriberFor<OtherTopic>();
@@ -232,7 +200,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberFor_WithNoFactory_ThrowsMissingFactoryException()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             TestDelegate subscriberFor = () => cache.SubscriberFor<Topic>();
@@ -246,14 +214,14 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberFor_WithRoutingAndFactory_CallsFactoryCreate()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
 
             // Act
             var subscriber = cache.SubscriberFor<Topic>();
 
             // Assert
-            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address), It.IsIn(cache.Handler)), Times.Once);
+            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address)), Times.Once);
         }
 
 
@@ -261,7 +229,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void SubscriberFor_WhenCalledTwice_CallsFactoryCreateOnce()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
             cache.SubscriberFor<Topic>();
 
@@ -269,7 +237,7 @@ namespace MessageRouter.UnitTests.Subscribers
             cache.SubscriberFor<Topic>();
 
             // Assert
-            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address), It.IsIn(cache.Handler)), Times.Once);
+            mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address)), Times.Once);
         }
         #endregion
 
@@ -279,7 +247,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void Subscribe_WithSubscriber_CallsSubscribe()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
 
             // Act
@@ -294,7 +262,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void Subscribe_WithSubscriber_AddsSubscriptionToSubscriptionsCache()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
 
             // Act
@@ -309,7 +277,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void Subscribe_WithNoFactory_ThrowsMissingFactoryExcpetion()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             TestDelegate subscriberFor = () => cache.Subscribe<Topic>();
@@ -323,7 +291,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void Subscribe_WithNoRouting_ThrowsKeyNotFoundException()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
 
             // Act
             TestDelegate subscribe = () => cache.Subscribe<OtherTopic>();
@@ -339,7 +307,7 @@ namespace MessageRouter.UnitTests.Subscribers
         public void Unsubscribe_WithFactory_ForwardsToSubscriptionsCache()
         {
             // Arrange
-            var cache = new SubscriberCache(topicRouter, monitorCache, packageFactory, dispatcher, subscriptionsCache);
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
             cache.AddFactory(subscriberFactory);
 
             // Act
