@@ -16,8 +16,8 @@ namespace MessageRouter.Verbs
         /// Distributes a message to any and all connected <see cref="ISubscriber"/>s
         /// </summary>
         /// <typeparam name="TTopic">The topic type of the message to publish</typeparam>
-        /// <param name="message">The topic message to distribute</param>
-        void Publish<TTopic>(TTopic message)
+        /// <param name="topicEvent">The topic message to distribute</param>
+        void Publish<TTopic>(TTopic topicEvent)
             where TTopic : class;
     }
 }

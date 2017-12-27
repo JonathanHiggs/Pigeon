@@ -9,70 +9,125 @@ using NetMQ;
 
 namespace MessageRouter.NetMQ
 {
+    /// <summary>
+    /// Creates and extracts <see cref="NetMQMessage"/>s
+    /// </summary>
     public class MessageFactory : IMessageFactory
     {
         private readonly ISerializer serializer;
+        private readonly IPackageFactory packageFactory;
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="MessageFactory"/>
         /// </summary>
         /// <param name="serializer">A serializer that will convert data into a binary format for transmission</param>
-        public MessageFactory(ISerializer serializer)
+        /// <param name="packageFactory">Wraps objects in a packages</param>
+        public MessageFactory(ISerializer serializer, IPackageFactory packageFactory)
         {
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
 
 
-        public NetMQMessage CreateTopicMessage(Package package)
+        /// <summary>
+        /// Creates a <see cref="NetMQMessage"/> wrapping a topic event
+        /// </summary>
+        /// <param name="topicEvent">Topic event to be wrapped in a <see cref="NetMQMessage"/></param>
+        /// <returns><see cref="NetMQMessage"/> wrapping a topic event</returns>
+        public NetMQMessage CreateTopicMessage(object topicEvent)
         {
+            var package = packageFactory.Pack(topicEvent);
             var message = new NetMQMessage(2);
-            message.Append(package.Body.GetType().FullName);
+            message.Append(topicEvent.GetType().FullName);
             message.Append(serializer.Serialize(package));
             return message;
         }
 
 
-        public Package ExtractTopicPackage(NetMQMessage message)
+        /// <summary>
+        /// Extracts a topic event from the <see cref="NetMQMessage"/>
+        /// </summary>
+        /// <param name="message"><see cref="NetMQMessage"/> wrapping a topic evnet</param>
+        /// <returns>Topic event contained within the <see cref="NetMQMessage"/></returns>
+        public object ExtractTopic(NetMQMessage message)
         {
-            return serializer.Deserialize<Package>(message[1].ToByteArray());
+            var package = serializer.Deserialize<Package>(message[1].ToByteArray());
+            return packageFactory.Unpack(package);
         }
 
 
-        public NetMQMessage CreateRequestMessage(Package package)
+        /// <summary>
+        /// Creates a <see cref="NetMQMessage"/> wapping a request object
+        /// </summary>
+        /// <param name="request">Request object to be wrapped in a <see cref="NetMQMessage"/></param>
+        /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
+        /// <returns><see cref="NetMQMessage"/> wrapping the request object</returns>
+        public NetMQMessage CreateRequestMessage(object request, int requestId)
         {
-            var message = new NetMQMessage();
+            var package = packageFactory.Pack(request);
+            var message = new NetMQMessage(4);
+            message.AppendEmptyFrame();
+            message.Append(requestId);
             message.AppendEmptyFrame();
             message.Append(serializer.Serialize(package));
             return message;
         }
 
-
-        public Package ExtractResponsePackage(NetMQMessage message)
+        
+        /// <summary>
+        /// Extracts a request from the <see cref="NetMQMessage"/>
+        /// </summary>
+        /// <param name="message"><see cref="NetMQMessage"/> wrapping a request object</param>
+        /// <returns>Request object contained withing the <see cref="NetMQMessage"/>, address of remote sender, and request identifier</returns>
+        public (object request, byte[] address, int requestId) ExtractRequest(NetMQMessage message)
         {
-            return serializer.Deserialize<Package>(message[1].ToByteArray());
+            var address = message[0].ToByteArray();
+            var requestId = message[2].ConvertToInt32();
+            var package = serializer.Deserialize<Package>(message[4].ToByteArray());
+            var request = packageFactory.Unpack(package);
+            return (request, address, requestId);
         }
 
 
-        public Package ExtractRequestPackage(NetMQMessage message)
+        /// <summary>
+        /// Creates a <see cref="NetMQMessage"/> wrapping a response object
+        /// </summary>
+        /// <param name="response">Response object to be wrapped in a <see cref="NetMQMessage"/></param>
+        /// <param name="address">Address of the remote</param>
+        /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
+        /// <returns><see cref="NetMQMessage"/> wrapping the response object</returns>
+        public NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId)
         {
-            return serializer.Deserialize<Package>(message[4].ToByteArray());
-        }
-
-
-        public NetMQMessage CreateResponseMessage(Package package, NetMQMessage requestMessage)
-        {
+            var package = packageFactory.Pack(response);
             var message = new NetMQMessage(5);
-            message.Append(requestMessage[0]);
+            message.Append(address);
             message.AppendEmptyFrame();
-            message.Append(requestMessage[2]);
+            message.Append(requestId);
             message.AppendEmptyFrame();
             message.Append(serializer.Serialize(package));
             return message;
         }
 
 
-        public bool ValidRequestMessage(NetMQMessage requestMessage)
+        /// <summary>
+        /// Extracts a response from the <see cref="NetMQMessage"/>
+        /// </summary>
+        /// <param name="message"><see cref="NetMQMessage"/> wrapping a response object</param>
+        /// <returns>Response object contained within the <see cref="NetMQMessage"/></returns>
+        public object ExtractResponse(NetMQMessage message)
+        {
+            var package = serializer.Deserialize<Package>(message[1].ToByteArray());
+            return packageFactory.Unpack(package);
+        }
+
+
+        /// <summary>
+        /// Checks to see whether the <see cref="NetMQMessage"/> request is valid
+        /// </summary>
+        /// <param name="requestMessage"><see cref="NetMQMessage"/> request to check for validity</param>
+        /// <returns>True if the request <see cref="NetMQMessage"/> is valid; false otherwise</returns>
+        public bool IsValidRequestMessage(NetMQMessage requestMessage)
         {
             return null != requestMessage && requestMessage.FrameCount == 5;
         }

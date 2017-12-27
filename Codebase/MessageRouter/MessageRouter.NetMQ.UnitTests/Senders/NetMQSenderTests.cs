@@ -30,10 +30,6 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
         {
             asyncSocket = mockAsyncSocket.Object;
             messageFactory = mockMessageFactory.Object;
-
-            mockAsyncSocket
-                .Setup(m => m.SendAndReceive(It.IsAny<NetMQMessage>(), It.IsAny<TimeSpan>()))
-                .Returns(Task.FromResult(new NetMQMessage(new List<byte[]> { new byte[0], new byte[0] })));
         }
 
 
@@ -178,61 +174,6 @@ namespace MessageRouter.NetMQ.UnitTests.Senders
             // Assert
             mockAsyncSocket.Verify(m => m.Disconnect(It.IsAny<string>()), Times.Never);
         }
-        #endregion
-
-
-        #region SendAndReceive
-        //[Test]
-        //public async Task SendAndReceive_WithTimeout_Serializes()
-        //{
-        //    // Arrange
-        //    var sender = new NetMQSender(asyncSocket, messageFactory);
-        //    var package = new DataPackage<string>(new GuidPackageId(), "something");
-        //    var timeout = TimeSpan.FromMinutes(1);
-
-        //    // Act
-        //    var response = await sender.SendAndReceive(package, timeout);
-
-        //    // Assert
-        //    mockMessageFactory.Verify(m => m.Serialize<Package>(It.IsIn(package)), Times.Once);
-        //}
-
-
-        //[Test]
-        //public async Task SendAndReceive_WithTimeout_CallsSocketSendAndReceive()
-        //{
-        //    // Arrange
-        //    var sender = new NetMQSender(asyncSocket, messageFactory);
-        //    var package = new DataPackage<string>(new GuidPackageId(), "something");
-        //    var timeout = TimeSpan.FromMinutes(1);
-
-        //    // Act
-        //    var response = await sender.SendAndReceive(package, timeout);
-
-        //    // Assert
-        //    mockAsyncSocket
-        //        .Verify(
-        //            m => m.SendAndReceive(
-        //                It.IsAny<NetMQMessage>(),
-        //                It.Is<TimeSpan>(d => d == timeout)
-        //        ), Times.Once);
-        //}
-
-
-        //[Test]
-        //public async Task SendAndReceive_WithReturnMessage_Deserializes()
-        //{
-        //    // Arrange
-        //    var sender = new NetMQSender(asyncSocket, messageFactory);
-        //    var package = new DataPackage<string>(new GuidPackageId(), "something");
-        //    var timeout = TimeSpan.FromMinutes(1);
-
-        //    // Act
-        //    var response = await sender.SendAndReceive(package, timeout);
-
-        //    // Assert
-        //    mockMessageFactory.Verify(m => m.Deserialize<Package>(It.IsAny<byte[]>()), Times.Once);
-        //}
         #endregion
     }
 }

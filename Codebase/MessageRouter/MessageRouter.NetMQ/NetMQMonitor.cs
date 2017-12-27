@@ -24,7 +24,6 @@ namespace MessageRouter.NetMQ
     public class NetMQMonitor : INetMQMonitor
     {
         private readonly INetMQPoller poller;
-        private readonly IPackageFactory packageFactory;
         private readonly IRequestDispatcher requestDispatcher;
         private readonly ITopicDispatcher topicDispatcher;
         private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
@@ -52,12 +51,11 @@ namespace MessageRouter.NetMQ
         /// </summary>
         /// <param name="poller">The <see cref="INetMQPoller"/> polls the sender and receiver connections for incoming messages</param>
         /// <param name="requestDispatcher">Delegates handling of incoming requests to registered handlers</param>
-        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are received from remote connections</param>
-        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, IPackageFactory packageFactory, ITopicDispatcher topicDispatcher)
+        /// <param name="topicDispatcher">Delegates handling of incoming topic events to registered handlers</param>
+        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, ITopicDispatcher topicDispatcher)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
             this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
-            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
             this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
         }
 
@@ -167,17 +165,14 @@ namespace MessageRouter.NetMQ
         
         private void HandleRequest(IReceiver receiver, RequestTask requestTask)
         {
-            var requestObject = packageFactory.Unpack(requestTask.Request);
-            var responseObject = requestDispatcher.Handle(requestObject);
-            var responseMessage = packageFactory.Pack(responseObject);
-            requestTask.ResponseHandler(responseMessage);
+            var response = requestDispatcher.Handle(requestTask.Request);
+            requestTask.ResponseHandler(response);
         }
 
 
-        private void HandleTopic(ISubscriber subscriber, Package topic)
+        private void HandleTopic(ISubscriber subscriber, object topicEvent)
         {
-            var subscriptionMessage = packageFactory.Unpack(topic);
-            topicDispatcher.Handle(subscriptionMessage);
+            topicDispatcher.Handle(topicEvent);
         }
     }
 }

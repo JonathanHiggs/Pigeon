@@ -13,23 +13,23 @@ namespace MessageRouter.Receivers
     public struct RequestTask
     {
         /// <summary>
-        /// Stores a readonly reference to an incoming <see cref="Package"/>
+        /// Stores a readonly reference to an incoming request
         /// </summary>
-        public readonly Package Request;
+        public readonly object Request;
 
 
         /// <summary>
-        /// Stores a readonly reference to an action that will send a response <see cref="Package"/>
+        /// Stores a readonly reference to an action that will send a response
         /// </summary>
-        public readonly Action<Package> ResponseHandler;
+        public readonly Action<object> ResponseHandler;
         
 
         /// <summary>
-        /// Initializes a new instance of a RequestTask composed of the supplied request <see cref="Package"/> and handler
+        /// Initializes a new instance of a RequestTask composed of the supplied request object and handler
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="responseHandler"></param>
-        public RequestTask(Package request, Action<Package> responseHandler)
+        /// <param name="request">The incoming request</param>
+        /// <param name="responseHandler">Action to return a response</param>
+        public RequestTask(object request, Action<object> responseHandler)
         {
             Request = request ?? throw new ArgumentNullException(nameof(request));
             ResponseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));

@@ -30,10 +30,21 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void NetMQConfig_WithNullFactory_ThrowsArgumentNullException()
+        public void NetMQConfig_WithNullContainer_ThrowsArgumentNullException()
         {
             // Act
             TestDelegate construct = () => new NetMQConfig(null);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void Create_WithNullNetMQFactory_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => NetMQConfig.Create(null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);

@@ -43,9 +43,9 @@ namespace MessageRouter.Fluent
             requestDispatcher = new RequestDispatcher();
             subscriptionsCache = new SubscriptionsCache();
 
-            senderCache = new SenderCache(requestRouter, monitorCache, packageFactory);
+            senderCache = new SenderCache(requestRouter, monitorCache);
             receiverCache = new ReceiverCache(monitorCache);
-            publisherCache = new PublisherCache(monitorCache, packageFactory);
+            publisherCache = new PublisherCache(monitorCache);
             subscriberCache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
         }
 

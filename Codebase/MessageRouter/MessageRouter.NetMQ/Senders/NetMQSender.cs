@@ -33,34 +33,34 @@ namespace MessageRouter.NetMQ.Senders
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
         }
-        
+
 
         /// <summary>
-        /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
+        /// Asynchronously dispatches a request along the transport to the connected remote 
         /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
         /// remote or when the one hour default timeout elapses
         /// </summary>
-        /// <param name="message"><see cref="Package"/> to send to the remote</param>
+        /// <param name="request">Request to send to the remote</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<Package> SendAndReceive(Package request)
+        public async Task<object> SendAndReceive(object request)
         {
             return await SendAndReceive(request, TimeSpan.FromHours(1));
         }
 
 
         /// <summary>
-        /// Asynchronously dispatches a <see cref="Package"/> along the transport to the connected remote 
+        /// Asynchronously dispatches a request along the transport to the connected remote 
         /// <see cref="NetMQReceiver"/> and returns a task that will complete when a response is returned from the
         /// remote or when the timeout elapses
         /// </summary>
-        /// <param name="request"><see cref="Package"/> to send to the remote</param>
+        /// <param name="request">Request to send to the remote</param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<Package> SendAndReceive(Package request, TimeSpan timeout)
+        public async Task<object> SendAndReceive(object request, TimeSpan timeout)
         {
-            var requestMessage = messageFactory.CreateRequestMessage(request);
-            var responseMessage = await socket.SendAndReceive(requestMessage, timeout);
-            return messageFactory.ExtractResponsePackage(responseMessage);
+            CompleteMessage messageFn = (requestId) => messageFactory.CreateRequestMessage(request, requestId);
+            var response = await socket.SendAndReceive(messageFn, timeout);
+            return messageFactory.ExtractResponse(response);
         }
 
 

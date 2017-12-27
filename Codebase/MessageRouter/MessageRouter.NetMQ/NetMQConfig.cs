@@ -30,6 +30,9 @@ namespace MessageRouter.NetMQ
         /// <param name="container">DI Container to wire up dependencies</param>
         public NetMQConfig(IContainer container)
         {
+            if (null == container)
+                throw new ArgumentNullException(nameof(container));
+
             container.Register<ISerializer, DotNetSerializer>(true);
             container.Register<IMessageFactory, MessageFactory>(true);
             container.Register<INetMQPoller, NetMQPoller>(true);
@@ -70,8 +73,16 @@ namespace MessageRouter.NetMQ
         public ISubscriberFactory SubscriberFactory => factory;
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQConfig"/>
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <returns></returns>
         public static NetMQConfig Create(INetMQFactory factory)
         {
+            if (null == factory)
+                throw new ArgumentNullException(nameof(factory));
+
             return new NetMQConfig(factory);
         }
     }

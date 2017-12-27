@@ -6,6 +6,6 @@ namespace MessageRouter.Subscribers
     /// A method that can perform the handling of <see cref="ISubscriber.Handler"/> for incoming messages
     /// </summary>
     /// <param name="subscriber">The source <see cref="ISubscriber"/></param>
-    /// <param name="package">Topic message wrapped in a <see cref="Package"/></param>
-    public delegate void TopicEventHandler(ISubscriber subscriber, Package package);
+    /// <param name="topicEvent">Topic event received by the <see cref="ISubscriber"/></param>
+    public delegate void TopicEventHandler(ISubscriber subscriber, object topicEvent);
 }

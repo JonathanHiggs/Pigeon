@@ -18,7 +18,6 @@ namespace MessageRouter.Publishers
     public class PublisherCache : IPublisherCache, IPublish
     {
         private readonly IMonitorCache monitorCache;
-        private readonly IPackageFactory packageFactory;
         private readonly Dictionary<IAddress, IPublisher> publishers = new Dictionary<IAddress, IPublisher>();
         private readonly Dictionary<Type, IPublisherFactory> factories = new Dictionary<Type, IPublisherFactory>();
 
@@ -33,11 +32,9 @@ namespace MessageRouter.Publishers
         /// Initializes a new instance of <see cref="PublisherCache"/>
         /// </summary>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="IPublisher"/>s</param>
-        /// <param name="packageFactory">Creates and extracts <see cref="Package"/>s that are distributed to remote <see cref="ISubscriber"/>s</param>
-        public PublisherCache(IMonitorCache monitorCache, IPackageFactory packageFactory)
+        public PublisherCache(IMonitorCache monitorCache)
         {
             this.monitorCache = monitorCache ?? throw new ArgumentNullException(nameof(monitorCache));
-            this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
 
 
@@ -82,17 +79,15 @@ namespace MessageRouter.Publishers
         /// <summary>
         /// Distributes a message to any and all connected <see cref="ISubscriber"/>s
         /// </summary>
-        /// <typeparam name="TMessage">Published message type</typeparam>
-        /// <param name="message">The published message to distribute</param>
-        public void Publish<TMessage>(TMessage message) where TMessage : class
+        /// <typeparam name="TTopic">The topic type of the message to publish</typeparam>
+        /// <param name="topicEvent">The topic message to distribute</param>
+        public void Publish<TMessage>(TMessage topicEvent) where TMessage : class
         {
-            if (null == message)
-                throw new ArgumentNullException(nameof(message));
-
-            var wrappedMessage = packageFactory.Pack(message);
-
+            if (null == topicEvent)
+                throw new ArgumentNullException(nameof(topicEvent));
+            
             foreach (var publisher in publishers.Values)
-                publisher.Publish(wrappedMessage);
+                publisher.Publish(topicEvent);
         }
     }
 }

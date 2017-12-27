@@ -29,9 +29,6 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<ITopicDispatcher> mockTopicDispatcher = new Mock<ITopicDispatcher>();
         private ITopicDispatcher topicDispatcher;
         
-        private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
-        private IPackageFactory packageFactory;
-        
         private readonly Mock<INetMQSender> mockSender = new Mock<INetMQSender>();
         private INetMQSender sender;
 
@@ -47,8 +44,8 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<ISocketPollable> mockPollableSocket = new Mock<ISocketPollable>();
         private ISocketPollable pollableSocket;
 
-        private readonly DataPackage<string> requestPackage = new DataPackage<string>(new GuidPackageId(), "hello");
-        private readonly DataPackage<string> responsePackage = new DataPackage<string>(new GuidPackageId(), "world");
+        private readonly string request = "hello";
+        private readonly string response = "world";
         
 
         #region Setup
@@ -58,7 +55,6 @@ namespace MessageRouter.NetMQ.UnitTests
             poller = mockPoller.Object;
             requestDispatcher = mockRequestDispatcher.Object;
             topicDispatcher = mockTopicDispatcher.Object;
-            packageFactory = mockPackageFactory.Object;
             sender = mockSender.Object;
             receiver = mockReceiver.Object;
             publisher = mockPublisher.Object;
@@ -81,17 +77,9 @@ namespace MessageRouter.NetMQ.UnitTests
                 .SetupGet(m => m.PollableSocket)
                 .Returns(pollableSocket);
 
-            mockPackageFactory
-                .Setup(m => m.Unpack(requestPackage))
-                .Returns(requestPackage.Data);
-
             mockRequestDispatcher
-                .Setup(m => m.Handle(It.IsIn<object>(requestPackage.Data)))
-                .Returns(responsePackage.Data);
-
-            mockPackageFactory
-                .Setup(m => m.Pack(It.IsIn(responsePackage.Body)))
-                .Returns(responsePackage);
+                .Setup(m => m.Handle(It.IsIn<object>(request)))
+                .Returns(response);
         }
 
 
@@ -100,7 +88,6 @@ namespace MessageRouter.NetMQ.UnitTests
         {
             mockPoller.Reset();
             mockRequestDispatcher.Reset();
-            mockPackageFactory.Reset();
             mockSender.Reset();
             mockReceiver.Reset();
             mockPublisher.Reset();
@@ -115,7 +102,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void NetMQMonitor_WithNullPoller_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQMonitor(null, requestDispatcher, packageFactory, topicDispatcher);
+            TestDelegate construct = () => new NetMQMonitor(null, requestDispatcher, topicDispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -126,18 +113,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void NetMQMonitor_WithNullRequestDispatcher_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQMonitor(poller, null, packageFactory, topicDispatcher);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void NetMQMonitor_WithNullPackageFactory_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new NetMQMonitor(poller, requestDispatcher, null, topicDispatcher);
+            TestDelegate construct = () => new NetMQMonitor(poller, null, topicDispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -148,7 +124,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void NetMQMonitor_WithNullTopicDispatcher_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQMonitor(poller, requestDispatcher, packageFactory, null);
+            TestDelegate construct = () => new NetMQMonitor(poller, requestDispatcher, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -161,7 +137,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSender_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddSender(null);
@@ -175,7 +151,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSender_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddSender(sender);
@@ -189,7 +165,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSender_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddSender(sender);
@@ -203,7 +179,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSender_AfterStarted_ConnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -218,7 +194,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSender_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -236,7 +212,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddReceiver_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddReceiver(null);
@@ -250,7 +226,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddReceiver_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddReceiver(receiver);
@@ -264,7 +240,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddReceiver_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddReceiver(receiver);
@@ -278,7 +254,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddReceiver_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -293,7 +269,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddReceiver_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -311,7 +287,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddPublisher_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddPublisher(null);
@@ -325,7 +301,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddPublisher_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddPublisher(publisher);
@@ -339,7 +315,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddPublisher_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddPublisher(publisher);
@@ -353,7 +329,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddPublisher_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -368,7 +344,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddPublisher_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -386,7 +362,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSubscriber_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddSubscriber(null);
@@ -400,7 +376,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSubscriber_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddSubscriber(subscriber);
@@ -414,7 +390,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSubscriber_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.AddSubscriber(subscriber);
@@ -428,7 +404,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSubscriber_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -443,7 +419,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void AddSubscriber_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -461,7 +437,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitoring_BeforeStarted_RunsPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
             monitor.StartMonitoring();
@@ -475,7 +451,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitor_WhenRunning_DoesNotRecallStartMethods()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
             monitor.AddSender(sender);
             monitor.AddReceiver(receiver);
@@ -498,7 +474,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitor_WithSenderAdded_ConnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddSender(sender);
 
             // Act
@@ -513,7 +489,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitor_WithReceiverAdded_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddReceiver(receiver);
 
             // Act
@@ -528,7 +504,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitor_WithPublisherAdded_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddPublisher(publisher);
 
             // Act
@@ -543,7 +519,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StartMonitor_WithSubscriberAdded_ConnectsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddSubscriber(subscriber);
 
             // Act
@@ -560,7 +536,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_BeforeStarted_DoesNothing()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddSender(sender);
             monitor.AddReceiver(receiver);
             monitor.AddPublisher(publisher);
@@ -582,7 +558,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_WhenRunning_StopsPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -597,7 +573,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_WithSenderAdded_DisconnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddSender(sender);
             monitor.StartMonitoring();
 
@@ -613,7 +589,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_WithReceiverAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddReceiver(receiver);
             monitor.StartMonitoring();
 
@@ -629,7 +605,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_WithPublisherAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddPublisher(publisher);
             monitor.StartMonitoring();
 
@@ -645,7 +621,7 @@ namespace MessageRouter.NetMQ.UnitTests
         public void StopMonitoring_WithSubscriberAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
             monitor.AddSubscriber(subscriber);
             monitor.StartMonitoring();
 
@@ -660,47 +636,17 @@ namespace MessageRouter.NetMQ.UnitTests
 
         #region RequestHandler
         [Test]
-        public void RequestHandler_WithRequest_UnpacksRequestObject()
-        {
-            // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
-            var request = new RequestTask(requestPackage, p => { });
-
-            // Act
-            monitor.RequestHandler(receiver, request);
-
-            // Assert
-            mockPackageFactory.Verify(m => m.Unpack(It.IsIn(requestPackage)), Times.Once);
-        }
-
-
-        [Test]
         public void RequestHandler_WithRequest_CallsRequestDispatcher()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
-            var request = new RequestTask(requestPackage, p => { });
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var requestTask = new RequestTask(request, p => { });
 
             // Act
-            monitor.RequestHandler(receiver, request);
+            monitor.RequestHandler(receiver, requestTask);
 
             // Assert
-            mockRequestDispatcher.Verify(m => m.Handle(It.IsAny<object>()), Times.Once);
-        }
-
-
-        [Test]
-        public void RequestHandler_WithRequest_PacksResponseObject()
-        {
-            // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
-            var request = new RequestTask(requestPackage, p => { });
-
-            // Act
-            monitor.RequestHandler(receiver, request);
-
-            // Assert
-            mockPackageFactory.Verify(m => m.Pack(It.IsIn(responsePackage.Body)), Times.Once);
+            mockRequestDispatcher.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
         }
 
 
@@ -709,11 +655,11 @@ namespace MessageRouter.NetMQ.UnitTests
         {
             // Arrange
             var called = false;
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
-            var request = new RequestTask(requestPackage, p => { called = true; });
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var requestTask = new RequestTask(request, p => { called = true; });
 
             // Act
-            monitor.RequestHandler(receiver, request);
+            monitor.RequestHandler(receiver, requestTask);
 
             // Assert
             Assert.That(called, Is.True);
@@ -723,30 +669,16 @@ namespace MessageRouter.NetMQ.UnitTests
 
         #region TopicHandler
         [Test]
-        public void TopicHandler_WithTopicPackage_UnpacksTopic()
-        {
-            // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
-
-            // Act
-            monitor.TopicHandler(subscriber, requestPackage);
-
-            // Assert
-            mockPackageFactory.Verify(m => m.Unpack(It.IsIn(requestPackage)), Times.Once);
-        }
-
-
-        [Test]
         public void TopicHandler_WithTopicPackage_CallsTopicDispatcher()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, packageFactory, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
 
             // Act
-            monitor.TopicHandler(subscriber, requestPackage);
+            monitor.TopicHandler(subscriber, request);
 
             // Assert
-            mockTopicDispatcher.Verify(m => m.Handle(It.IsIn(requestPackage.Body)), Times.Once);
+            mockTopicDispatcher.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
         }
         #endregion
     }

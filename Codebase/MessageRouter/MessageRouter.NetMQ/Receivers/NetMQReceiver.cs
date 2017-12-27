@@ -73,14 +73,15 @@ namespace MessageRouter.NetMQ.Receivers
             Task.Run(() =>
             {
                 NetMQMessage requestMessage = default(NetMQMessage);
-                if (!socket.TryReceiveMultipartMessage(ref requestMessage) && messageFactory.ValidRequestMessage(requestMessage))
+                if (!socket.TryReceiveMultipartMessage(ref requestMessage) && !messageFactory.IsValidRequestMessage(requestMessage))
                     return;
 
-                var request = messageFactory.ExtractRequestPackage(requestMessage);
+                // So this is some pretty cool shit, yo
+                var (request, address, requestId) = messageFactory.ExtractRequest(requestMessage);
 
                 var requestTask = new RequestTask(request, (response) =>
                 {
-                    var message = messageFactory.CreateResponseMessage(response, requestMessage);
+                    var message = messageFactory.CreateResponseMessage(response, address, requestId);
                     socket.SendMultipartMessage(message);
                 });
 

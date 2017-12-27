@@ -12,14 +12,14 @@ namespace MessageRouter.UnitTests.Receivers
         public void RequestTask_WithAllRequiredFields_InitializesObject()
         {
             // Arrange
-            var package = new DataPackage<object>(new GuidPackageId(), new object());
-            Action<Package> handler = _ => { };
+            var request = new object();
+            Action<object> handler = _ => { };
 
             // Act
-            var requestTask = new RequestTask(package, handler);
+            var requestTask = new RequestTask(request, handler);
 
             // Assert
-            Assert.AreSame(package, requestTask.Request);
+            Assert.AreSame(request, requestTask.Request);
             Assert.AreSame(handler, requestTask.ResponseHandler);
         }
 
@@ -28,7 +28,7 @@ namespace MessageRouter.UnitTests.Receivers
         public void RequestTask_WithNullRequest_ThrowsArgumentNullException()
         {
             // Arrange
-            Action<Package> handler = _ => { };
+            Action<object> handler = _ => { };
 
             // Act
             TestDelegate test = () => new RequestTask(null, handler);

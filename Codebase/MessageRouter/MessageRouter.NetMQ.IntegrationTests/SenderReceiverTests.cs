@@ -31,13 +31,13 @@ namespace MessageRouter.NetMQ.IntegrationTests
             RequestTaskHandler handler = (rec, task) =>
             {
                 called = true;
-                receivedRequest = (string)task.Request.Body;
-                var responsePackage = new DataPackage<string>(new GuidPackageId(), responseStr);
-                task.ResponseHandler(responsePackage);
+                receivedRequest = (string)task.Request;
+                task.ResponseHandler(responseStr);
             };
 
             var serializer = new DotNetSerializer();
-            var messageFactory = new MessageFactory(serializer);
+            var packageFactory = new PackageFactory();
+            var messageFactory = new MessageFactory(serializer, packageFactory);
             var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), messageFactory);
             var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, handler);
             var poller = new NetMQPoller();
@@ -64,7 +64,7 @@ namespace MessageRouter.NetMQ.IntegrationTests
             // Assert
             Assert.That(called, Is.True);
             Assert.That(receivedRequest, Is.EqualTo(requestStr));
-            Assert.That((string)response.Body, Is.EqualTo(responseStr));
+            Assert.That((string)response, Is.EqualTo(responseStr));
         }
     }
 }

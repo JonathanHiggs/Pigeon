@@ -19,9 +19,6 @@ namespace MessageRouter.UnitTests.Publishers
         private readonly Mock<IMonitorCache> mockMonitorCache = new Mock<IMonitorCache>();
         private IMonitorCache monitorCache;
 
-        private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
-        private IPackageFactory packageFactory;
-
         private readonly Mock<IPublisherFactory<IPublisher>> mockFactory = new Mock<IPublisherFactory<IPublisher>>();
         private IPublisherFactory<IPublisher> factory;
 
@@ -41,7 +38,6 @@ namespace MessageRouter.UnitTests.Publishers
         public void Setup()
         {
             monitorCache = mockMonitorCache.Object;
-            packageFactory = mockPackageFactory.Object;
             factory = mockFactory.Object;
             publisher = mockPublisher.Object;
             address = mockAddress.Object;
@@ -66,10 +62,6 @@ namespace MessageRouter.UnitTests.Publishers
             mockAddress
                 .Setup(m => m.GetHashCode())
                 .Returns(1);
-
-            mockPackageFactory
-                .Setup(m => m.Pack(It.IsAny<string>()))
-                .Returns(package);
         }
 
 
@@ -77,7 +69,6 @@ namespace MessageRouter.UnitTests.Publishers
         public void TearDown()
         {
             mockMonitorCache.Reset();
-            mockPackageFactory.Reset();
             mockFactory.Reset();
             mockPublisher.Reset();
             mockAddress.Reset();
@@ -89,18 +80,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void PublisherCache_WithNullMonitorCache_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new PublisherCache(null, packageFactory);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void PublisherCache_WithNullPackageFactory_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new PublisherCache(monitorCache, null);
+            TestDelegate construct = () => new PublisherCache(null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -113,7 +93,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddFactory_WithNullFactory_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             TestDelegate addFactory = () => cache.AddFactory(null);
@@ -127,7 +107,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddFactory_WithExistingFactoryForPublisherType_DoesNothing()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
             cache.AddFactory(factory);
 
             // Act
@@ -143,7 +123,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddFactory_WithFactory_AddsToFactoryList()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             cache.AddFactory(factory);
@@ -157,7 +137,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddFactory_WithFactory_AddsMonitorToMonitorCache()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             cache.AddFactory(factory);
@@ -173,7 +153,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddPublisher_WithNullAddress_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             TestDelegate addPublisher = () => cache.AddPublisher<IPublisher>(null);
@@ -187,7 +167,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddPublisher_WithNoFactory_ThrowsMissingFactoryException()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             TestDelegate addPublisher = () => cache.AddPublisher<IPublisher>(address);
@@ -201,7 +181,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void AddPublisher_WithFactory_CallsFactoryCreatePublisher()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
             cache.AddFactory(factory);
 
             // Act
@@ -217,7 +197,7 @@ namespace MessageRouter.UnitTests.Publishers
         {
             // Arrange
             var address = TcpAddress.Wildcard(5555);  // Doesn't seem to work when using the mockAddress
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
             cache.AddFactory(factory);
             cache.AddPublisher<IPublisher>(address);
 
@@ -235,7 +215,7 @@ namespace MessageRouter.UnitTests.Publishers
         public void Publish_WithNullMessage_ThrowsArgumentNullException()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var cache = new PublisherCache(monitorCache);
 
             // Act
             TestDelegate publish = () => cache.Publish<object>(null);
@@ -246,33 +226,19 @@ namespace MessageRouter.UnitTests.Publishers
 
 
         [Test]
-        public void Publish_WithMessage_CallsCreateMessage()
-        {
-            // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
-            var message = "something";
-
-            // Act
-            cache.Publish(message);
-
-            // Assert
-            mockPackageFactory.Verify(m => m.Pack(It.IsIn(message)), Times.Once);
-        }
-
-
-        [Test]
         public void Publish_WithPublisherAdded_CallsPublish()
         {
             // Arrange
-            var cache = new PublisherCache(monitorCache, packageFactory);
+            var topicEvent = "something";
+            var cache = new PublisherCache(monitorCache);
             cache.AddFactory(factory);
             cache.AddPublisher<IPublisher>(address);
 
             // Act
-            cache.Publish("something");
+            cache.Publish(topicEvent);
 
             // Assert
-            mockPublisher.Verify(m => m.Publish(It.IsIn(package)), Times.Once);
+            mockPublisher.Verify(m => m.Publish(It.IsIn(topicEvent)), Times.Once);
         }
         #endregion
     }

@@ -77,7 +77,7 @@ namespace MessageRouter.NetMQ.Subscribers
                 if (!socket.TryReceiveMultipartMessage(ref message, 2))
                     return;
                 
-                var package = messageFactory.ExtractTopicPackage(message);
+                var package = messageFactory.ExtractTopic(message);
                 Handler(this, package);
             });
         }

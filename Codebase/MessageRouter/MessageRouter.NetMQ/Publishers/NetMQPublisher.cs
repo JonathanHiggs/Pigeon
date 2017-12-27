@@ -34,10 +34,10 @@ namespace MessageRouter.NetMQ.Publishers
 
 
         /// <summary>
-        /// Transmits the <see cref="Package"/> to all connected <see cref="Subscribers.INetMQSubscriber"/>s
+        /// Transmits the events to all connected <see cref="ISubscriber"/>s
         /// </summary>
-        /// <param name="package"><see cref="Package"/> to be sent to all remote <see cref="Subscribers.INetMQSubscriber"/>s</param>
-        public void Publish(Package package)
+        /// <param name="topicEvent">Topic event to be sent to all remote <see cref="Subscribers.ISubscriber"/>s</param>
+        public void Publish(object package)
         {
             socket.SendMultipartMessage(messageFactory.CreateTopicMessage(package));
         }

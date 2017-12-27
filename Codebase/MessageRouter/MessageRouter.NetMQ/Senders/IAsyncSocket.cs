@@ -7,6 +7,13 @@ using System;
 namespace MessageRouter.NetMQ.Senders
 {
     /// <summary>
+    /// Delegate captures part of the information needed to create a request <see cref="NetMQMessage"/>
+    /// </summary>
+    /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
+    /// <returns><see cref="NetMQMessage"/> wrapping the request object</returns>
+    public delegate NetMQMessage CompleteMessage(int requestId);
+
+    /// <summary>
     /// Socket interface for connecting and asynchronously sending and receiving <see cref="NetMQMessage"/>s
     /// </summary>
     public interface IAsyncSocket : ISocketPollable
@@ -33,6 +40,6 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="message"><see cref="NetMQMessage"/> to send to the remote</param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{NetMQMessage}"/> will throw an error if no response has been received</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        Task<NetMQMessage> SendAndReceive(NetMQMessage message, TimeSpan timeout);
+        Task<NetMQMessage> SendAndReceive(CompleteMessage messageFn, TimeSpan timeout);
     }
 }
