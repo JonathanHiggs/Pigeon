@@ -63,16 +63,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageFactoryTests.cs" />
+    <Compile Include="NetMQMessageFactoryTests.cs" />
     <Compile Include="NetMQConfigTests.cs" />
     <Compile Include="NetMQFactoryTests.cs" />
     <Compile Include="NetMQMonitorTests.cs" />
     <Compile Include="Publishers\NetMQPublisherTests.cs" />
     <Compile Include="Receivers\NetMQReceiverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Senders\AsyncSocketTests.cs" />
     <Compile Include="Senders\NetMQSenderTests.cs" />
-    <Compile Include="Senders\NetMQTaskTests.cs" />
     <Compile Include="Subscribers\NetMQSubscriberTests.cs" />
   </ItemGroup>
   <ItemGroup>

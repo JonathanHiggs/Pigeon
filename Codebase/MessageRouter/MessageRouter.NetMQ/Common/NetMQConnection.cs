@@ -15,7 +15,7 @@ namespace MessageRouter.NetMQ.Common
     public abstract class NetMQConnection : INetMQConnection
     {
         private readonly ISocketPollable pollableSocket;
-        protected readonly IMessageFactory messageFactory;
+        protected readonly INetMQMessageFactory messageFactory;
         private readonly HashSet<IAddress> addresses = new HashSet<IAddress>();
         private bool isConnected = false;
 
@@ -43,7 +43,7 @@ namespace MessageRouter.NetMQ.Common
         /// </summary>
         /// <param name="pollableSocket">Inner socket connection that is monitored by <see cref="INetMQPoller"/></param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQConnection(ISocketPollable pollableSocket, IMessageFactory messageFactory)
+        public NetMQConnection(ISocketPollable pollableSocket, INetMQMessageFactory messageFactory)
         {
             this.pollableSocket = pollableSocket ?? throw new ArgumentNullException(nameof(pollableSocket));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));

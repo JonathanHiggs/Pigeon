@@ -23,8 +23,8 @@ namespace MessageRouter.NetMQ.UnitTests
         private readonly Mock<INetMQMonitor> mockMonitor = new Mock<INetMQMonitor>();
         private INetMQMonitor monitor;
         
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
+        private INetMQMessageFactory messageFactory;
         
         private readonly RequestTaskHandler requestHandler = (rec, task) => { };
         private readonly TopicEventHandler topicHandler = (sub, topic) => { };

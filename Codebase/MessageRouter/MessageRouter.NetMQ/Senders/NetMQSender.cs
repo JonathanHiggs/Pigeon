@@ -11,6 +11,7 @@ using MessageRouter.Serialization;
 using NetMQ;
 using NetMQ.Sockets;
 using MessageRouter.NetMQ.Common;
+using MessageRouter.Utils;
 
 namespace MessageRouter.NetMQ.Senders
 {
@@ -20,18 +21,20 @@ namespace MessageRouter.NetMQ.Senders
     /// </summary>
     public class NetMQSender : NetMQConnection, INetMQSender
     {
-        private readonly IAsyncSocket socket;
+        private readonly DealerSocket socket;
+        private readonly AsyncTaskHelper asyncTaskHelper = new AsyncTaskHelper();
 
 
         /// <summary>
         /// Initializes a new instance of a <see cref="NetMQSender"/>
         /// </summary>
-        /// <param name="socket">Inner <see cref="IAsyncSocket"/> that sends data to remotes</param>
+        /// <param name="socket">Inner <see cref="DealerSocket"/> that sends data to remotes</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQSender(IAsyncSocket socket, IMessageFactory messageFactory)
+        public NetMQSender(DealerSocket socket, INetMQMessageFactory messageFactory)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            socket.ReceiveReady += PendingMessage;
         }
 
 
@@ -56,11 +59,17 @@ namespace MessageRouter.NetMQ.Senders
         /// <param name="request">Request to send to the remote</param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<object> SendAndReceive(object request, TimeSpan timeout)
+        public Task<object> SendAndReceive(object request, TimeSpan timeout)
         {
-            CompleteMessage messageFn = (requestId) => messageFactory.CreateRequestMessage(request, requestId);
-            var response = await socket.SendAndReceive(messageFn, timeout);
-            return messageFactory.ExtractResponse(response);
+            //CompleteMessage messageFn = (requestId) => messageFactory.CreateRequestMessage(request, requestId);
+            //var response = await socket.SendAndReceive(messageFn, timeout);
+            //return messageFactory.ExtractResponse(response);
+
+            return asyncTaskHelper.StartAsyncTask(requestId =>
+            {
+                var message = messageFactory.CreateRequestMessage(request, requestId);
+                socket.SendMultipartMessage(message);
+            }, timeout);
         }
 
 
@@ -81,6 +90,23 @@ namespace MessageRouter.NetMQ.Senders
         public override void SocketRemove(IAddress address)
         {
             socket.Disconnect(address.ToString());
+        }
+
+
+        private void PendingMessage(object sender, NetMQSocketEventArgs e)
+        {
+            NetMQMessage responseMessage = null;
+            if (!socket.TryReceiveMultipartMessage(ref responseMessage, 4))
+                return;
+            
+            Task.Run(() =>
+            {
+                if (!messageFactory.IsValidResponseMessage(responseMessage))
+                    return;
+
+                var (requestId, response) = messageFactory.ExtractResponse(responseMessage);
+                asyncTaskHelper.CompleteTask(requestId, response);
+            });
         }
     }
 }

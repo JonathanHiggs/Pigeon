@@ -21,7 +21,7 @@ namespace MessageRouter.NetMQ
     /// </summary>
     public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, INetMQFactory
     {
-        private readonly IMessageFactory messageFactory;
+        private readonly INetMQMessageFactory messageFactory;
         private readonly INetMQMonitor monitor;
 
 
@@ -30,7 +30,7 @@ namespace MessageRouter.NetMQ
         /// </summary>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQFactory(INetMQMonitor monitor, IMessageFactory messageFactory)
+        public NetMQFactory(INetMQMonitor monitor, INetMQMessageFactory messageFactory)
             : base(monitor, monitor, monitor, monitor)
         {
             if (null == monitor)
@@ -64,7 +64,7 @@ namespace MessageRouter.NetMQ
         /// <returns>Sender connected to the remote address</returns>
         protected override INetMQSender CreateNewSender(IAddress address)
         {
-            var socket = new AsyncSocket(new DealerSocket());
+            var socket = new DealerSocket();
             var sender = new NetMQSender(socket, messageFactory);
 
             sender.AddAddress(address);

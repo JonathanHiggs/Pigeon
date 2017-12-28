@@ -15,8 +15,8 @@ namespace MessageRouter.NetMQ.UnitTests.Publishers
     [TestFixture]
     public class NetMQPublisherTests
     {
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
+        private INetMQMessageFactory messageFactory;
 
         private readonly IAddress address = TcpAddress.Wildcard(5555);
         

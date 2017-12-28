@@ -34,7 +34,7 @@ namespace MessageRouter.NetMQ
                 throw new ArgumentNullException(nameof(container));
 
             container.Register<ISerializer, DotNetSerializer>(true);
-            container.Register<IMessageFactory, MessageFactory>(true);
+            container.Register<INetMQMessageFactory, NetMQMessageFactory>(true);
             container.Register<INetMQPoller, NetMQPoller>(true);
             container.Register<INetMQMonitor, NetMQMonitor>(true);
             container.Register<INetMQFactory, NetMQFactory>(true);

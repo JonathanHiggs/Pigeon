@@ -37,8 +37,8 @@ namespace MessageRouter.NetMQ.IntegrationTests
 
             var serializer = new DotNetSerializer();
             var packageFactory = new PackageFactory();
-            var messageFactory = new MessageFactory(serializer, packageFactory);
-            var sender = new NetMQSender(new AsyncSocket(new DealerSocket()), messageFactory);
+            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+            var sender = new NetMQSender(new DealerSocket(), messageFactory);
             var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, handler);
             var poller = new NetMQPoller();
 

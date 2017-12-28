@@ -26,7 +26,7 @@ namespace MessageRouter.NetMQ.Publishers
         /// </summary>
         /// <param name="socket">Inner <see cref="PublisherSocket"/> that sends data to remotes</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQPublisher(PublisherSocket socket, IMessageFactory messageFactory)
+        public NetMQPublisher(PublisherSocket socket, INetMQMessageFactory messageFactory)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));

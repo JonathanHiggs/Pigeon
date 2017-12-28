@@ -16,8 +16,8 @@ namespace MessageRouter.NetMQ.UnitTests.Receivers
     [TestFixture]
     public class NetMQReceiverTests
     {
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
+        private INetMQMessageFactory messageFactory;
 
         private readonly RequestTaskHandler handler = (rec, task) => { };
 

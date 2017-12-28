@@ -37,7 +37,7 @@ namespace MessageRouter.NetMQ.Receivers
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
         /// <param name="handler"><see cref="RequestTaskHandler"/> is called when an incoming message is received</param>
-        public NetMQReceiver(RouterSocket socket, IMessageFactory messageFactory, RequestTaskHandler handler)
+        public NetMQReceiver(RouterSocket socket, INetMQMessageFactory messageFactory, RequestTaskHandler handler)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
@@ -69,11 +69,14 @@ namespace MessageRouter.NetMQ.Receivers
 
         private void OnRequestReceived(object sender, NetMQSocketEventArgs e)
         {
+            NetMQMessage requestMessage = null;
+            if (!socket.TryReceiveMultipartMessage(ref requestMessage, 5))
+                return;
+
             // Move handling request off NetMQPoller thread and onto TaskPool as soon as possible
             Task.Run(() =>
             {
-                NetMQMessage requestMessage = default(NetMQMessage);
-                if (!socket.TryReceiveMultipartMessage(ref requestMessage) && !messageFactory.IsValidRequestMessage(requestMessage))
+                if (!messageFactory.IsValidRequestMessage(requestMessage))
                     return;
 
                 // So this is some pretty cool shit, yo

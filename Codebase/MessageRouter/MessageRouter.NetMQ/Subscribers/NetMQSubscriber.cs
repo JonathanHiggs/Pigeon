@@ -36,7 +36,7 @@ namespace MessageRouter.NetMQ.Subscribers
         /// <param name="socket">Inner <see cref="SubscriberSocket"/> that receives data from remotes</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
         /// <param name="handler"><see cref="TopicEventHandler"/> delegate that is called when an incoming topic message is received</param>
-        public NetMQSubscriber(SubscriberSocket socket, IMessageFactory messageFactory, TopicEventHandler handler)
+        public NetMQSubscriber(SubscriberSocket socket, INetMQMessageFactory messageFactory, TopicEventHandler handler)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));

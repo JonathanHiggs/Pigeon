@@ -12,18 +12,18 @@ namespace MessageRouter.NetMQ
     /// <summary>
     /// Creates and extracts <see cref="NetMQMessage"/>s
     /// </summary>
-    public class MessageFactory : IMessageFactory
+    public class NetMQMessageFactory : INetMQMessageFactory
     {
         private readonly ISerializer serializer;
         private readonly IPackageFactory packageFactory;
 
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MessageFactory"/>
+        /// Initializes a new instance of <see cref="NetMQMessageFactory"/>
         /// </summary>
         /// <param name="serializer">A serializer that will convert data into a binary format for transmission</param>
         /// <param name="packageFactory">Wraps objects in a packages</param>
-        public MessageFactory(ISerializer serializer, IPackageFactory packageFactory)
+        public NetMQMessageFactory(ISerializer serializer, IPackageFactory packageFactory)
         {
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
@@ -91,6 +91,21 @@ namespace MessageRouter.NetMQ
 
 
         /// <summary>
+        /// Checks to see whether the <see cref="NetMQMessage"/> request is valid
+        /// </summary>
+        /// <param name="requestMessage"><see cref="NetMQMessage"/> request to check for validity</param>
+        /// <returns>True if the request <see cref="NetMQMessage"/> is valid; false otherwise</returns>
+        public bool IsValidRequestMessage(NetMQMessage requestMessage)
+        {
+            return null != requestMessage
+                && requestMessage.FrameCount == 5
+                && !requestMessage[0].IsEmpty
+                && !requestMessage[2].IsEmpty
+                && !requestMessage[4].IsEmpty;
+        }
+
+
+        /// <summary>
         /// Creates a <see cref="NetMQMessage"/> wrapping a response object
         /// </summary>
         /// <param name="response">Response object to be wrapped in a <see cref="NetMQMessage"/></param>
@@ -114,26 +129,27 @@ namespace MessageRouter.NetMQ
         /// Extracts a response from the <see cref="NetMQMessage"/>
         /// </summary>
         /// <param name="message"><see cref="NetMQMessage"/> wrapping a response object</param>
-        /// <returns>Response object contained within the <see cref="NetMQMessage"/></returns>
-        public object ExtractResponse(NetMQMessage message)
+        /// <returns>Request identifier, response object contained within the <see cref="NetMQMessage"/></returns>
+        public (int requestId, object response) ExtractResponse(NetMQMessage message)
         {
-            var package = serializer.Deserialize<Package>(message[1].ToByteArray());
-            return packageFactory.Unpack(package);
+            var requestId = message[1].ConvertToInt32();
+            var package = serializer.Deserialize<Package>(message[3].ToByteArray());
+            var response = packageFactory.Unpack(package);
+            return (requestId, response);
         }
 
 
         /// <summary>
         /// Checks to see whether the <see cref="NetMQMessage"/> request is valid
         /// </summary>
-        /// <param name="requestMessage"><see cref="NetMQMessage"/> request to check for validity</param>
-        /// <returns>True if the request <see cref="NetMQMessage"/> is valid; false otherwise</returns>
-        public bool IsValidRequestMessage(NetMQMessage requestMessage)
+        /// <param name="responseMessage"><see cref="NetMQMessage"/> response to check for validity</param>
+        /// <returns>True if the response <see cref="NetMQMessage"/> is valid; false otherwise</returns>
+        public bool IsValidResponseMessage(NetMQMessage responseMessage)
         {
-            return null != requestMessage
-                && requestMessage.FrameCount == 5
-                && !requestMessage[0].IsEmpty
-                && !requestMessage[2].IsEmpty
-                && !requestMessage[4].IsEmpty;
+            return null != responseMessage
+                && responseMessage.FrameCount == 4
+                && !responseMessage[1].IsEmpty
+                && !responseMessage[3].IsEmpty;
         }
     }
 }

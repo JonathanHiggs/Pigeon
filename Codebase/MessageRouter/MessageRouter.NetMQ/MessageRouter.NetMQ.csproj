@@ -53,22 +53,19 @@
   <ItemGroup>
     <Compile Include="Common\INetMQConnection.cs" />
     <Compile Include="Common\NetMQConnection.cs" />
-    <Compile Include="IMessageFactory.cs" />
+    <Compile Include="INetMQMessageFactory.cs" />
     <Compile Include="INetMQFactory.cs" />
     <Compile Include="INetMQMonitor.cs" />
-    <Compile Include="MessageFactory.cs" />
+    <Compile Include="NetMQMessageFactory.cs" />
     <Compile Include="NetMQMonitor.cs" />
     <Compile Include="NetMQFactory.cs" />
     <Compile Include="NetMQConfig.cs" />
     <Compile Include="Publishers\INetMQPublisher.cs" />
     <Compile Include="Publishers\NetMQPublisher.cs" />
-    <Compile Include="Senders\AsyncSocket.cs" />
     <Compile Include="Receivers\INetMQReceiver.cs" />
-    <Compile Include="Senders\IAsyncSocket.cs" />
     <Compile Include="Senders\INetMQSender.cs" />
     <Compile Include="Senders\NetMQSender.cs" />
     <Compile Include="Receivers\NetMQReceiver.cs" />
-    <Compile Include="Senders\NetMQTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscribers\INetMQSubscriber.cs" />
     <Compile Include="Subscribers\NetMQSubscriber.cs" />

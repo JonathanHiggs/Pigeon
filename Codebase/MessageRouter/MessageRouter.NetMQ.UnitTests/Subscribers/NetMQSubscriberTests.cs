@@ -16,8 +16,8 @@ namespace MessageRouter.NetMQ.UnitTests.Subscribers
     [TestFixture]
     public class NetMQSubscriberTests
     {
-        private readonly Mock<IMessageFactory> mockMessageFactory = new Mock<IMessageFactory>();
-        private IMessageFactory messageFactory;
+        private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
+        private INetMQMessageFactory messageFactory;
 
         private readonly IAddress address = TcpAddress.Localhost(5555);
 
