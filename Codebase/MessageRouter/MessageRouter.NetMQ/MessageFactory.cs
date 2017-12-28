@@ -129,7 +129,11 @@ namespace MessageRouter.NetMQ
         /// <returns>True if the request <see cref="NetMQMessage"/> is valid; false otherwise</returns>
         public bool IsValidRequestMessage(NetMQMessage requestMessage)
         {
-            return null != requestMessage && requestMessage.FrameCount == 5;
+            return null != requestMessage
+                && requestMessage.FrameCount == 5
+                && !requestMessage[0].IsEmpty
+                && !requestMessage[2].IsEmpty
+                && !requestMessage[4].IsEmpty;
         }
     }
 }

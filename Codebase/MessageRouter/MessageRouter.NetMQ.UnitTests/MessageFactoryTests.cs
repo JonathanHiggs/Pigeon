@@ -236,7 +236,7 @@ namespace MessageRouter.NetMQ.UnitTests
 
 
         [Test]
-        public void CreateRequestMessage_WithRequest_MessageHasTwoFrames()
+        public void CreateRequestMessage_WithRequest_MessageHasFourFrames()
         {
             // Arrange
             var messageFactory = new MessageFactory(serializer, packageFactory);
@@ -498,6 +498,103 @@ namespace MessageRouter.NetMQ.UnitTests
 
             // Assert
             Assert.That(message[4].ToByteArray(), Is.EqualTo(data));
+        }
+        #endregion
+
+
+        #region ExtractResponse
+        [Test]
+        public void ExtractResponse()
+        {
+            Assert.Fail("Not Written");
+        }
+        #endregion
+
+
+        #region IsValidRequestMessage
+        [Test]
+        public void IsValidRequestMessage_WithNullMessage_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new MessageFactory(serializer, packageFactory);
+
+            // Act
+            var isValid = messageFactory.IsValidRequestMessage(null);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+
+
+        [Test]
+        public void IsValidRequestMessage_WithFiveFrameMessage_IsTrue()
+        {
+            // Arrange
+            var messageFactory = new MessageFactory(serializer, packageFactory);
+            var message = messageFactory.CreateRequestMessage(obj, 1);
+            message.Push(address);
+
+            // Act
+            var isValid = messageFactory.IsValidRequestMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.True);
+        }
+
+
+        [Test]
+        public void IsValidRequestMessage_WithEmptyAddress_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new MessageFactory(serializer, packageFactory);
+            var message = messageFactory.CreateRequestMessage(obj, requestId);
+            message.PushEmptyFrame();
+
+            // Act
+            var isValid = messageFactory.IsValidRequestMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+
+
+        [Test]
+        public void IsValidRequestMessage_WithEmptyRequestId_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new MessageFactory(serializer, packageFactory);
+            var message = new NetMQMessage(5);
+            message.Append(address);
+            message.AppendEmptyFrame();
+            message.AppendEmptyFrame();
+            message.AppendEmptyFrame();
+            message.Append(obj);
+
+            // Act
+            var isValid = messageFactory.IsValidRequestMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+
+
+        [Test]
+        public void IsValidRequestMessage_WithEmptyDataFrame_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new MessageFactory(serializer, packageFactory);
+            var message = new NetMQMessage(5);
+            message.Append(address);
+            message.AppendEmptyFrame();
+            message.Append(requestId);
+            message.AppendEmptyFrame();
+            message.AppendEmptyFrame();
+
+            // Act
+            var isValid = messageFactory.IsValidRequestMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.False);
         }
         #endregion
     }
