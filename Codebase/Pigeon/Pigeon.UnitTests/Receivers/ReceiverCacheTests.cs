@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-
-using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.Monitors;
-using Pigeon.Receivers;
-using Pigeon.Requests;
+﻿using System.Threading.Tasks;
 
 using Moq;
 
 using NUnit.Framework;
+
+using Pigeon.Addresses;
 using Pigeon.Diagnostics;
+using Pigeon.Monitors;
+using Pigeon.Receivers;
 
 namespace Pigeon.UnitTests.Receivers
 {
@@ -31,7 +29,7 @@ namespace Pigeon.UnitTests.Receivers
         private readonly Mock<IReceiverMonitor<IReceiver>> mockReceiverMonitor = new Mock<IReceiverMonitor<IReceiver>>();
         private IReceiverMonitor<IReceiver> receiverMonitor;
 
-        private readonly RequestTaskHandler handler = (rec, task) => { };
+        private readonly RequestTaskHandler handler = (rec, task) => Task.Run(() => { });
         
         
         [SetUp]

@@ -22,7 +22,7 @@ namespace Pigeon.NetMQ.Senders
     public class NetMQSender : NetMQConnection, INetMQSender
     {
         private readonly DealerSocket socket;
-        private readonly RemoteTaskManager<object, int> taskManager = new RemoteTaskManager<object, int>(1, id => id++);
+        private readonly RemoteTaskManager<object, int> taskManager = new RemoteTaskManager<object, int>(1, id => ++id);
 
 
         /// <summary>

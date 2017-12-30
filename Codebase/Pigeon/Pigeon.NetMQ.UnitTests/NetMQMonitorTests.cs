@@ -79,7 +79,7 @@ namespace Pigeon.NetMQ.UnitTests
 
             mockRequestDispatcher
                 .Setup(m => m.Handle(It.IsIn<object>(request)))
-                .Returns(response);
+                .Returns(Task.FromResult<object>(response));
         }
 
 

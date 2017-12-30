@@ -84,11 +84,19 @@ namespace Pigeon.Fluent
             return this;
         }
 
-        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(Requests.RequestHandlerDelegate<TRequest, TResponse> handler)
+        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
             container.Resolve<IRequestDispatcher>().Register(handler);
+            return this;
+        }
+
+        public IFluentBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+            where TRequest : class
+            where TResponse : class
+        {
+            container.Resolve<IRequestDispatcher>().RegisterAsync(handler);
             return this;
         }
 

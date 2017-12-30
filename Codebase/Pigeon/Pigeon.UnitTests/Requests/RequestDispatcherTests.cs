@@ -4,6 +4,7 @@ using Pigeon.Requests;
 using Moq;
 
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace Pigeon.UnitTests.Requests
 {
@@ -92,7 +93,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public void Handle_WithHandlerFunctionRegistered_CallsHandler()
+        public async Task Handle_WithHandlerFunctionRegistered_CallsHandler()
         {
             // Arrange
             var handled = false;
@@ -100,7 +101,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new Request();
 
             // Act
-            var response = dispatcher.Handle(request);
+            var response = await dispatcher.Handle(request);
 
             // Assert
             Assert.That(handled, Is.True);

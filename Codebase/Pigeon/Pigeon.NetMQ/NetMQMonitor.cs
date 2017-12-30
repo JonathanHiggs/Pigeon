@@ -14,6 +14,7 @@ using Pigeon.NetMQ.Common;
 using Pigeon.Requests;
 using Pigeon.Packages;
 using Pigeon.Topics;
+using System.Threading.Tasks;
 
 namespace Pigeon.NetMQ
 {
@@ -163,9 +164,9 @@ namespace Pigeon.NetMQ
         }
 
         
-        private void HandleRequest(IReceiver receiver, RequestTask requestTask)
+        private async Task HandleRequest(IReceiver receiver, RequestTask requestTask)
         {
-            var response = requestDispatcher.Handle(requestTask.Request);
+            var response = await requestDispatcher.Handle(requestTask.Request);
             requestTask.ResponseHandler(response);
         }
 

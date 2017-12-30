@@ -19,7 +19,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
         private INetMQMessageFactory messageFactory;
 
-        private readonly RequestTaskHandler handler = (rec, task) => { };
+        private readonly RequestTaskHandler handler = (rec, task) => Task.Run(() => { });
 
 
         [SetUp]

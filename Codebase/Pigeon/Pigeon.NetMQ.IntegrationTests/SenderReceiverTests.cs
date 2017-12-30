@@ -28,12 +28,12 @@ namespace Pigeon.NetMQ.IntegrationTests
             ushort port = 6555;
             var called = false;
 
-            RequestTaskHandler handler = (rec, task) =>
+            RequestTaskHandler handler = (rec, task) => Task.Run(() =>
             {
                 called = true;
                 receivedRequest = (string)task.Request;
                 task.ResponseHandler(responseStr);
-            };
+            });
 
             var serializer = new DotNetSerializer();
             var packageFactory = new PackageFactory();

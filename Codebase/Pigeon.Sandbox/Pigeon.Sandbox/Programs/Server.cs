@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-
+using System.Threading.Tasks;
 using Pigeon.Addresses;
 using Pigeon.NetMQ;
 using Pigeon.NetMQ.Receivers;
@@ -17,7 +17,7 @@ namespace Pigeon.Sandbox.Programs
             var router = UnityBuilder.WithName("TestServer")
                                      .WithTransport<NetMQConfig>()
                                      .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
-                                     .WithRequestHandler<TestMessage, TestMessage>(Handler)
+                                     .WithAsyncRequestHandler<TestMessage, TestMessage>(Handler)
                                      .BuildAndStart();
             
             Console.WriteLine("Press enter to stop server");
@@ -27,10 +27,10 @@ namespace Pigeon.Sandbox.Programs
         }
 
 
-        private static TestMessage Handler(TestMessage request)
+        private static async Task<TestMessage> Handler(TestMessage request)
         {
             Console.WriteLine($"Received {request.Num}");
-            Thread.Sleep(3000);
+            await Task.Delay(TimeSpan.FromSeconds(1)); // Simulate work
             Console.WriteLine($"Returning {request.Num + 1}");
             return new TestMessage { Num = request.Num + 1 };
         }

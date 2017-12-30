@@ -19,7 +19,7 @@ namespace Pigeon.Requests
         /// </summary>
         /// <param name="request">Request message</param>
         /// <returns>Response message</returns>
-        public object Handle(object request)
+        public Task<object> Handle(object request)
         {
             if (null == request)
                 throw new ArgumentNullException(nameof(request));
@@ -39,9 +39,9 @@ namespace Pigeon.Requests
         /// <typeparam name="TResponse">Type of response message</typeparam>
         /// <param name="handler">Request handler instance</param>
         /// <returns>Returns the same <see cref="RequestDispatcher"/> for fluent construction</returns>
-        public RequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public IRequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
-            requestHandlers.Add(typeof(TRequest), request => handler.Handle((TRequest)request));
+            requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler.Handle((TRequest)request)));
             return this;
         }
 
@@ -53,9 +53,23 @@ namespace Pigeon.Requests
         /// <typeparam name="TResponse">Type of response object</typeparam>
         /// <param name="handler">Request handler instance</param>
         /// <returns>Returns the same RequestDispatcher instance for fluent construction</returns>
-        public RequestDispatcher Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public IRequestDispatcher Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
         {
-            requestHandlers.Add(typeof(TRequest), request => handler((TRequest)request));
+            requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler((TRequest)request)));
+            return this;
+        }
+
+
+        /// <summary>
+        /// Registers an <see cref="AsyncRequestHandlerDelegate{TRequest, TResponse}"/>
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request object</typeparam>
+        /// <typeparam name="TResponse">Type of response object</typeparam>
+        /// <param name="handler">Request handler instance</param>
+        /// <returns>Returns the same <see cref="IRequestDispatcher"/> instance for fluent construction</returns>
+        public IRequestDispatcher RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+        {
+            requestHandlers.Add(typeof(TRequest), request => Task.Run(async () => (object)(await handler((TRequest)request))));
             return this;
         }
 

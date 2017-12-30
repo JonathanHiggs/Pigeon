@@ -122,6 +122,15 @@ namespace Pigeon.Fluent
         }
 
 
+        public IFluentBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+            where TRequest : class
+            where TResponse : class
+        {
+            requestDispatcher.RegisterAsync(handler);
+            return this;
+        }
+
+
         public IFluentBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
             topicDispatcher.Register(handler);

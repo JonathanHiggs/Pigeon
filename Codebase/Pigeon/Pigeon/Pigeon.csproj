@@ -49,6 +49,7 @@
     <Compile Include="Fluent\IFluentBuilder.cs" />
     <Compile Include="Fluent\DependencyInjectionBuilder.cs" />
     <Compile Include="IContainer.cs" />
+    <Compile Include="Requests\AsyncRequestHandlerDelegate.cs" />
     <Compile Include="Routing\ITopicRouter.cs" />
     <Compile Include="Routing\SubscriberRouting.cs" />
     <Compile Include="Routing\TopicRouter.cs" />
