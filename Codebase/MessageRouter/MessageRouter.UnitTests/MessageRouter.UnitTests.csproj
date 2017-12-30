@@ -79,6 +79,8 @@
     <Compile Include="Subscribers\SubscriptionsCacheTests.cs" />
     <Compile Include="Subscribers\SubscriptionTests.cs" />
     <Compile Include="Topics\TopicDispatcherTests.cs" />
+    <Compile Include="Utils\RemoteTaskManagerTests.cs" />
+    <Compile Include="Utils\RemoteTaskTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

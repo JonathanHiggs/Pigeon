@@ -22,7 +22,7 @@ namespace MessageRouter.NetMQ.Senders
     public class NetMQSender : NetMQConnection, INetMQSender
     {
         private readonly DealerSocket socket;
-        private readonly AsyncTaskHelper asyncTaskHelper = new AsyncTaskHelper();
+        private readonly RemoteTaskManager<object, int> taskManager = new RemoteTaskManager<object, int>(1, id => id++);
 
 
         /// <summary>
@@ -61,11 +61,7 @@ namespace MessageRouter.NetMQ.Senders
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
         public Task<object> SendAndReceive(object request, TimeSpan timeout)
         {
-            //CompleteMessage messageFn = (requestId) => messageFactory.CreateRequestMessage(request, requestId);
-            //var response = await socket.SendAndReceive(messageFn, timeout);
-            //return messageFactory.ExtractResponse(response);
-
-            return asyncTaskHelper.StartAsyncTask(requestId =>
+            return taskManager.StartRemoteTask(requestId =>
             {
                 var message = messageFactory.CreateRequestMessage(request, requestId);
                 socket.SendMultipartMessage(message);
@@ -105,7 +101,7 @@ namespace MessageRouter.NetMQ.Senders
                     return;
 
                 var (requestId, response) = messageFactory.ExtractResponse(responseMessage);
-                asyncTaskHelper.CompleteTask(requestId, response);
+                taskManager.CompleteTask(requestId, response);
             });
         }
     }
