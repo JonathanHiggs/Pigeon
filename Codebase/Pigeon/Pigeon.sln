@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{863EDB3D-B126-4163-BF3A-30EBBE40F8F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{17BD1D4E-F52F-4425-8ED3-B27AE85A520A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon", "Pigeon\Pigeon.csproj", "{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.NetMQ", "Pigeon.NetMQ\Pigeon.NetMQ.csproj", "{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.NetMQ.IntegrationTests", "Pigeon.NetMQ.IntegrationTests\Pigeon.NetMQ.IntegrationTests.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.NetMQ.UnitTests", "Pigeon.NetMQ.UnitTests\Pigeon.NetMQ.UnitTests.csproj", "{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.UnitTests", "Pigeon.UnitTests\Pigeon.UnitTests.csproj", "{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Unity", "Pigeon.Unity\Pigeon.Unity.csproj", "{89C03F24-7E90-4F20-B438-B9587E060F64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Sandbox", "..\Pigeon.Sandbox\Pigeon.Sandbox\Pigeon.Sandbox.csproj", "{25A9DB45-8465-4D37-95D5-3222AF20B1FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C03F24-7E90-4F20-B438-B9587E060F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8EDF4429-251A-416D-BB68-93F227191BCF} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
+		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
+		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
+		{25A9DB45-8465-4D37-95D5-3222AF20B1FA} = {17BD1D4E-F52F-4425-8ED3-B27AE85A520A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9795E1F7-EDC1-4B4C-AADF-5BB529187C83}
+	EndGlobalSection
+EndGlobal
