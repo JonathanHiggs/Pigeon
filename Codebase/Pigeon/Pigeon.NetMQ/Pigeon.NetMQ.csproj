@@ -7,8 +7,8 @@
     <ProjectGuid>{8E603BA1-CEB3-4AF7-92F4-D49EB2E76599}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MessageRouter.NetMQ</RootNamespace>
-    <AssemblyName>MessageRouter.NetMQ</AssemblyName>
+    <RootNamespace>Pigeon.NetMQ</RootNamespace>
+    <AssemblyName>Pigeon.NetMQ</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

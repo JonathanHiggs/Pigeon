@@ -7,8 +7,8 @@
     <ProjectGuid>{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MessageRouter</RootNamespace>
-    <AssemblyName>MessageRouter</AssemblyName>
+    <RootNamespace>Pigeon</RootNamespace>
+    <AssemblyName>Pigeon</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
