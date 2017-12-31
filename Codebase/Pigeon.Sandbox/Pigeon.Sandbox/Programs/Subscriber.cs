@@ -23,7 +23,7 @@ namespace Pigeon.Sandbox.Programs
             router = UnityBuilder.WithName("Subscriber")
                                  .WithTransport<NetMQConfig>()
                                  .WithSubscriber<INetMQSubscriber, Observation>(TcpAddress.Localhost(5556))
-                                 .WithTopicHandler<Observation>(Handler)
+                                 .WithAsyncTopicHandler<Observation>(AsyncHandler)
                                  .Build();
         }
 
@@ -53,6 +53,17 @@ namespace Pigeon.Sandbox.Programs
         {
             received += 1;
 
+            if (received % 1000 == 0)
+                Console.WriteLine($"Received: {observation}");
+        }
+
+
+        private async Task AsyncHandler(Observation observation)
+        {
+            received += 1;
+
+            await Task.Delay(TimeSpan.FromMilliseconds(3));
+            
             if (received % 1000 == 0)
                 Console.WriteLine($"Received: {observation}");
         }

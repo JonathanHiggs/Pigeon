@@ -41,6 +41,8 @@ namespace Pigeon.Fluent
 
         IFluentBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler);
 
+        IFluentBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
+
         IFluentBuilder WithTransport<TTransport>() where TTransport : ITransportConfig;
     }
 }

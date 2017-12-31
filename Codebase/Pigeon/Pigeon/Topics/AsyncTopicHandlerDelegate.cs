@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Pigeon.Topics
 {
@@ -7,5 +11,5 @@ namespace Pigeon.Topics
     /// </summary>
     /// <typeparam name="TTopic">Type of the topic message that is handled</typeparam>
     /// <param name="message">The topic message object that was published</param>
-    public delegate void TopicHandlerDelegate<TTopic>(TTopic message);
+    public delegate Task AsyncTopicHandlerDelegate<TTopic>(TTopic message);
 }

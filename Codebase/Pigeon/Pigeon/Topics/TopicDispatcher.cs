@@ -19,16 +19,16 @@ namespace Pigeon.Topics
         /// Finds and invokes a registered handler for the topic message
         /// </summary>
         /// <param name="message">Topic message</param>
-        public void Handle(object message)
+        public Task Handle(object message)
         {
             if (null == message)
-                return;
+                return Task.CompletedTask;
 
             var eventType = message.GetType();
             if (!handlers.TryGetValue(eventType, out var handler))
-                return;
+                return Task.CompletedTask;
 
-            handler(message);
+            return handler(message);
         }
 
 
@@ -37,10 +37,10 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
-        public TopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler)
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        public ITopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler)
         {
-            handlers.Add(typeof(TTopic), eventMessage => handler.Handle((TTopic)eventMessage));
+            handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler.Handle((TTopic)eventMessage)));
             return this;
         }
 
@@ -50,21 +50,24 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
-        public TopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        public ITopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
-            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
+            handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler((TTopic)eventMessage)));
             return this;
         }
 
 
         /// <summary>
-        /// Initializes a new instance of <see cref="TopicDispatcher"/> for fluent construction
+        /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
         /// </summary>
-        /// <returns>An empty <see cref="TopicDispatcher"/></returns>
-        public static TopicDispatcher Create()
+        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        public ITopicDispatcher RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
-            return new TopicDispatcher();
+            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
+            return this;
         }
     }
 }

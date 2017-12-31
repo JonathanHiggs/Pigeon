@@ -60,6 +60,7 @@
     <Compile Include="Subscribers\ISubscriptionsCache.cs" />
     <Compile Include="Subscribers\Subscription.cs" />
     <Compile Include="Subscribers\SubscriptionsCache.cs" />
+    <Compile Include="Topics\AsyncTopicHandlerDelegate.cs" />
     <Compile Include="Utils\RemoteTask.cs" />
     <Compile Include="Utils\RemoteTaskManager.cs" />
     <Compile Include="Verbs\IPublish.cs" />

@@ -126,6 +126,12 @@ namespace Pigeon.Fluent
             return this;
         }
 
+        public IFluentBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        {
+            container.Resolve<ITopicDispatcher>().RegisterAsync(handler);
+            return this;
+        }
+
         public IFluentBuilder WithTransport<TTransport>() where TTransport : ITransportConfig
         {
             container.Register<TTransport>(true);

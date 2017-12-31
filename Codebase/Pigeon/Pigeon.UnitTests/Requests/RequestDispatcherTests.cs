@@ -40,7 +40,7 @@ namespace Pigeon.UnitTests.Requests
             var dispatcher = RequestDispatcher.Create();
 
             // Act
-            TestDelegate handleNull = () => dispatcher.Handle(null);
+            AsyncTestDelegate handleNull = async () => await dispatcher.Handle(null);
 
             // Assert
             Assert.That(handleNull, Throws.ArgumentNullException);
@@ -55,7 +55,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new Request();
 
             // Act
-            TestDelegate handleUnregistered = () => dispatcher.Handle(request);
+            AsyncTestDelegate handleUnregistered = async () => await dispatcher.Handle(request);
 
             // Assert
             Assert.That(handleUnregistered, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -63,14 +63,14 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public void Handle_WithHandlerRegistered_CallsHandler()
+        public async Task Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
             var dispatcher = RequestDispatcher.Create().Register(handler);
             var request = new Request();
 
             // Act
-            var response = dispatcher.Handle(request);
+            var response = await dispatcher.Handle(request);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -85,7 +85,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new SubRequest();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(request);
+            AsyncTestDelegate handle = async () => await dispatcher.Handle(request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -116,7 +116,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new SubRequest();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(request);
+            AsyncTestDelegate handle = async () => await dispatcher.Handle(request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());

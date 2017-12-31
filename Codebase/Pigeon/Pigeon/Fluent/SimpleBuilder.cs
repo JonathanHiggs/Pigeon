@@ -145,6 +145,13 @@ namespace Pigeon.Fluent
         }
 
 
+        public IFluentBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        {
+            topicDispatcher.RegisterAsync(handler);
+            return this;
+        }
+
+
         public Router Build()
         {
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);

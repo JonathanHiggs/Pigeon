@@ -15,7 +15,7 @@ namespace Pigeon.Topics
         /// Dispatches the handling of a published message
         /// </summary>
         /// <param name="message">The message published by a remote source to be handled</param>
-        void Handle(object message);
+        Task Handle(object message);
 
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
-        TopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler);
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        ITopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler);
 
 
         /// <summary>
@@ -32,7 +32,16 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="TopicDispatcher"/> for fluent construction</returns>
-        TopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        ITopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
+
+
+        /// <summary>
+        /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
+        ITopicDispatcher RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
     }
 }
