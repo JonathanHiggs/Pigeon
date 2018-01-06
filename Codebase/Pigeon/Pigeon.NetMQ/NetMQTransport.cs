@@ -12,6 +12,9 @@ using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Subscribers;
 
 using NetMQ;
+using Pigeon.Fluent;
+using Pigeon.NetMQ.Fluent;
+using Pigeon.Routing;
 
 namespace Pigeon.NetMQ
 {
@@ -19,16 +22,17 @@ namespace Pigeon.NetMQ
     /// Internally connects up all dependencies for NetMQ transport and is used to supply <see cref="Router"/> with all
     /// factories and monitors to create and run <see cref="Common.INetMQConnection"/>s
     /// </summary>
-    public class NetMQConfig : ITransportConfig
+    public class NetMQTransport : ITransportConfig
     {
         private readonly INetMQFactory factory;
+        private ITransportSetup setup;
         
 
         /// <summary>
-        /// Initializes a new instance of <see cref="NetMQConfig"/>
+        /// Initializes a new instance of <see cref="NetMQTransport"/>
         /// </summary>
         /// <param name="container">DI Container to wire up dependencies</param>
-        public NetMQConfig(IContainer container)
+        public NetMQTransport(IContainer container)
         {
             if (null == container)
                 throw new ArgumentNullException(nameof(container));
@@ -40,12 +44,14 @@ namespace Pigeon.NetMQ
             container.Register<INetMQFactory, NetMQFactory>(true);
             
             factory = container.Resolve<INetMQFactory>();
+            setup = container.Resolve<TransportSetup<INetMQSender, INetMQSubscriber>>();
         }
 
 
-        private NetMQConfig(INetMQFactory factory)
+        private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, ITopicRouter topicRouter)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            setup = new TransportSetup<INetMQSender, INetMQSubscriber>(requestRouter, topicRouter);
         }
 
 
@@ -73,17 +79,20 @@ namespace Pigeon.NetMQ
         public ISubscriberFactory SubscriberFactory => factory;
 
 
+        public ITransportSetup Configurer => setup;
+
+
         /// <summary>
-        /// Initializes a new instance of <see cref="NetMQConfig"/>
+        /// Initializes a new instance of <see cref="NetMQTransport"/>
         /// </summary>
         /// <param name="factory"></param>
         /// <returns></returns>
-        public static NetMQConfig Create(INetMQFactory factory)
+        public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, ITopicRouter topicRouter)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));
 
-            return new NetMQConfig(factory);
+            return new NetMQTransport(factory, requestRouter, topicRouter);
         }
     }
 }

@@ -144,6 +144,11 @@ namespace Pigeon.Fluent
 
         public DependencyInjectionBuilder WithTransport<TTransport>() where TTransport : ITransportConfig
         {
+            return WithTransport<TTransport>(t => { });
+        }
+
+        public DependencyInjectionBuilder WithTransport<TTransport>(Action<ITransportSetup> config) where TTransport : ITransportConfig
+        {
             container.Register<TTransport>(true);
             var transport = container.Resolve<TTransport>();
 
@@ -158,6 +163,8 @@ namespace Pigeon.Fluent
 
             if (null != transport.SubscriberFactory)
                 container.Resolve<ISubscriberCache>().AddFactory(transport.SubscriberFactory);
+
+            config(transport.Configurer);
 
             return this;
         }

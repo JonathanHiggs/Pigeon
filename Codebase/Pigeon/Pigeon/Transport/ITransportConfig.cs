@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pigeon.Fluent;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Senders;
@@ -38,5 +39,12 @@ namespace Pigeon.Transport
         /// Gets a factory for creating <see cref="ISubscriber"/>s if available, otherwise null
         /// </summary>
         ISubscriberFactory SubscriberFactory { get; }
+
+
+        /// <summary>
+        /// Makes a configuration unit for fluent construction
+        /// </summary>
+        /// <returns></returns>
+        ITransportSetup Configurer { get; }
     }
 }

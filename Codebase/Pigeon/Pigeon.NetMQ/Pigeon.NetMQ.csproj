@@ -59,7 +59,7 @@
     <Compile Include="NetMQMessageFactory.cs" />
     <Compile Include="NetMQMonitor.cs" />
     <Compile Include="NetMQFactory.cs" />
-    <Compile Include="NetMQConfig.cs" />
+    <Compile Include="NetMQTransport.cs" />
     <Compile Include="Publishers\INetMQPublisher.cs" />
     <Compile Include="Publishers\NetMQPublisher.cs" />
     <Compile Include="Receivers\INetMQReceiver.cs" />

@@ -48,7 +48,7 @@ namespace Pigeon.Sandbox.Programs
             var serverName = Console.ReadLine();
 
             var router = UnityBuilder.Named("TestClient")
-                                     .WithTransport<NetMQConfig>()
+                                     .WithTransport<NetMQTransport>()
                                      .WithSenderRouting<INetMQSender, TestMessage>(TcpAddress.FromNameAndPort(serverName, 5555))
                                      .BuildAndStart();
 

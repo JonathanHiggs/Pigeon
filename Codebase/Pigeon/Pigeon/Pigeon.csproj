@@ -48,6 +48,12 @@
     <Compile Include="Diagnostics\MissingFactoryException.cs" />
     <Compile Include="Fluent\IFluentBuilder.cs" />
     <Compile Include="Fluent\DependencyInjectionBuilder.cs" />
+    <Compile Include="Fluent\ISenderSetup.cs" />
+    <Compile Include="Fluent\ISubscriberSetup.cs" />
+    <Compile Include="Fluent\ITransportSetup.cs" />
+    <Compile Include="Fluent\TransportSetup.cs" />
+    <Compile Include="Fluent\SenderSetup.cs" />
+    <Compile Include="Fluent\SubscriberSetup.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Requests\AsyncRequestHandlerDelegate.cs" />
     <Compile Include="Diagnostics\UnserializableTypeException.cs" />
