@@ -159,7 +159,8 @@ namespace Pigeon.UnitTests.Requests
         public async Task Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create().Register(handler);
+            var dispatcher = RequestDispatcher.Create();
+            dispatcher.Register(handler);
             var request = new Request();
 
             // Act
@@ -174,7 +175,8 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create().Register(handler);
+            var dispatcher = RequestDispatcher.Create();
+            dispatcher.Register(handler);
             var request = new SubRequest();
 
             // Act
@@ -190,7 +192,8 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var handled = false;
-            var dispatcher = RequestDispatcher.Create().Register<Request, Request>(dt => { handled = true; return dt; });
+            var dispatcher = RequestDispatcher.Create();
+            dispatcher.Register<Request, Request>(dt => { handled = true; return dt; });
             var request = new Request();
 
             // Act
@@ -205,7 +208,8 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerFunctionRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create().Register<Request, Request>(r => r);
+            var dispatcher = RequestDispatcher.Create();
+            dispatcher.Register<Request, Request>(r => r);
             var request = new SubRequest();
 
             // Act

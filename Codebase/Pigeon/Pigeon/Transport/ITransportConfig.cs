@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Fluent;
+﻿using Pigeon.Fluent.Transport;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Senders;

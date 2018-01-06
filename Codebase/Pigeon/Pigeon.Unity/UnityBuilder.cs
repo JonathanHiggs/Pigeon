@@ -8,12 +8,7 @@ using Unity;
 
 namespace Pigeon.Unity
 {
-    public interface INamedBuilder<TBuilder>
-    {
-        IFluentBuilder<TBuilder> WithName(string name);
-    }
-
-    public class UnityBuilder : INamedBuilder<DependencyInjectionBuilder>
+    public class UnityBuilder : INamedBuilder<ContainerBuilder>
     {
         private UnityContainerWrapper container;
 
@@ -22,20 +17,20 @@ namespace Pigeon.Unity
             this.container = container;
         }
 
-        public static DependencyInjectionBuilder Named(string name)
+        public static ContainerBuilder Named(string name)
         {
             var container = new UnityContainerWrapper(new UnityContainer());
-            return new DependencyInjectionBuilder(name, container);
+            return new ContainerBuilder(name, container);
         }
 
-        public static INamedBuilder<DependencyInjectionBuilder> FromContainer(UnityContainerWrapper container)
+        public static INamedBuilder<ContainerBuilder> FromContainer(UnityContainerWrapper container)
         {
             return new UnityBuilder(container);
         }
         
-        public IFluentBuilder<DependencyInjectionBuilder> WithName(string name)
+        public ContainerBuilder WithName(string name)
         {
-            return new DependencyInjectionBuilder(name, container);
+            return new ContainerBuilder(name, container);
         }
     }
 }

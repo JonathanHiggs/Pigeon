@@ -8,11 +8,11 @@ using Pigeon.Diagnostics;
 namespace Pigeon.Requests
 {
     /// <summary>
-    /// Finds an appropriate handler for an incoming request to invoke to prepare responses and respond to
+    /// Stores and resolves registered handlers for an incoming request to invoke to prepare responses and respond to
     /// </summary>
     public class RequestDispatcher : IRequestDispatcher
     {
-        private readonly Dictionary<Type, RequestHandlerFunction> requestHandlers = new Dictionary<Type, RequestHandlerFunction>();
+        protected readonly Dictionary<Type, RequestHandlerFunction> requestHandlers = new Dictionary<Type, RequestHandlerFunction>();
 
 
         /// <summary>
@@ -39,13 +39,10 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request message</typeparam>
         /// <typeparam name="TResponse">Type of response message</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same <see cref="RequestDispatcher"/> for fluent construction</returns>
-        public IRequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
-
             requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler.Handle((TRequest)request)));
-            return this;
         }
 
 
@@ -55,13 +52,10 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request object</typeparam>
         /// <typeparam name="TResponse">Type of response object</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same RequestDispatcher instance for fluent construction</returns>
-        public IRequestDispatcher Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public void Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
-
             requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler((TRequest)request)));
-            return this;
         }
 
 
@@ -71,13 +65,11 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request object</typeparam>
         /// <typeparam name="TResponse">Type of response object</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same <see cref="IRequestDispatcher"/> instance for fluent construction</returns>
-        public IRequestDispatcher RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+        public void RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
 
             requestHandlers.Add(typeof(TRequest), request => Task.Run(async () => (object)(await handler((TRequest)request))));
-            return this;
         }
 
 
@@ -91,7 +83,7 @@ namespace Pigeon.Requests
         }
 
 
-        private void ValidateTypes<TRequest, TResponse>()
+        protected void ValidateTypes<TRequest, TResponse>()
         {
             if (null == typeof(TRequest).GetCustomAttribute<SerializableAttribute>())
                 throw new UnserializableTypeException(typeof(TRequest));

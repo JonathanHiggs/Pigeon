@@ -1,20 +1,19 @@
 ﻿using System;
 
+using NetMQ;
+
+using Pigeon.Fluent.Transport;
+using Pigeon.NetMQ.Publishers;
+using Pigeon.NetMQ.Receivers;
+using Pigeon.NetMQ.Senders;
+using Pigeon.NetMQ.Subscribers;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
+using Pigeon.Routing;
 using Pigeon.Senders;
 using Pigeon.Serialization;
 using Pigeon.Subscribers;
 using Pigeon.Transport;
-using Pigeon.NetMQ.Senders;
-using Pigeon.NetMQ.Publishers;
-using Pigeon.NetMQ.Receivers;
-using Pigeon.NetMQ.Subscribers;
-
-using NetMQ;
-using Pigeon.Fluent;
-using Pigeon.NetMQ.Fluent;
-using Pigeon.Routing;
 
 namespace Pigeon.NetMQ
 {
@@ -44,14 +43,14 @@ namespace Pigeon.NetMQ
             container.Register<INetMQFactory, NetMQFactory>(true);
             
             factory = container.Resolve<INetMQFactory>();
-            setup = container.Resolve<TransportSetup<INetMQSender, INetMQSubscriber>>();
+            setup = container.Resolve<TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>>();
         }
 
 
-        private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, ITopicRouter topicRouter)
+        private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            setup = new TransportSetup<INetMQSender, INetMQSubscriber>(requestRouter, topicRouter);
+            setup = new TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>(requestRouter, receiverCache, topicRouter, publisherCache);
         }
 
 
@@ -81,18 +80,13 @@ namespace Pigeon.NetMQ
 
         public ITransportSetup Configurer => setup;
 
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="NetMQTransport"/>
-        /// </summary>
-        /// <param name="factory"></param>
-        /// <returns></returns>
-        public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, ITopicRouter topicRouter)
+        
+        public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
             if (null == factory)
                 throw new ArgumentNullException(nameof(factory));
 
-            return new NetMQTransport(factory, requestRouter, topicRouter);
+            return new NetMQTransport(factory, requestRouter, receiverCache, topicRouter, publisherCache);
         }
     }
 }

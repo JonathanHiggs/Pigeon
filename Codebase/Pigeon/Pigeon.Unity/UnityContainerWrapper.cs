@@ -19,6 +19,10 @@ namespace Pigeon.Unity
             Register<IContainer>(this);
         }
 
+        public bool IsRegistered<T>()
+        {
+            return unityContainer.IsRegistered<T>();
+        }
 
         public void Register<T>(bool singleton)
         {

@@ -7,7 +7,7 @@ using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.Transport;
 
-namespace Pigeon.Fluent
+namespace Pigeon.Fluent.Simple
 {
     public interface IFluentBuilder<TBuilder>
     {
@@ -37,11 +37,11 @@ namespace Pigeon.Fluent
 
         TBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address) where TSubscriber : ISubscriber;
 
-        TBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler);
+        //TBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler);
 
-        TBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler);
+        //TBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler);
 
-        TBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
+        //TBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
 
         TBuilder WithTransport<TTransport>() where TTransport : ITransportConfig;
     }

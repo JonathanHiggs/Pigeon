@@ -1,4 +1,4 @@
-﻿namespace Pigeon.Fluent
+﻿namespace Pigeon.Fluent.Transport
 {
     public interface ISenderSetup
     {

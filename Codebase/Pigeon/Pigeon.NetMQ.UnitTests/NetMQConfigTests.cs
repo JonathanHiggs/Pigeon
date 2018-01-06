@@ -1,5 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
+using Pigeon.Publishers;
+using Pigeon.Receivers;
 using Pigeon.Routing;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,12 @@ namespace Pigeon.NetMQ.UnitTests
         private readonly Mock<IRequestRouter> mockRequestRouter = new Mock<IRequestRouter>();
         private IRequestRouter requestRouter;
 
+        private readonly Mock<IReceiverCache> mockReceiverCache = new Mock<IReceiverCache>();
+        private IReceiverCache receiverCache;
+
+        private readonly Mock<IPublisherCache> mockPublisherCache = new Mock<IPublisherCache>();
+        private IPublisherCache publisherCache;
+        
         private readonly Mock<ITopicRouter> mockTopicRouter = new Mock<ITopicRouter>();
         private ITopicRouter topicRouter;
         
@@ -28,6 +36,8 @@ namespace Pigeon.NetMQ.UnitTests
             factory = mockFactory.Object;
             requestRouter = mockRequestRouter.Object;
             topicRouter = mockTopicRouter.Object;
+            receiverCache = mockReceiverCache.Object;
+            publisherCache = mockPublisherCache.Object;
         }
 
 
@@ -37,6 +47,8 @@ namespace Pigeon.NetMQ.UnitTests
             mockFactory.Reset();
             mockRequestRouter.Reset();
             mockTopicRouter.Reset();
+            mockReceiverCache.Reset();
+            mockPublisherCache.Reset();
         }
 
 
@@ -56,7 +68,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void Create_WithNullNetMQFactory_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => NetMQTransport.Create(null, requestRouter, topicRouter);
+            TestDelegate construct = () => NetMQTransport.Create(null, requestRouter, receiverCache, topicRouter, publisherCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -67,7 +79,18 @@ namespace Pigeon.NetMQ.UnitTests
         public void Create_WithNullRequestRouter_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => NetMQTransport.Create(factory, null, topicRouter);
+            TestDelegate construct = () => NetMQTransport.Create(factory, null, receiverCache, topicRouter, publisherCache);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void Create_WithNullReceiverCache_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => NetMQTransport.Create(factory, requestRouter, null, topicRouter, publisherCache);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -78,7 +101,18 @@ namespace Pigeon.NetMQ.UnitTests
         public void Create_WithNullTopicRouter_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => NetMQTransport.Create(factory, requestRouter, null);
+            TestDelegate construct = () => NetMQTransport.Create(factory, requestRouter, receiverCache, null, publisherCache);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
+        }
+
+
+        [Test]
+        public void Create_WithNullPublisherCache_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => NetMQTransport.Create(factory, requestRouter, receiverCache, topicRouter, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -90,7 +124,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void SenderFactory_ReturnsFactory()
         {
             // Arrange
-            var config = NetMQTransport.Create(factory, requestRouter, topicRouter);
+            var config = NetMQTransport.Create(factory, requestRouter, receiverCache, topicRouter, publisherCache);
 
             // Act
             var senderFactory = config.SenderFactory;
@@ -104,7 +138,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void ReceiverFactory_ReturnsFactory()
         {
             // Arrange
-            var config = NetMQTransport.Create(factory, requestRouter, topicRouter);
+            var config = NetMQTransport.Create(factory, requestRouter, receiverCache, topicRouter, publisherCache);
 
             // Act
             var receiverFactory = config.ReceiverFactory;
@@ -118,7 +152,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void PublisherFactory_ReturnsFactory()
         {
             // Arrange
-            var config = NetMQTransport.Create(factory, requestRouter, topicRouter);
+            var config = NetMQTransport.Create(factory, requestRouter, receiverCache, topicRouter, publisherCache);
 
             // Act
             var publisherFactory = config.PublisherFactory;
@@ -132,7 +166,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void SubscriberFactory_ReturnsRactory()
         {
             // Arrange
-            var config = NetMQTransport.Create(factory, requestRouter, topicRouter);
+            var config = NetMQTransport.Create(factory, requestRouter, receiverCache, topicRouter, publisherCache);
 
             // Act
             var subscriberFactory = config.SubscriberFactory;

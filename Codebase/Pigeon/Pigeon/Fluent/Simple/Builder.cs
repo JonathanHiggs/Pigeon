@@ -12,9 +12,9 @@ using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.Transport;
 
-namespace Pigeon.Fluent
+namespace Pigeon.Fluent.Simple
 {
-    public class SimpleBuilder : IFluentBuilder<SimpleBuilder>
+    public class Builder : IFluentBuilder<Builder>
     {
         private string name;
 
@@ -32,7 +32,7 @@ namespace Pigeon.Fluent
         private readonly SubscriberCache subscriberCache;
 
 
-        public SimpleBuilder(string name)
+        public Builder(string name)
         {
             this.name = name;
             topicRouter = new TopicRouter();
@@ -50,7 +50,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithTransport<TTransport>()
+        public Builder WithTransport<TTransport>()
             where TTransport : ITransportConfig
         {
             var transport = Activator.CreateInstance<TTransport>();
@@ -71,7 +71,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
+        public Builder WithSenderRouting<TSender, TRequest>(IAddress address)
             where TSender : ISender
             where TRequest : class
         {
@@ -80,7 +80,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithReceiver<TReceiver>(IAddress address)
+        public Builder WithReceiver<TReceiver>(IAddress address)
             where TReceiver : IReceiver
         {
             receiverCache.AddReceiver<TReceiver>(address);
@@ -88,7 +88,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithPublisher<TPublisher>(IAddress address)
+        public Builder WithPublisher<TPublisher>(IAddress address)
             where TPublisher : IPublisher
         {
             publisherCache.AddPublisher<TPublisher>(address);
@@ -96,7 +96,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
+        public Builder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
             topicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
@@ -104,7 +104,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public Builder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -113,7 +113,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public Builder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -122,7 +122,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+        public Builder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -131,21 +131,21 @@ namespace Pigeon.Fluent
         }
 
 
-        public SimpleBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
+        public Builder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;
         }
 
 
-        public SimpleBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        public Builder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;
         }
 
 
-        public SimpleBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        public Builder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
             topicDispatcher.RegisterAsync(handler);
             return this;

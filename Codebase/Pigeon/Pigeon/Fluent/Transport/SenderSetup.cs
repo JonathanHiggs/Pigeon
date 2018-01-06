@@ -1,10 +1,10 @@
 ﻿using System;
+
 using Pigeon.Addresses;
-using Pigeon.Fluent;
 using Pigeon.Routing;
 using Pigeon.Senders;
 
-namespace Pigeon.NetMQ.Fluent
+namespace Pigeon.Fluent.Transport
 {
     public class SenderSetup<TSender> : ISenderSetup
         where TSender : ISender

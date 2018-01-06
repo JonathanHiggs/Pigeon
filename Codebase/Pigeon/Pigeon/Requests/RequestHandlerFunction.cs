@@ -7,5 +7,5 @@ namespace Pigeon.Requests
     /// </summary>
     /// <param name="request">Request message</param>
     /// <returns>Response message</returns>
-    internal delegate Task<object> RequestHandlerFunction(object request);
+    public delegate Task<object> RequestHandlerFunction(object request);
 }

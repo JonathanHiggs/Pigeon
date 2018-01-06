@@ -26,8 +26,7 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request message</typeparam>
         /// <typeparam name="TResponse">Type of response message</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same <see cref="IRequestDispatcher"/> for fluent construction</returns>
-        IRequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler);
+        void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler);
 
 
         /// <summary>
@@ -36,8 +35,7 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request object</typeparam>
         /// <typeparam name="TResponse">Type of response object</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same <see cref="IRequestDispatcher"/> instance for fluent construction</returns>
-        IRequestDispatcher Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler);
+        void Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler);
 
 
         /// <summary>
@@ -46,7 +44,6 @@ namespace Pigeon.Requests
         /// <typeparam name="TRequest">Type of request object</typeparam>
         /// <typeparam name="TResponse">Type of response object</typeparam>
         /// <param name="handler">Request handler instance</param>
-        /// <returns>Returns the same <see cref="IRequestDispatcher"/> instance for fluent construction</returns>
-        IRequestDispatcher RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler);
+        void RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler);
     }
 }

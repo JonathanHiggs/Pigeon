@@ -4,7 +4,7 @@ using Pigeon.Fluent;
 using Pigeon.Routing;
 using Pigeon.Subscribers;
 
-namespace Pigeon.NetMQ.Fluent
+namespace Pigeon.Fluent.Transport
 {
     public class SubscriberSetup<TSubscriber> : ISubscriberSetup
         where TSubscriber : ISubscriber

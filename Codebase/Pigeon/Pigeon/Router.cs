@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Pigeon.Fluent;
+using Pigeon.Fluent.Simple;
 using Pigeon.Monitors;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
@@ -167,15 +168,15 @@ namespace Pigeon
         }
 
 
-        public static IFluentBuilder<SimpleBuilder> Builder(string name)
+        public static Builder Builder(string name)
         {
-            return new SimpleBuilder(name);
+            return new Builder(name);
         }
 
 
-        public static IFluentBuilder<DependencyInjectionBuilder> Builder(string name, IContainer container)
+        public static ContainerBuilder Builder(string name, IContainer container)
         {
-            return new DependencyInjectionBuilder(name, container);
+            return new ContainerBuilder(name, container);
         }
     }
 }

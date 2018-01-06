@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INamedBuilder.cs" />
     <Compile Include="UnityBuilder.cs" />
     <Compile Include="UnityContainerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

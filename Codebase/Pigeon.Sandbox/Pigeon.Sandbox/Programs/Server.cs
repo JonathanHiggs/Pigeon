@@ -15,9 +15,8 @@ namespace Pigeon.Sandbox.Programs
         public static void Run()
         {
             var router = UnityBuilder.Named("TestServer")
-                                     .WithTransport<NetMQTransport>()
-                                     .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
-                                     .WithAsyncRequestHandler<TestMessage, TestMessage>(Handler)
+                                     .WithTransport<NetMQTransport>(t => t.WithReceiver(TcpAddress.Wildcard(5555)))
+                                     .WithHandlers(h => h.WithAsyncRequestHandler<TestMessage, TestMessage>(Handler))
                                      .BuildAndStart();
             
             Console.WriteLine("Press enter to stop server");
