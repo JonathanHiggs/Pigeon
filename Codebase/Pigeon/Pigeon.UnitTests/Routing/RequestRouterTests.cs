@@ -8,15 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Routing
 {
     [TestFixture]
     public class RequestRouterTests
     {
-        class Request { }
-        class SubRequest : Request { }
-
         private readonly IAddress address = TcpAddress.Wildcard(5555);
         private readonly IAddress address2 = TcpAddress.Wildcard(5556);
 
@@ -92,6 +90,20 @@ namespace Pigeon.UnitTests.Routing
 
             // Assert
             Assert.That(router.RoutingTable.ContainsKey(typeof(SubRequest)), Is.True);
+        }
+
+
+        [Test]
+        public void AddRequestRouting_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var router = new RequestRouter();
+
+            // Act
+            TestDelegate addRequestRouting = () => router.AddRequestRouting<UnserializableRequest, ISender>(address);
+
+            // Assert
+            Assert.That(addRequestRouting, Throws.TypeOf<UnserializableTypeException>());
         }
         #endregion
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Reflection;
 using Pigeon.Addresses;
 using Pigeon.Diagnostics;
 using Pigeon.Receivers;
@@ -34,6 +34,9 @@ namespace Pigeon.Routing
         {
             if (null == address)
                 throw new ArgumentNullException(nameof(address));
+
+            if (null == typeof(TRequest).GetCustomAttribute<SerializableAttribute>())
+                throw new UnserializableTypeException(typeof(TRequest));
 
             var requestType = typeof(TRequest);
             var newRouting = SenderRouting.For<TSender>(address);

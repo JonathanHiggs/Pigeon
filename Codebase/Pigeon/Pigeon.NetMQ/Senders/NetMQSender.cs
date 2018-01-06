@@ -19,7 +19,7 @@ namespace Pigeon.NetMQ.Senders
     /// NetMQ implementation of <see cref="ISender"/> that wraps a <see cref="DealerSocket"/> that connects to 
     /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Package"/>es
     /// </summary>
-    public class NetMQSender : NetMQConnection, INetMQSender
+    public sealed class NetMQSender : NetMQConnection, INetMQSender
     {
         private readonly DealerSocket socket;
         private readonly RemoteTaskManager<object, int> taskManager = new RemoteTaskManager<object, int>(1, id => ++id);

@@ -5,15 +5,14 @@ using Moq;
 
 using NUnit.Framework;
 using System.Threading.Tasks;
+using Pigeon.UnitTests.TestFixtures;
+using Pigeon.Diagnostics;
 
 namespace Pigeon.UnitTests.Requests
 {
     [TestFixture]
     public class RequestDispatcherTests
     {
-        public class Request { }
-        public class SubRequest : Request { }
-
         private readonly Mock<IRequestHandler<Request, Request>> mockHandler = new Mock<IRequestHandler<Request, Request>>();
         private IRequestHandler<Request, Request> handler;
 
@@ -30,6 +29,100 @@ namespace Pigeon.UnitTests.Requests
         {
             mockHandler.Reset();
         }
+
+
+        #region Register
+        [Test]
+        public void Register_WithRequestHandler_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            var handler = new Mock<IRequestHandler<UnserializableRequest, Response>>().Object;
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandler_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            var handler = new Mock<IRequestHandler<Request, UnserializableResponse>>().Object;
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        
+
+        [Test]
+        public void Register_WithRequestHandlerDelegate_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            RequestHandlerDelegate<UnserializableRequest, Response> handler = request => default(Response);
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandlerDelegate_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            RequestHandlerDelegate<Request, UnserializableResponse> handler = request => default(UnserializableResponse);
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        #endregion
+
+
+        #region RegisterAsync
+        [Test]
+        public void RegisterAsync_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            AsyncRequestHandlerDelegate<UnserializableRequest, Response> handler = request => Task.FromResult(default(Response));
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void RegisterAsync_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new RequestDispatcher();
+            AsyncRequestHandlerDelegate<Request, UnserializableResponse> handler = request => Task.FromResult(default(UnserializableResponse));
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        #endregion
 
 
         #region Handle

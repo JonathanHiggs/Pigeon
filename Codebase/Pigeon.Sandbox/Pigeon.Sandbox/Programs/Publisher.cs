@@ -31,7 +31,7 @@ namespace Pigeon.Sandbox.Programs
 
         public Publisher()
         {
-            router = UnityBuilder.WithName("Publisher")
+            router = UnityBuilder.Named("Publisher")
                                  .WithTransport<NetMQConfig>()
                                  .WithPublisher<INetMQPublisher>(TcpAddress.Wildcard(5556))
                                  .Build();

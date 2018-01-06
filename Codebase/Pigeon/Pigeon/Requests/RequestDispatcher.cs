@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
+
+using Pigeon.Diagnostics;
 
 namespace Pigeon.Requests
 {
@@ -41,6 +42,8 @@ namespace Pigeon.Requests
         /// <returns>Returns the same <see cref="RequestDispatcher"/> for fluent construction</returns>
         public IRequestDispatcher Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
+            ValidateTypes<TRequest, TResponse>();
+
             requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler.Handle((TRequest)request)));
             return this;
         }
@@ -55,6 +58,8 @@ namespace Pigeon.Requests
         /// <returns>Returns the same RequestDispatcher instance for fluent construction</returns>
         public IRequestDispatcher Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
         {
+            ValidateTypes<TRequest, TResponse>();
+
             requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler((TRequest)request)));
             return this;
         }
@@ -69,6 +74,8 @@ namespace Pigeon.Requests
         /// <returns>Returns the same <see cref="IRequestDispatcher"/> instance for fluent construction</returns>
         public IRequestDispatcher RegisterAsync<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
         {
+            ValidateTypes<TRequest, TResponse>();
+
             requestHandlers.Add(typeof(TRequest), request => Task.Run(async () => (object)(await handler((TRequest)request))));
             return this;
         }
@@ -81,6 +88,16 @@ namespace Pigeon.Requests
         public static RequestDispatcher Create()
         {
             return new RequestDispatcher();
+        }
+
+
+        private void ValidateTypes<TRequest, TResponse>()
+        {
+            if (null == typeof(TRequest).GetCustomAttribute<SerializableAttribute>())
+                throw new UnserializableTypeException(typeof(TRequest));
+
+            if (null == typeof(TResponse).GetCustomAttribute<SerializableAttribute>())
+                throw new UnserializableTypeException(typeof(TResponse));
         }
     }
 }

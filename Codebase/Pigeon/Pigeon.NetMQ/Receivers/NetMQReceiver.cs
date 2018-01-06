@@ -18,7 +18,7 @@ namespace Pigeon.NetMQ.Receivers
     /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/>es from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
-    public class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
+    public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
     {
         private RouterSocket socket;
         private RequestTaskHandler handler;
@@ -97,7 +97,7 @@ namespace Pigeon.NetMQ.Receivers
         private bool disposedValue = false; // To detect redundant calls
 
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

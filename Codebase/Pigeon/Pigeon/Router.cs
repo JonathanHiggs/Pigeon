@@ -167,13 +167,13 @@ namespace Pigeon
         }
 
 
-        public static IFluentBuilder Builder(string name)
+        public static IFluentBuilder<SimpleBuilder> Builder(string name)
         {
             return new SimpleBuilder(name);
         }
 
 
-        public static IFluentBuilder Builder(string name, IContainer container)
+        public static IFluentBuilder<DependencyInjectionBuilder> Builder(string name, IContainer container)
         {
             return new DependencyInjectionBuilder(name, container);
         }

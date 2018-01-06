@@ -14,7 +14,7 @@ namespace Pigeon.Sandbox.Programs
     {
         public static void Run()
         {
-            var router = UnityBuilder.WithName("TestServer")
+            var router = UnityBuilder.Named("TestServer")
                                      .WithTransport<NetMQConfig>()
                                      .WithReceiver<INetMQReceiver>(TcpAddress.Wildcard(5555))
                                      .WithAsyncRequestHandler<TestMessage, TestMessage>(Handler)

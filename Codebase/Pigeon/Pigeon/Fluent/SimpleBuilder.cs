@@ -14,7 +14,7 @@ using Pigeon.Transport;
 
 namespace Pigeon.Fluent
 {
-    public class SimpleBuilder : IFluentBuilder
+    public class SimpleBuilder : IFluentBuilder<SimpleBuilder>
     {
         private string name;
 
@@ -50,7 +50,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithTransport<TTransport>()
+        public SimpleBuilder WithTransport<TTransport>()
             where TTransport : ITransportConfig
         {
             var transport = Activator.CreateInstance<TTransport>();
@@ -71,7 +71,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
+        public SimpleBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
             where TSender : ISender
             where TRequest : class
         {
@@ -80,7 +80,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithReceiver<TReceiver>(IAddress address)
+        public SimpleBuilder WithReceiver<TReceiver>(IAddress address)
             where TReceiver : IReceiver
         {
             receiverCache.AddReceiver<TReceiver>(address);
@@ -88,7 +88,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithPublisher<TPublisher>(IAddress address)
+        public SimpleBuilder WithPublisher<TPublisher>(IAddress address)
             where TPublisher : IPublisher
         {
             publisherCache.AddPublisher<TPublisher>(address);
@@ -96,7 +96,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
+        public SimpleBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
             topicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
@@ -104,7 +104,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public SimpleBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -113,7 +113,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public SimpleBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -122,7 +122,7 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+        public SimpleBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -131,21 +131,21 @@ namespace Pigeon.Fluent
         }
 
 
-        public IFluentBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
+        public SimpleBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;
         }
 
 
-        public IFluentBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        public SimpleBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             topicDispatcher.Register(handler);
             return this;
         }
 
 
-        public IFluentBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        public SimpleBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
             topicDispatcher.RegisterAsync(handler);
             return this;

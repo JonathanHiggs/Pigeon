@@ -16,7 +16,7 @@ namespace Pigeon.NetMQ.Publishers
     /// NetMQ imlementation of <see cref="Pigeon.Publishers.IPublisher"/> that wraps a <see cref="PublisherSocket"/>
     /// that connects to remote <see cref="Subscribers.INetMQSubscriber"/>s to publish <see cref="Package"/>s
     /// </summary>
-    public class NetMQPublisher : NetMQConnection, INetMQPublisher
+    public sealed class NetMQPublisher : NetMQConnection, INetMQPublisher
     {
         private readonly PublisherSocket socket;
 

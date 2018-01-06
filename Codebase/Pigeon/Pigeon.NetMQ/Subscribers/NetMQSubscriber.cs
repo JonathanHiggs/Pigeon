@@ -18,7 +18,7 @@ namespace Pigeon.NetMQ.Subscribers
     /// NetMQ implementation of <see cref="ISubscriber"/> that wraps a <see cref="SubscriberSocket"/> that connects to 
     /// remote <see cref="INetMQSubscriber"/>s to receive published <see cref="Package"/>es
     /// </summary>
-    public class NetMQSubscriber : NetMQConnection, INetMQSubscriber, IDisposable
+    public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber, IDisposable
     {
         private SubscriberSocket socket;
         private TopicEventHandler handler;
@@ -69,12 +69,14 @@ namespace Pigeon.NetMQ.Subscribers
         
         private void OnMessageReceived(object sender, NetMQSocketEventArgs e)
         {
+            NetMQMessage message = null;
+            if (!socket.TryReceiveMultipartMessage(ref message, 2))
+                return;
+
             // Move handling request off NetMQPoller thread and onto TaskPool as soon as possible
             Task.Run(() =>
             {
-                NetMQMessage message = default(NetMQMessage);
-
-                if (!socket.TryReceiveMultipartMessage(ref message, 2))
+                if (!messageFactory.IsValidTopicMessage(message))
                     return;
                 
                 var package = messageFactory.ExtractTopic(message);
@@ -107,7 +109,7 @@ namespace Pigeon.NetMQ.Subscribers
         private bool disposedValue = false; // To detect redundant calls
 
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

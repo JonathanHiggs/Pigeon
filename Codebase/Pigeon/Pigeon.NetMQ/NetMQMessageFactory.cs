@@ -58,6 +58,20 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
+        /// Checks to see whether the <see cref="NetMQMessage"/> topic is valid
+        /// </summary>
+        /// <param name="topicMessage"></param>
+        /// <returns></returns>
+        public bool IsValidTopicMessage(NetMQMessage topicMessage)
+        {
+            return null != topicMessage 
+                && topicMessage.FrameCount == 2
+                && !topicMessage[0].IsEmpty
+                && !topicMessage[1].IsEmpty;
+        }
+
+
+        /// <summary>
         /// Creates a <see cref="NetMQMessage"/> wapping a request object
         /// </summary>
         /// <param name="request">Request object to be wrapped in a <see cref="NetMQMessage"/></param>

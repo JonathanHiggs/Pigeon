@@ -17,7 +17,7 @@ using Pigeon.Transport;
 
 namespace Pigeon.Fluent
 {
-    public class DependencyInjectionBuilder : IFluentBuilder
+    public class DependencyInjectionBuilder : IFluentBuilder<DependencyInjectionBuilder>
     {
         private string name;
         private IContainer container;
@@ -40,21 +40,21 @@ namespace Pigeon.Fluent
             container.Register<IReceiverCache, ReceiverCache>(true);
             container.Register<IPublisherCache, PublisherCache>(true);
             container.Register<ISubscriberCache, SubscriberCache>(true);
-
-            container.Register<Router>(true);
-        }
-
-
-        public Router Build()
-        {
-            return new Router(
+            
+            container.Register(new Router(
                 name,
                 container.Resolve<ISenderCache>(),
                 container.Resolve<IMonitorCache>(),
                 container.Resolve<IReceiverCache>(),
                 container.Resolve<IPublisherCache>(),
                 container.Resolve<ISubscriberCache>()
-            );
+            ));
+        }
+
+
+        public Router Build()
+        {
+            return container.Resolve<Router>();
         }
 
         public Router BuildAndStart()
@@ -64,19 +64,19 @@ namespace Pigeon.Fluent
             return router;
         }
 
-        public IFluentBuilder WithPublisher<TPublisher>(IAddress address) where TPublisher : IPublisher
+        public DependencyInjectionBuilder WithPublisher<TPublisher>(IAddress address) where TPublisher : IPublisher
         {
             container.Resolve<IPublisherCache>().AddPublisher<TPublisher>(address);
             return this;
         }
 
-        public IFluentBuilder WithReceiver<TReceiver>(IAddress address) where TReceiver : IReceiver
+        public DependencyInjectionBuilder WithReceiver<TReceiver>(IAddress address) where TReceiver : IReceiver
         {
             container.Resolve<IReceiverCache>().AddReceiver<TReceiver>(address);
             return this;
         }
 
-        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+        public DependencyInjectionBuilder WithRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -84,15 +84,25 @@ namespace Pigeon.Fluent
             return this;
         }
 
-        public IFluentBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
+        public DependencyInjectionBuilder WithRequestHandler<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
             container.Resolve<IRequestDispatcher>().Register(handler);
             return this;
         }
+        
+        public DependencyInjectionBuilder WithRequestHandler<THandler, TRequest, TResponse>()
+            where TRequest : class
+            where TResponse : class
+            where THandler : IRequestHandler<TRequest, TResponse>
+        {
+            var handler = container.Resolve<THandler>();
+            container.Resolve<IRequestDispatcher>().Register(handler);
+            return this;
+        }
 
-        public IFluentBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+        public DependencyInjectionBuilder WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
             where TRequest : class
             where TResponse : class
         {
@@ -100,7 +110,7 @@ namespace Pigeon.Fluent
             return this;
         }
 
-        public IFluentBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
+        public DependencyInjectionBuilder WithSenderRouting<TSender, TRequest>(IAddress address)
             where TSender : ISender
             where TRequest : class
         {
@@ -108,31 +118,31 @@ namespace Pigeon.Fluent
             return this;
         }
 
-        public IFluentBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address) where TSubscriber : ISubscriber
+        public DependencyInjectionBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address) where TSubscriber : ISubscriber
         {
             container.Resolve<ITopicRouter>().AddTopicRouting<TTopic, TSubscriber>(address);
             return this;
         }
 
-        public IFluentBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
+        public DependencyInjectionBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
             container.Resolve<ITopicDispatcher>().Register(handler);
             return this;
         }
 
-        public IFluentBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        public DependencyInjectionBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             container.Resolve<ITopicDispatcher>().Register(handler);
             return this;
         }
 
-        public IFluentBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        public DependencyInjectionBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
             container.Resolve<ITopicDispatcher>().RegisterAsync(handler);
             return this;
         }
 
-        public IFluentBuilder WithTransport<TTransport>() where TTransport : ITransportConfig
+        public DependencyInjectionBuilder WithTransport<TTransport>() where TTransport : ITransportConfig
         {
             container.Register<TTransport>(true);
             var transport = container.Resolve<TTransport>();

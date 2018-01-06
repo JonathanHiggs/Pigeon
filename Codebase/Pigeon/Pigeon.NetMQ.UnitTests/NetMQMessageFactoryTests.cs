@@ -206,6 +206,72 @@ namespace Pigeon.NetMQ.UnitTests
         #endregion
 
 
+        #region IsValidTopicMessage
+        [Test]
+        public void IsValidTopicMessage_WithWellFormedMessage_IsTrue()
+        {
+            // Arrange
+            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+            var message = new NetMQMessage(2);
+            message.Push("Topic");
+            message.Push(data);
+
+            // Act
+            var isValid = messageFactory.IsValidTopicMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.True);
+        }
+
+
+        [Test]
+        public void IsValidTopicMessage_WithNullMessage_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+
+            // Act
+            var isValid = messageFactory.IsValidTopicMessage(null);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+
+
+        [Test]
+        public void IsValidTopicMessage_WithEmptyTopicName_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+            var message = new NetMQMessage(2);
+            message.PushEmptyFrame();
+            message.Push(data);
+
+            // Act
+            var isValid = messageFactory.IsValidTopicMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+
+
+        [Test]
+        public void IsValidTopicMessage_WithNoData_IsFalse()
+        {
+            // Arrange
+            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+            var message = new NetMQMessage(2);
+            message.Push("Topic");
+            message.PushEmptyFrame();
+
+            // Act
+            var isValid = messageFactory.IsValidTopicMessage(message);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+        }
+        #endregion
+
         #region CreateRequestMessage
         [Test]
         public void CreateRequestMessage_WithRequest_PacksRequest()

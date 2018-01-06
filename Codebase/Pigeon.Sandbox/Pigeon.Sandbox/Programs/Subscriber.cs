@@ -20,7 +20,7 @@ namespace Pigeon.Sandbox.Programs
 
         public Subscriber()
         {
-            router = UnityBuilder.WithName("Subscriber")
+            router = UnityBuilder.Named("Subscriber")
                                  .WithTransport<NetMQConfig>()
                                  .WithSubscriber<INetMQSubscriber, Observation>(TcpAddress.Localhost(5556))
                                  .WithAsyncTopicHandler<Observation>(AsyncHandler)
