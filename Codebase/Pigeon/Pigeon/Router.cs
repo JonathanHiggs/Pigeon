@@ -120,7 +120,7 @@ namespace Pigeon
             return subscriberCache.Subscribe<TTopic>();
         }
 
-
+        
         public void Unsubscribe<TTopic>()
         {
             subscriberCache.Unsubscribe<TTopic>();

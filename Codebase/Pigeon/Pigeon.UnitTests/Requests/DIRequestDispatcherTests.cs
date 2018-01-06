@@ -7,23 +7,28 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Pigeon.UnitTests.TestFixtures;
 using Pigeon.Diagnostics;
+using Pigeon.Utils;
 
 namespace Pigeon.UnitTests.Requests
 {
     [TestFixture]
-    public class RequestDispatcherTests
+    public class DIRequestDispatcherTests
     {
         private readonly Mock<IRequestHandler<Request, Response>> mockHandler = new Mock<IRequestHandler<Request, Response>>();
         private IRequestHandler<Request, Response> handler;
 
+        private readonly Mock<IContainer> mockContainer = new Mock<IContainer>();
+        private IContainer container;
+
         private readonly Request request = new Request();
         private readonly Response response = new Response();
-
+        
 
         [SetUp]
         public void Setup()
         {
             handler = mockHandler.Object;
+            container = mockContainer.Object;
 
             mockHandler
                 .Setup(m => m.Handle(It.IsAny<Request>()))
@@ -35,6 +40,18 @@ namespace Pigeon.UnitTests.Requests
         public void Teaddown()
         {
             mockHandler.Reset();
+            mockContainer.Reset();
+        }
+
+
+        [Test]
+        public void DIRequestDispatcher_WithNullContainer_ThrowsArgumentNullException()
+        {
+            // Act
+            TestDelegate construct = () => new DIRequestDispatcher(null);
+
+            // Assert
+            Assert.That(construct, Throws.ArgumentNullException);
         }
 
 
@@ -43,7 +60,7 @@ namespace Pigeon.UnitTests.Requests
         public void Register_WithRequestHandler_WithUnserializableRequestType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             var handler = new Mock<IRequestHandler<UnserializableRequest, Response>>().Object;
 
             // Act
@@ -58,7 +75,7 @@ namespace Pigeon.UnitTests.Requests
         public void Register_WithRequestHandler_WithUnserializableResponseType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             var handler = new Mock<IRequestHandler<Request, UnserializableResponse>>().Object;
 
             // Act
@@ -73,7 +90,7 @@ namespace Pigeon.UnitTests.Requests
         public void Register_WithRequestHandlerDelegate_WithUnserializableRequestType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             RequestHandlerDelegate<UnserializableRequest, Response> handler = request => response;
 
             // Act
@@ -88,7 +105,7 @@ namespace Pigeon.UnitTests.Requests
         public void Register_WithRequestHandlerDelegate_WithUnserializableResponseType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             RequestHandlerDelegate<Request, UnserializableResponse> handler = request => default(UnserializableResponse);
 
             // Act
@@ -96,6 +113,65 @@ namespace Pigeon.UnitTests.Requests
 
             // Assert
             Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandlerType_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.Register<UnserializableRequest, Response, IRequestHandler<UnserializableRequest, Response>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandlerType_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.Register<Request, UnserializableResponse, IRequestHandler<Request, UnserializableResponse>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandlerType_WithUnregisteredHandler_ThrowsNotRegisteredException()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<NotRegisteredException>());
+        }
+
+
+        [Test]
+        public void Register_WithRequestHandlerType_CallsContainerIsRegistered()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+            mockContainer
+                .Setup(m => m.IsRegistered<IRequestHandler<Request, Response>>())
+                .Returns(true);
+
+            // Act
+            dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
+
+            // Assert
+            mockContainer.Verify(m => m.IsRegistered<IRequestHandler<Request, Response>>(), Times.Once);
         }
         #endregion
 
@@ -105,7 +181,7 @@ namespace Pigeon.UnitTests.Requests
         public void RegisterAsync_WithUnserializableRequestType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             AsyncRequestHandlerDelegate<UnserializableRequest, Response> handler = request => Task.FromResult(response);
 
             // Act
@@ -120,7 +196,7 @@ namespace Pigeon.UnitTests.Requests
         public void RegisterAsync_WithUnserializableResponseType_ThrowsUnserializableTypeException()
         {
             // Arrange
-            var dispatcher = new RequestDispatcher();
+            var dispatcher = new DIRequestDispatcher(container);
             AsyncRequestHandlerDelegate<Request, UnserializableResponse> handler = request => Task.FromResult(default(UnserializableResponse));
 
             // Act
@@ -137,7 +213,7 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithNull_ThrowsArgumentNullException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
 
             // Act
             AsyncTestDelegate handleNull = async () => await dispatcher.Handle(null);
@@ -151,7 +227,7 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithNoRegisteredHandler_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
 
             // Act
             AsyncTestDelegate handleUnregistered = async () => await dispatcher.Handle(request);
@@ -165,7 +241,7 @@ namespace Pigeon.UnitTests.Requests
         public async Task Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register(handler);
 
             // Act
@@ -180,7 +256,7 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register(handler);
             var request = new SubRequest();
 
@@ -197,11 +273,11 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var handled = false;
-            var dispatcher = RequestDispatcher.Create();
-            dispatcher.Register<Request, Request>(dt => { handled = true; return dt; });
+            var dispatcher = new DIRequestDispatcher(container);
+            dispatcher.Register<Request, Response>(dt => { handled = true; return response; });
 
             // Act
-            var response = await dispatcher.Handle(request);
+            var ret = await dispatcher.Handle(request);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -212,8 +288,8 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerFunctionRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
-            dispatcher.Register<Request, Request>(r => r);
+            var dispatcher = new DIRequestDispatcher(container);
+            dispatcher.Register<Request, Response>(r => response);
             var request = new SubRequest();
 
             // Act
@@ -228,7 +304,7 @@ namespace Pigeon.UnitTests.Requests
         public async Task Handle_WithHandlerRegistered_ReturnsResponse()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register<Request, Response>(r => response);
 
             // Act
@@ -244,7 +320,7 @@ namespace Pigeon.UnitTests.Requests
         public async Task Handle_WithAsyncHandlerRegistered_ReturnsResponse()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
             AsyncRequestHandlerDelegate<Request, Response> handler = request => Task.FromResult(response);
             dispatcher.RegisterAsync(handler);
 
@@ -261,7 +337,7 @@ namespace Pigeon.UnitTests.Requests
         public async Task Handle_WithHandlerClassRegistered_ReturnsResponse()
         {
             // Arrange
-            var dispatcher = RequestDispatcher.Create();
+            var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register(handler);
 
             // Act
@@ -272,6 +348,40 @@ namespace Pigeon.UnitTests.Requests
             Assert.That(ret, Is.SameAs(response));
         }
 
+
+        [Test]
+        public async Task Handle_WithResolvableHandlerClassRegistered_ReturnsResponse()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+            mockContainer.Setup(m => m.IsRegistered<IRequestHandler<Request, Response>>()).Returns(true);
+            mockContainer.Setup(m => m.Resolve<IRequestHandler<Request, Response>>()).Returns(handler);
+            dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
+
+            // Act
+            var ret = await dispatcher.Handle(request);
+
+            // Assert
+            Assert.That(ret is Response, Is.True);
+            Assert.That(ret, Is.SameAs(response));
+        }
+
+
+        [Test]
+        public async Task Handle_WithResolvableHandlerClassRegistered_ResolvesFromContainer()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+            mockContainer.Setup(m => m.IsRegistered<IRequestHandler<Request, Response>>()).Returns(true);
+            mockContainer.Setup(m => m.Resolve<IRequestHandler<Request, Response>>()).Returns(handler);
+            dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
+
+            // Act
+            var ret = await dispatcher.Handle(request);
+
+            // Assert
+            mockContainer.Verify(m => m.Resolve<IRequestHandler<Request, Response>>(), Times.Once);
+        }
         #endregion
     }
 }

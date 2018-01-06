@@ -10,20 +10,20 @@ namespace Pigeon.Unity
 {
     public class UnityBuilder : INamedBuilder<ContainerBuilder>
     {
-        private UnityContainerWrapper container;
+        private UnityContainerAdapter container;
 
-        public UnityBuilder(UnityContainerWrapper container)
+        public UnityBuilder(UnityContainerAdapter container)
         {
             this.container = container;
         }
 
         public static ContainerBuilder Named(string name)
         {
-            var container = new UnityContainerWrapper(new UnityContainer());
+            var container = new UnityContainerAdapter(new UnityContainer());
             return new ContainerBuilder(name, container);
         }
 
-        public static INamedBuilder<ContainerBuilder> FromContainer(UnityContainerWrapper container)
+        public static INamedBuilder<ContainerBuilder> FromContainer(UnityContainerAdapter container)
         {
             return new UnityBuilder(container);
         }

@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Unity", "Pigeon.Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Sandbox", "..\Pigeon.Sandbox\Pigeon.Sandbox\Pigeon.Sandbox.csproj", "{25A9DB45-8465-4D37-95D5-3222AF20B1FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Unity.UnitTests", "Pigeon.Unity.UnitTests\Pigeon.Unity.UnitTests.csproj", "{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25A9DB45-8465-4D37-95D5-3222AF20B1FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{CE1C50D6-D606-4C6B-94C3-A15CB9D36C32} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
 		{A60D2BCA-8E46-46CB-8EC1-CFA99EBFAEF0} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
 		{25A9DB45-8465-4D37-95D5-3222AF20B1FA} = {17BD1D4E-F52F-4425-8ED3-B27AE85A520A}
+		{9DA0AEC5-A08B-4831-A8C7-529EFAA295CD} = {863EDB3D-B126-4163-BF3A-30EBBE40F8F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9795E1F7-EDC1-4B4C-AADF-5BB529187C83}
