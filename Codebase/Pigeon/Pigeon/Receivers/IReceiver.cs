@@ -20,6 +20,6 @@ namespace Pigeon.Receivers
         /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
         /// an incoming request message is received
         /// </summary>
-        RequestTaskHandler Handler { get; }
+        //RequestTaskHandler Handler { get; }
     }
 }

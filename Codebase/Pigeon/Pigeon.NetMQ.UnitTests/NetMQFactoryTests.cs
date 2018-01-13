@@ -219,20 +219,6 @@ namespace Pigeon.NetMQ.UnitTests
 
 
         [Test]
-        public void CreateNewReceiver_WithHandler_ReceiverHandlerIsSame()
-        {
-            // Arrange
-            var factory = new NetMQFactory(monitor, messageFactory);
-
-            // Act
-            var receiver = factory.CreateReceiver(TcpAddress.Wildcard(5555));
-
-            // Assert
-            Assert.That(receiver.Handler, Is.SameAs(requestHandler));
-        }
-
-
-        [Test]
         public void CreateNewPublisher_ReturnsPublisher()
         {
             // Arrange
