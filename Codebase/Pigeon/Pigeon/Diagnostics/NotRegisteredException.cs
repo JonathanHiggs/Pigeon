@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Pigeon.Utils
+namespace Pigeon.Diagnostics
 {
     /// <summary>
     /// Exception that is thrown when a type is set for future resolution from an <see cref="IContainer"/>
     /// without a suitable mapping registration
     /// </summary>
     [Serializable]
-    public class NotRegisteredException : Exception
+    public class NotRegisteredException : PigeonException
     {
         private Type type;
 

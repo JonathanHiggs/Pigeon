@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Subscribers
 {
     [TestFixture]
     public class SubscriptionsCacheTests
     {
-        public class Topic { }
-
         private readonly Mock<ISubscriber> mockSubscriber = new Mock<ISubscriber>();
         private ISubscriber subscriber;
 

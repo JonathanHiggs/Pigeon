@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Pigeon.Diagnostics;
 
 namespace Pigeon.Topics
 {
@@ -12,7 +14,7 @@ namespace Pigeon.Topics
     /// </summary>
     public class TopicDispatcher : ITopicDispatcher
     {
-        private readonly Dictionary<Type, TopicHandlerFunction> handlers = new Dictionary<Type, TopicHandlerFunction>();
+        protected readonly Dictionary<Type, TopicHandlerFunction> handlers = new Dictionary<Type, TopicHandlerFunction>();
 
 
         /// <summary>
@@ -37,11 +39,10 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        public ITopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler)
+        public void Register<TTopic>(ITopicHandler<TTopic> handler)
         {
+            Validate<TTopic>();
             handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler.Handle((TTopic)eventMessage)));
-            return this;
         }
 
 
@@ -50,11 +51,10 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        public ITopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
+        public void Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
+            Validate<TTopic>();
             handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler((TTopic)eventMessage)));
-            return this;
         }
 
 
@@ -63,11 +63,17 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        public ITopicDispatcher RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        public void RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
+            Validate<TTopic>();
             handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
-            return this;
+        }
+
+
+        protected void Validate<TTopic>()
+        {
+            if (null == typeof(TTopic).GetCustomAttribute<SerializableAttribute>())
+                throw new UnserializableTypeException(typeof(TTopic));
         }
     }
 }

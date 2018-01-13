@@ -1,20 +1,18 @@
-﻿using Pigeon.Topics;
+﻿using System.Threading.Tasks;
+
 using Moq;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Diagnostics;
+using Pigeon.Topics;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Subscripions
 {
     [TestFixture]
     public class TopicDispatcherTests
     {
-        public class Topic { }
-        public class SubTopic : Topic { }
-
         private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
         private ITopicHandler<Topic> handler;
         
@@ -33,9 +31,58 @@ namespace Pigeon.UnitTests.Subscripions
         }
 
 
+        #region Register
+        [Test]
+        public void Register_WithTopicHandler_WithUnserializableTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new TopicDispatcher();
+            var handler = new Mock<ITopicHandler<UnserializableTopic>>().Object;
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithTopicHandlerDelegate_WithUnserializableTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new TopicDispatcher();
+            TopicHandlerDelegate<UnserializableTopic> handler = _ => { };
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        #endregion
+
+
+        #region AsyncRegister
+        [Test]
+        public void RegisterAsync_WithUnserializableTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new TopicDispatcher();
+            AsyncTopicHandlerDelegate<UnserializableTopic> handler = _ => Task.CompletedTask;
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        #endregion
+
+
         #region Handle
         [Test]
-        public void Handle_WithNullMessage_DoesNothing()
+        public void Handle_WithNull_DoesNothing()
         {
             // Arrange
             var dispatcher = new TopicDispatcher();
@@ -67,7 +114,8 @@ namespace Pigeon.UnitTests.Subscripions
         public async Task Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
-            var dispatcher = new TopicDispatcher().Register(handler);
+            var dispatcher = new TopicDispatcher();
+            dispatcher.Register(handler);
             var message = new Topic();
 
             // Act
@@ -83,7 +131,8 @@ namespace Pigeon.UnitTests.Subscripions
         {
             // Arrange
             var handled = false;
-            var dispatcher = new TopicDispatcher().RegisterAsync<Topic>(e => Task.Run(() => { handled = true; }));
+            var dispatcher = new TopicDispatcher();
+            dispatcher.RegisterAsync<Topic>(e => Task.Run(() => { handled = true; }));
             var message = new Topic();
 
             // Act
@@ -98,7 +147,8 @@ namespace Pigeon.UnitTests.Subscripions
         public async Task Handle_WithBaseClassHandlerRegistered_DoesNothing()
         {
             // Arrange
-            var dispatcher = new TopicDispatcher().Register(handler);
+            var dispatcher = new TopicDispatcher();
+            dispatcher.Register(handler);
             var message = new SubTopic();
 
             // Act

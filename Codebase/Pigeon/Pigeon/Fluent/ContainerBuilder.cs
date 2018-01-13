@@ -28,9 +28,15 @@ namespace Pigeon.Fluent
             container.Register<ITopicRouter, TopicRouter>(true);
             container.Register<IRequestRouter, RequestRouter>(true);
             container.Register<IPackageFactory, PackageFactory>(true);
-            container.Register<ITopicDispatcher, TopicDispatcher>(true);
-            container.Register<IRequestDispatcher, DIRequestDispatcher>(true);
-            container.Register<IDIRequestDispatcher, DIRequestDispatcher>(true);
+
+            var topicDispatcher = container.Resolve<DITopicDispatcher>();
+            container.Register<ITopicDispatcher>(topicDispatcher);
+            container.Register<IDITopicDispatcher>(topicDispatcher);
+
+            var requestDispatcher = container.Resolve<DIRequestDispatcher>();
+            container.Register<IRequestDispatcher>(requestDispatcher);
+            container.Register<IDIRequestDispatcher>(requestDispatcher);
+
             container.Register<ISubscriptionsCache, SubscriptionsCache>(true);
 
             container.Register<ISenderCache, SenderCache>(true);

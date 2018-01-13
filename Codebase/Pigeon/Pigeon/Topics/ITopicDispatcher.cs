@@ -23,8 +23,7 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        ITopicDispatcher Register<TTopic>(ITopicHandler<TTopic> handler);
+        void Register<TTopic>(ITopicHandler<TTopic> handler);
 
 
         /// <summary>
@@ -32,8 +31,7 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        ITopicDispatcher Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
+        void Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
 
 
         /// <summary>
@@ -41,7 +39,6 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        /// <returns>Returns the same <see cref="ITopicDispatcher"/> for fluent construction</returns>
-        ITopicDispatcher RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
+        void RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
     }
 }

@@ -4,16 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pigeon.Requests;
+using Pigeon.Topics;
 
 namespace Pigeon.Fluent.Handlers
 {
-    class HandlerSetup : IHandlerSetup
+    public class HandlerSetup : IHandlerSetup
     {
-        private IDIRequestDispatcher dispatcher;
+        private IDIRequestDispatcher requestdispatcher;
+        private IDITopicDispatcher topicDispatcher;
 
-        public HandlerSetup(IDIRequestDispatcher dispatcher)
+        public HandlerSetup(IDIRequestDispatcher requestDispatcher, IDITopicDispatcher topicDispatcher)
         {
-            this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            this.requestdispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
+            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
         }
 
 
@@ -21,7 +24,7 @@ namespace Pigeon.Fluent.Handlers
             where TRequest : class
             where TResponse : class
         {
-            dispatcher.RegisterAsync(handler);
+            requestdispatcher.RegisterAsync(handler);
             return this;
         }
 
@@ -31,7 +34,7 @@ namespace Pigeon.Fluent.Handlers
             where TResponse : class
             where THandler : IRequestHandler<TRequest, TResponse>
         {
-            dispatcher.Register<TRequest, TResponse, THandler>();
+            requestdispatcher.Register<TRequest, TResponse, THandler>();
             return this;
         }
 
@@ -40,7 +43,7 @@ namespace Pigeon.Fluent.Handlers
             where TRequest : class
             where TResponse : class
         {
-            dispatcher.Register(handler);
+            requestdispatcher.Register(handler);
             return this;
         }
 
@@ -49,7 +52,16 @@ namespace Pigeon.Fluent.Handlers
             where TRequest : class
             where TResponse : class
         {
-            dispatcher.Register(handler);
+            requestdispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithTopicHandler<TTopic, THandler>()
+            where TTopic : class
+            where THandler : ITopicHandler<TTopic>
+        {
+            topicDispatcher.Register<TTopic, THandler>();
             return this;
         }
     }

@@ -107,11 +107,16 @@
     <Compile Include="Subscribers\SubscriberCacheTests.cs" />
     <Compile Include="Subscribers\SubscriptionsCacheTests.cs" />
     <Compile Include="Subscribers\SubscriptionTests.cs" />
+    <Compile Include="TestFixtures\OtherTopic.cs" />
     <Compile Include="TestFixtures\Request.cs" />
     <Compile Include="TestFixtures\Response.cs" />
     <Compile Include="TestFixtures\SubRequest.cs" />
+    <Compile Include="TestFixtures\SubTopic.cs" />
+    <Compile Include="TestFixtures\Topic.cs" />
     <Compile Include="TestFixtures\UnserializableRequest.cs" />
     <Compile Include="TestFixtures\UnserializableResponse.cs" />
+    <Compile Include="TestFixtures\UnserializableTopic.cs" />
+    <Compile Include="Topics\DITopicDispatcherTests.cs" />
     <Compile Include="Topics\TopicDispatcherTests.cs" />
     <Compile Include="Utils\RemoteTaskManagerTests.cs" />
     <Compile Include="Utils\RemoteTaskTests.cs" />

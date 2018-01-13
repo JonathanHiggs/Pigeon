@@ -8,15 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Routing
 {
     [TestFixture]
     public class TopicRouterTests
     {
-        public class Topic { }
-        public class SubTopic { }
-
         private readonly IAddress address = TcpAddress.Localhost(5555);
         private readonly IAddress address2 = TcpAddress.Localhost(5556);
 

@@ -10,12 +10,18 @@ namespace Pigeon.Unity
 {
     public class UnityBuilder : INamedBuilder<ContainerBuilder>
     {
-        private UnityContainerAdapter container;
+        private UnityContainerAdapter adapter;
 
-        public UnityBuilder(UnityContainerAdapter container)
+        public UnityBuilder(UnityContainer container)
+            : this(new UnityContainerAdapter(container))
+        { }
+
+
+        private UnityBuilder(UnityContainerAdapter adapter)
         {
-            this.container = container;
+            this.adapter = adapter;
         }
+
 
         public static ContainerBuilder Named(string name)
         {
@@ -23,14 +29,16 @@ namespace Pigeon.Unity
             return new ContainerBuilder(name, container);
         }
 
-        public static INamedBuilder<ContainerBuilder> FromContainer(UnityContainerAdapter container)
+
+        public static INamedBuilder<ContainerBuilder> FromContainer(UnityContainer container)
         {
             return new UnityBuilder(container);
         }
         
+
         public ContainerBuilder WithName(string name)
         {
-            return new ContainerBuilder(name, container);
+            return new ContainerBuilder(name, adapter);
         }
     }
 }

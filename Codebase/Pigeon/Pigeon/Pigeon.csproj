@@ -75,7 +75,9 @@
     <Compile Include="Subscribers\Subscription.cs" />
     <Compile Include="Subscribers\SubscriptionsCache.cs" />
     <Compile Include="Topics\AsyncTopicHandlerDelegate.cs" />
-    <Compile Include="Utils\NotRegisteredException.cs" />
+    <Compile Include="Topics\DITopicDispatcher.cs" />
+    <Compile Include="Topics\IDITopicDispatcher.cs" />
+    <Compile Include="Diagnostics\NotRegisteredException.cs" />
     <Compile Include="Utils\RemoteTask.cs" />
     <Compile Include="Utils\RemoteTaskManager.cs" />
     <Compile Include="Verbs\IPublish.cs" />

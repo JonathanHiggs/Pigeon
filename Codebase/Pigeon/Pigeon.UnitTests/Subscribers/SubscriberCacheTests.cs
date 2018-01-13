@@ -11,15 +11,13 @@ using Moq;
 
 using NUnit.Framework;
 using Pigeon.Diagnostics;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Subscribers
 {
     [TestFixture]
     public class SubscriberCacheTests
     {
-        public class Topic { }
-        public class OtherTopic { }
-        
         private readonly Mock<ITopicRouter> mockTopicRouter = new Mock<ITopicRouter>();
         private ITopicRouter topicRouter;
         

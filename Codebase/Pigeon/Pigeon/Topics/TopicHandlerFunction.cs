@@ -6,5 +6,5 @@ namespace Pigeon.Topics
     /// Delegate for handling topic messages
     /// </summary>
     /// <param name="message">Topic message</param>
-    internal delegate Task TopicHandlerFunction(object message);
+    public delegate Task TopicHandlerFunction(object message);
 }
