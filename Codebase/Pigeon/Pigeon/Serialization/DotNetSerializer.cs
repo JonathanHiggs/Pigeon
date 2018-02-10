@@ -45,6 +45,15 @@ namespace Pigeon.Serialization
             }
         }
 
+        public object Deserialize(byte[] data, int offset)
+        {
+            using (var stream = new MemoryStream(data, offset, data.Length - offset))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                return binaryFormatter.Deserialize(stream);
+            }
+        }
+
 
         /// <summary>
         /// Transforms serialized data back to the requested object type
@@ -56,6 +65,19 @@ namespace Pigeon.Serialization
         {
             using (var stream = new MemoryStream())
             {
+                binaryFormatter.Serialize(stream, obj);
+                stream.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+                return stream.ToArray();
+            }
+        }
+
+
+        public byte[] Serialize(object obj, int offset)
+        {
+            using (var stream = new MemoryStream())
+            {
+                stream.Seek(offset, SeekOrigin.Begin);
                 binaryFormatter.Serialize(stream, obj);
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);

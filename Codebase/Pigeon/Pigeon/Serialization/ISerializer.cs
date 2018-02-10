@@ -26,6 +26,9 @@ namespace Pigeon.Serialization
         byte[] Serialize<TObj>(TObj obj);
 
 
+        byte[] Serialize(object obj, int offset);
+
+
         /// <summary>
         /// Transforms serialized data back to the requested object type
         /// </summary>
@@ -33,5 +36,8 @@ namespace Pigeon.Serialization
         /// <param name="data">Data to be deserialized</param>
         /// <returns>Deserialized object</returns>
         TObj Deserialize<TObj>(byte[] data);
+
+
+        object Deserialize(byte[] data, int offset);
     }
 }

@@ -17,6 +17,7 @@ namespace Pigeon.NetMQ.UnitTests
         #region Setup & Mocks
         private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
         private ISerializer serializer;
+        private DotNetSerializer dotNetSerializer = new DotNetSerializer();
 
         private readonly Mock<IPackageFactory> mockPackageFactory = new Mock<IPackageFactory>();
         private IPackageFactory packageFactory;
@@ -46,11 +47,19 @@ namespace Pigeon.NetMQ.UnitTests
 
             mockSerializer
                 .Setup(m => m.Serialize(It.IsAny<Package>()))
-                .Returns(data);
+                .Returns<Package>(p => dotNetSerializer.Serialize(p));
 
             mockSerializer
-                .Setup(m => m.Deserialize<Package>(It.IsIn<byte[]>(data)))
-                .Returns(package);
+                .Setup(m => m.Serialize(It.IsAny<object>(), It.IsAny<int>()))
+                .Returns<Package, int>((obj, offset) => dotNetSerializer.Serialize(obj, offset));
+
+            mockSerializer
+                .Setup(m => m.Deserialize<Package>(It.IsAny<byte[]>()))
+                .Returns<byte[]>(d => dotNetSerializer.Deserialize<Package>(d));
+
+            mockSerializer
+                .Setup(m => m.Deserialize(It.IsAny<byte[]>(), It.IsAny<int>()))
+                .Returns<byte[], int>((data, offset) => dotNetSerializer.Deserialize(data, offset));
         }
 
 

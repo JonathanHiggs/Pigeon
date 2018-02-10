@@ -80,11 +80,16 @@ namespace Pigeon.NetMQ
         public NetMQMessage CreateRequestMessage(object request, int requestId)
         {
             var package = packageFactory.Pack(request);
+            var header = new SerializationHeader(new ProtocolVersion { Major = 1, Minor = 0 }, SerializationDescriptor.DotNet.Name);
+
+            var data = serializer.Serialize(package, header.ToBytesCount());
+            header.ToBytes(data);
+
             var message = new NetMQMessage(4);
             message.AppendEmptyFrame();
             message.Append(requestId);
             message.AppendEmptyFrame();
-            message.Append(serializer.Serialize(package));
+            message.Append(data);
             return message;
         }
 
@@ -98,8 +103,15 @@ namespace Pigeon.NetMQ
         {
             var address = message[0].ToByteArray();
             var requestId = message[2].ConvertToInt32();
-            var package = serializer.Deserialize<Package>(message[4].ToByteArray());
-            var request = packageFactory.Unpack(package);
+
+            var data = message[4].ToByteArray();
+            var (header, byteCount) = SerializationHeader.FromBytes(data);
+            var obj = serializer.Deserialize(data, byteCount);
+
+            if (!(obj is Package))
+                throw new InvalidOperationException("Unable to deserialize");
+            
+            var request = packageFactory.Unpack(obj as Package);
             return (request, address, requestId);
         }
 
@@ -129,12 +141,17 @@ namespace Pigeon.NetMQ
         public NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId)
         {
             var package = packageFactory.Pack(response);
+            var header = new SerializationHeader(new ProtocolVersion { Major = 1, Minor = 0 }, SerializationDescriptor.DotNet.Name);
+
+            var data = serializer.Serialize(package, header.ToBytesCount());
+            header.ToBytes(data);
+
             var message = new NetMQMessage(5);
             message.Append(address);
             message.AppendEmptyFrame();
             message.Append(requestId);
             message.AppendEmptyFrame();
-            message.Append(serializer.Serialize(package));
+            message.Append(data);
             return message;
         }
 
@@ -147,8 +164,14 @@ namespace Pigeon.NetMQ
         public (int requestId, object response) ExtractResponse(NetMQMessage message)
         {
             var requestId = message[1].ConvertToInt32();
-            var package = serializer.Deserialize<Package>(message[3].ToByteArray());
-            var response = packageFactory.Unpack(package);
+            var data = message[3].ToByteArray();
+            var (header, byteCount) = SerializationHeader.FromBytes(data);
+            var obj = serializer.Deserialize(data, byteCount);
+
+            if (!(obj is Package))
+                throw new InvalidOperationException("Unable to deserialize response");
+
+            var response = packageFactory.Unpack(obj as Package);
             return (requestId, response);
         }
 
