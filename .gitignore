@@ -307,3 +307,6 @@ OpenCover/
 
 # Cake
 /Codebase/Pigeon/Pigeon/tools
+
+
+/Build/
