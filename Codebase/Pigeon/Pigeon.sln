@@ -27,8 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.IntegrationTests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A6675FFD-7D29-4723-AF11-A8286E3F29B9}"
 	ProjectSection(SolutionItems) = preProject
-		Pigeon\build.cake = Pigeon\build.cake
-		Pigeon\build.ps1 = Pigeon\build.ps1
+		..\..\.gitattributes = ..\..\.gitattributes
+		..\..\.gitignore = ..\..\.gitignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pigeon.Json", "Pigeon.Json\Pigeon.Json.csproj", "{F5702E1C-3EFE-43CD-91D6-B257EE006670}"
