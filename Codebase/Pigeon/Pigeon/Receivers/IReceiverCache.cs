@@ -17,6 +17,12 @@ namespace Pigeon.Receivers
 
 
         /// <summary>
+        /// Gets an enumerable of all <see cref="IReceiver"/>s
+        /// </summary>
+        IEnumerable<IReceiver> Receivers { get; }
+
+
+        /// <summary>
         /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories config-time creation of <see cref="IReceiver"/>s
         /// </summary>
         /// <param name="factory">Factory that will be used to create <see cref="IReceiver"/>s when 

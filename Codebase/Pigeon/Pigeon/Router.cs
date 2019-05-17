@@ -19,7 +19,7 @@ namespace Pigeon
     /// through the Router
     /// route
     /// </summary>
-    public class Router : IRouter<IRouterInfo>
+    public class Router : IRouter<RouterInfo>
     {
         private readonly ISenderCache senderCache;
         private readonly IMonitorCache monitorCache;
@@ -27,15 +27,10 @@ namespace Pigeon
         private readonly IPublisherCache publisherCache;
         private readonly ISubscriberCache subscriberCache;
 
+        private readonly NodeIdentity identity;
         private readonly RouterInfo routerInfo;
         private bool running = false;
         private object lockObj = new object();
-
-
-        /// <summary>
-        /// Gets a <see cref="IRouterInfo"/> to access state information of the <see cref="Router"/>
-        /// </summary>
-        public IRouterInfo Info => routerInfo;
 
         
         /// <summary>
@@ -64,14 +59,27 @@ namespace Pigeon
             this.publisherCache = publisherCache ?? throw new ArgumentNullException(nameof(publisherCache));
             this.subscriberCache = subscriberCache ?? throw new ArgumentNullException(nameof(subscriberCache));
 
+            identity = new NodeIdentity(name);
+
             routerInfo = new RouterInfo
             {
-                Name = name,
                 Running = false,
                 StartedTimestamp = null,
                 StoppedTimestamp = null
             };
         }
+
+
+        /// <summary>
+        /// Gets a <see cref="NodeIdentity"/> representity the identity of the node on the network
+        /// </summary>
+        public NodeIdentity Identity => identity;
+
+
+        /// <summary>
+        /// Gets a <see cref="RouterInfo"/> to access state information of the <see cref="Router"/>
+        /// </summary>
+        public RouterInfo Info => routerInfo;
 
 
         /// <summary>

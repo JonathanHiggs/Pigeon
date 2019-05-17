@@ -27,6 +27,12 @@ namespace Pigeon.Publishers
 
 
         /// <summary>
+        /// Gets an enumerable of all <see cref="IPublisher"/>
+        /// </summary>
+        public IEnumerable<IPublisher> Publishers => publishers.Values.Distinct();
+
+
+        /// <summary>
         /// Initializes a new instance of <see cref="PublisherCache"/>
         /// </summary>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="IPublisher"/>s</param>

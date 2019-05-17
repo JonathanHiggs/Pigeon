@@ -18,6 +18,12 @@ namespace Pigeon.Publishers
 
 
         /// <summary>
+        /// Gets an enumerable of all <see cref="IPublisher"/>
+        /// </summary>
+        IEnumerable<IPublisher> Publishers { get; }
+
+
+        /// <summary>
         /// Adds a <see cref="IPublisherFactory{TPublisher}"/> to the cache for config-time creation of <see cref="IPublisher"/>s
         /// </summary>
         /// <param name="factory">Factory used to create <see cref="IPublisher"/>s at config-time</param>

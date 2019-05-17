@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Pigeon.Addresses;
+using Pigeon.Contrib.Meta.Describe.v1_0;
 using Pigeon.NetMQ;
 using Pigeon.Sandbox.Contracts;
 using Pigeon.Unity;
@@ -20,7 +22,7 @@ namespace Pigeon.Sandbox.Programs
         }
 
 
-        public void Start()
+        public async Task Start()
         {
             Console.WriteLine("Press return to send message");
             Console.WriteLine("Enter 'stop' to end");
@@ -28,10 +30,13 @@ namespace Pigeon.Sandbox.Programs
             do
             {
                 var line = Console.ReadLine();
-                if (line == "stop")
-                    break;
 
-                Task.Run(async () => await SendRequest());
+                if (line == "meta")
+                    DisplayMeta(await router.Send<DescribeRouter, RouterDescription>(new DescribeRouter()));
+                else if (line == "stop")
+                    break;
+                else
+                    await SendRequest();
             }
             while (true);
 
@@ -45,11 +50,16 @@ namespace Pigeon.Sandbox.Programs
             var serverName = Console.ReadLine();
 
             var router = UnityBuilder.Named("TestClient")
-                                     .WithTransport<NetMQTransport>(t => { t.WithSender(TcpAddress.FromNameAndPort(serverName, 5555)).For<TestMessage>(); })
+                                     .WithTransport<NetMQTransport>(t => 
+                                     {
+                                         t.WithSender(TcpAddress.FromNameAndPort(serverName, 5555))
+                                            .For<TestMessage>()
+                                            .For<DescribeRouter>();
+                                     })
                                      .BuildAndStart();
 
             var client = new Client(router);
-            client.Start();
+            client.Start().GetAwaiter().GetResult();
         }
 
 
@@ -66,6 +76,29 @@ namespace Pigeon.Sandbox.Programs
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+
+
+        public void DisplayMeta(RouterDescription description)
+        {
+            Console.WriteLine($"Id:        {description.Identity.Id}");
+            Console.WriteLine($"Name:      {description.Identity.Name}");
+            Console.WriteLine($"Host:      {description.Identity.Host}");
+            Console.WriteLine($"Started:   {description.RuntimeInfo.StartedTimestamp.Value}");
+
+            if (description.Receivers.Any())
+            {
+                Console.WriteLine("Receivers:");
+                foreach (var receiver in description.Receivers)
+                    Console.WriteLine($"\t{receiver.Type.Name}\t : {String.Join(", ", receiver.Addresses.Select(a => a.ToString()))}");
+            }
+
+            if (description.Publishers.Any())
+            {
+                Console.WriteLine("Publishers:");
+                foreach (var publisher in description.Publishers)
+                    Console.WriteLine($"\t{publisher.Type.Name}");
             }
         }
     }

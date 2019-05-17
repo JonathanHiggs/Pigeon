@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Pigeon.Addresses;
+using Pigeon.Contrib;
 using Pigeon.NetMQ;
 using Pigeon.Sandbox.Contracts;
 using Pigeon.Unity;
@@ -12,10 +13,13 @@ namespace Pigeon.Sandbox.Programs
     {
         public static void Run()
         {
-            var router = UnityBuilder.Named("TestServer")
-                                     .WithTransport<NetMQTransport>(t => t.WithReceiver(TcpAddress.Wildcard(5555)))
-                                     .WithHandlers(h => h.WithAsyncRequestHandler<TestMessage, TestMessage>(Handler))
-                                     .BuildAndStart();
+            var router = 
+                UnityBuilder
+                    .Named("TestServer")
+                    .WithTransport<NetMQTransport>(t => t.WithReceiver(TcpAddress.Wildcard(5555)))
+                    .WithHandlers(h => h.WithAsyncRequestHandler<TestMessage, TestMessage>(Handler))
+                    .WithContribHandlers()
+                    .BuildAndStart();
             
             Console.WriteLine("Press enter to stop server");
             Console.ReadLine();

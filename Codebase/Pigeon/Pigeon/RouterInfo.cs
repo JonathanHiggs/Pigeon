@@ -5,18 +5,13 @@ namespace Pigeon
     /// <summary>
     /// Interface for retrieving <see cref="IRouter{TRouterInfo}"/> state information
     /// </summary>
+    [Serializable]
     public class RouterInfo : IRouterInfo
     {
         /// <summary>
         /// Get a flag that is true if the <see cref="IRouter{TRouterInfo}"/> is running, and false otherwise
         /// </summary>
         public bool Running { get; set; }
-
-
-        /// <summary>
-        /// Gets a <see cref="string"/> that represents a human readable name of the node
-        /// </summary>
-        public string Name { get; set; }
 
 
         /// <summary>

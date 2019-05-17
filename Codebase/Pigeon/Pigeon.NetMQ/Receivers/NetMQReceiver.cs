@@ -22,6 +22,12 @@ namespace Pigeon.NetMQ.Receivers
 
 
         /// <summary>
+        /// Gets a meta description of the <see cref="IReceiver"/>
+        /// </summary>
+        public ReceiverMeta Meta => new ReceiverMeta(GetType(), Addresses);
+
+
+        /// <summary>
         /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
         /// an incoming message is received
         /// </summary>

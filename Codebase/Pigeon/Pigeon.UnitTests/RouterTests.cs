@@ -132,20 +132,6 @@ namespace Pigeon.UnitTests
         #region Info
 
         [Test]
-        public void Info_WithName_RetunsSameName()
-        {
-            // Arrange
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
-
-            // Act
-            var infoName = router.Info.Name;
-
-            // Assert
-            Assert.That(infoName, Is.EqualTo(name));
-        }
-
-
-        [Test]
         public void Info_BeforeStart_HasNoStartTimestamp()
         {
             // Arrange

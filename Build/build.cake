@@ -10,7 +10,8 @@ var configuration = Argument("configuration", "Release");
 // 
 ///////////////////////////////////////////////////////////////////////////////
 
-var projectFile = Argument("projectFile", @".\Pigeon.csproj");
+var projectDir = Argument("projectDir", @"..\Codebase\Pigeon\Pigeon");
+var projectFile = Argument("projectFile", @"Pigeon.csproj");
 var packageName = Argument("packageName", "Pigeon");
 var outputDir = Directory(@".\bin");
 var nugetDeployDir = Directory(@"\\pihub\packages");

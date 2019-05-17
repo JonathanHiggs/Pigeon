@@ -14,12 +14,6 @@ namespace Pigeon
 
 
         /// <summary>
-        /// Gets a <see cref="string"/> that represents a human readable name of the node
-        /// </summary>
-        string Name { get; }
-
-
-        /// <summary>
         /// Gets a <see cref="DateTime"/> of the last time the <see cref="IRouter{TRouterInfo}"/> started
         /// </summary>
         DateTime? StartedTimestamp { get; }

@@ -6,6 +6,7 @@ namespace Pigeon.Addresses
     /// <summary>
     /// Represents tcp addresses
     /// </summary>
+    [Serializable]
     public class TcpAddress : IAddress
     {
         private ushort port;
