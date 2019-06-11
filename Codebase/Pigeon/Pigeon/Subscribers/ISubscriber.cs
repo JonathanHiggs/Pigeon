@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Addresses;
+﻿using Pigeon.Addresses;
 using Pigeon.Common;
-using Pigeon.Packages;
 using Pigeon.Publishers;
-using Pigeon.Transport;
-using Pigeon.Verbs;
 
 namespace Pigeon.Subscribers
 {

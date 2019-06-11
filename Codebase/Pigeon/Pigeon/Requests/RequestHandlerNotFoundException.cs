@@ -10,13 +10,10 @@ namespace Pigeon.Requests
     [Serializable]
     public class RequestHandlerNotFoundException : PigeonException
     {
-        private readonly Type requestType;
-
-        
         /// <summary>
         /// Get the type of request for which a handler was not found
         /// </summary>
-        public Type RequestType => requestType;
+        public Type RequestType { get; private set; }
 
 
         /// <summary>
@@ -47,7 +44,7 @@ namespace Pigeon.Requests
         public RequestHandlerNotFoundException(Type requestType, string message, Exception inner) 
             : base(message, inner)
         {
-            this.requestType = requestType;
+            this.RequestType = requestType;
         }
 
 

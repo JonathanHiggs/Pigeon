@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pigeon.Serialization
+﻿namespace Pigeon.Serialization
 {
     /// <summary>
     /// Interface defining transforming objects to data and back

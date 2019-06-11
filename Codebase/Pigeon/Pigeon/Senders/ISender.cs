@@ -1,14 +1,9 @@
-﻿using Pigeon.Addresses;
+﻿using System;
+using System.Threading.Tasks;
+
 using Pigeon.Common;
 using Pigeon.Packages;
 using Pigeon.Receivers;
-using Pigeon.Serialization;
-using Pigeon.Transport;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.Senders
 {

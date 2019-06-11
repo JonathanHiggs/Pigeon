@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pigeon.Requests
+﻿namespace Pigeon.Requests
 {
     /// <summary>
     /// Type safe delegaste for handling responses to requests

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Pigeon.Addresses;
-using Pigeon.Packages;
+using Pigeon.Diagnostics;
 using Pigeon.Monitors;
 using Pigeon.Receivers;
 using Pigeon.Routing;
-using Pigeon.Diagnostics;
 
 namespace Pigeon.Senders
 {

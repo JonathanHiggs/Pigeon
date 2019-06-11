@@ -2,7 +2,6 @@
 using Pigeon.NetMQ.Common;
 using Pigeon.Receivers;
 using Pigeon.Senders;
-using NetMQ;
 
 namespace Pigeon.NetMQ.Senders
 {

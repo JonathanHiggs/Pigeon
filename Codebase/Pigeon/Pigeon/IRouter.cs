@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Publishers;
-using Pigeon.Receivers;
-using Pigeon.Senders;
-using Pigeon.Verbs;
+﻿using Pigeon.Verbs;
 
 namespace Pigeon
 {

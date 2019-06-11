@@ -4,7 +4,6 @@ using Pigeon.Receivers;
 using Pigeon.Requests;
 using Pigeon.Senders;
 using Pigeon.Subscribers;
-using Pigeon.Topics;
 using Pigeon.Transport;
 
 namespace Pigeon.Fluent.Simple

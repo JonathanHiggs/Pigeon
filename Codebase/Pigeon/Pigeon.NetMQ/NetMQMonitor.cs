@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using NetMQ;
+
+using Pigeon.NetMQ.Common;
 using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
-using Pigeon.Receivers;
-using Pigeon.Senders;
 using Pigeon.Publishers;
-using Pigeon.Subscribers;
-
-using NetMQ;
-using Pigeon.NetMQ.Common;
+using Pigeon.Receivers;
 using Pigeon.Requests;
-using Pigeon.Packages;
+using Pigeon.Senders;
+using Pigeon.Subscribers;
 using Pigeon.Topics;
-using System.Threading.Tasks;
 
 namespace Pigeon.NetMQ
 {

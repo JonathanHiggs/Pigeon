@@ -1,5 +1,4 @@
-﻿using Pigeon.Packages;
-using NetMQ;
+﻿using NetMQ;
 
 namespace Pigeon.NetMQ
 {

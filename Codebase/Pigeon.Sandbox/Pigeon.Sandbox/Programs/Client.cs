@@ -3,11 +3,8 @@ using System.Threading.Tasks;
 
 using Pigeon.Addresses;
 using Pigeon.NetMQ;
-using Pigeon.NetMQ.Senders;
 using Pigeon.Sandbox.Contracts;
 using Pigeon.Unity;
-using Microsoft.Practices.Unity;
-using Unity;
 
 namespace Pigeon.Sandbox.Programs
 {

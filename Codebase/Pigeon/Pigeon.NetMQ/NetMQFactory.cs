@@ -1,18 +1,15 @@
 ﻿using System;
 
+using NetMQ;
+using NetMQ.Sockets;
+
 using Pigeon.Addresses;
-using Pigeon.Packages;
 using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
-using Pigeon.Receivers;
-using Pigeon.Senders;
-using Pigeon.Serialization;
-using Pigeon.Transport;
-using NetMQ;
-using NetMQ.Sockets;
 using Pigeon.Subscribers;
+using Pigeon.Transport;
 
 namespace Pigeon.NetMQ
 {

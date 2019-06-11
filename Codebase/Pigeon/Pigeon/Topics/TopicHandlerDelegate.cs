@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Pigeon.Topics
+﻿namespace Pigeon.Topics
 {
     /// <summary>
     /// Represents the method to handle <see cref="Pigeon.Subscribers.ISubscriber.Handler"/> events

@@ -1,6 +1,4 @@
-﻿using Pigeon.Packages;
-
-namespace Pigeon.Subscribers
+﻿namespace Pigeon.Subscribers
 {
     /// <summary>
     /// A method that can perform the handling of <see cref="ISubscriber.Handler"/> for incoming messages

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Packages;
-using Pigeon.Addresses;
-using Pigeon.Transport;
+﻿using Pigeon.Addresses;
 using Pigeon.Common;
 
 namespace Pigeon.Receivers

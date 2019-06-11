@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.Monitors;
-using Pigeon.Requests;
-using Pigeon.Senders;
 using Pigeon.Diagnostics;
+using Pigeon.Monitors;
 
 namespace Pigeon.Receivers
 {

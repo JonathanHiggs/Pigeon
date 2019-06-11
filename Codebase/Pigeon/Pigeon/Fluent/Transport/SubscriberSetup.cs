@@ -1,6 +1,6 @@
 ﻿using System;
+
 using Pigeon.Addresses;
-using Pigeon.Fluent;
 using Pigeon.Routing;
 using Pigeon.Subscribers;
 

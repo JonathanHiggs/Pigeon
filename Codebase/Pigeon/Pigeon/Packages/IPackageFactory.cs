@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pigeon.Packages
+﻿namespace Pigeon.Packages
 {
     /// <summary>
     /// Interface defines an abstract factory to control the creation and extraction of data from <see cref="Package"/>s

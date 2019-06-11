@@ -1,8 +1,8 @@
 ﻿using System;
 
 using Pigeon.Addresses;
-using Pigeon.Packages;
 using Pigeon.Monitors;
+using Pigeon.Packages;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Requests;

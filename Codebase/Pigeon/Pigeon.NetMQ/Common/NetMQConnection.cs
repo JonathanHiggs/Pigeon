@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Addresses;
-using Pigeon.Serialization;
+
 using NetMQ;
+
+using Pigeon.Addresses;
 
 namespace Pigeon.NetMQ.Common
 {

@@ -9,13 +9,10 @@ namespace Pigeon.Diagnostics
     [Serializable]
     public class NotRegisteredException : PigeonException
     {
-        private Type type;
-
-
         /// <summary>
         /// Gets the type that would have been requested and failed to resolve
         /// </summary>
-        public Type Type => type;
+        public Type Type { get; private set; }
 
 
         /// <summary>
@@ -46,7 +43,7 @@ namespace Pigeon.Diagnostics
         public NotRegisteredException(Type type, string message, Exception inner) 
             : base(message, inner)
         {
-            this.type = type;
+            this.Type = type;
         }
 
 

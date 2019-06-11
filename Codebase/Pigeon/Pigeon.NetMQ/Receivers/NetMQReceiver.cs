@@ -1,15 +1,13 @@
-﻿using Pigeon.Addresses;
+﻿using System;
+using System.Threading.Tasks;
+
+using NetMQ;
+using NetMQ.Sockets;
+
+using Pigeon.Addresses;
 using Pigeon.NetMQ.Common;
 using Pigeon.Packages;
 using Pigeon.Receivers;
-using Pigeon.Serialization;
-using NetMQ;
-using NetMQ.Sockets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.NetMQ.Receivers
 {

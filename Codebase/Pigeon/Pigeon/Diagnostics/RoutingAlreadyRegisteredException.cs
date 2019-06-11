@@ -1,10 +1,4 @@
-﻿using Pigeon.Addresses;
-using Pigeon.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Pigeon.Diagnostics
 {
@@ -14,22 +8,18 @@ namespace Pigeon.Diagnostics
     [Serializable]
     public class RoutingAlreadyRegisteredException<T> : PigeonException
     {
-        private readonly T overridingRouting;
-        private readonly T existingRouting;
-
-
         /// <summary>
         /// Gets the overriding routing that was attempted to be registered
         /// </summary>
-        public T OverridingRouting => overridingRouting;
+        public T OverridingRouting { get; private set; }
 
 
         /// <summary>
         /// Gets the pre-existing routing that was already registered
         /// </summary>
-        public T ExistingRouting => existingRouting;
+        public T ExistingRouting { get; private set; }
 
-        
+
         /// <summary>
         /// Initializes a new instance of <see cref="RoutingAlreadyRegisteredException"/>
         /// </summary>
@@ -61,8 +51,8 @@ namespace Pigeon.Diagnostics
         public RoutingAlreadyRegisteredException(T overridingRouting, T existingRouting, string message, Exception inner) 
             : base(message, inner)
         {
-            this.overridingRouting = overridingRouting;
-            this.existingRouting = existingRouting;
+            this.OverridingRouting = overridingRouting;
+            this.ExistingRouting = existingRouting;
         }
 
 

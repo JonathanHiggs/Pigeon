@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pigeon.Monitors
+﻿namespace Pigeon.Monitors
 {
     /// <summary>
     /// Performs any active management for transports

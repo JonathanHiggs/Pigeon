@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Diagnostics;
 
 namespace Pigeon.Diagnostics
 {
@@ -13,13 +8,10 @@ namespace Pigeon.Diagnostics
     [Serializable]
     public class UnserializableTypeException : PigeonException
     {
-        private readonly Type type;
-
-
         /// <summary>
         /// Gets the type that is unserilizable
         /// </summary>
-        public Type Type => type;
+        public Type Type { get; private set; }
 
 
         /// <summary>
@@ -50,7 +42,7 @@ namespace Pigeon.Diagnostics
         public UnserializableTypeException(Type type, string message, Exception inner) 
             : base(message, inner)
         {
-            this.type = type;
+            this.Type = type;
         }
 
 

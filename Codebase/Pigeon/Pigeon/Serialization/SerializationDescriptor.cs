@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.Serialization
 {
@@ -11,21 +7,19 @@ namespace Pigeon.Serialization
     /// </summary>
     public struct SerializationDescriptor
     {
-        private readonly string name;
         private readonly string description;
-        private readonly Type type;
 
 
         /// <summary>
         /// Gets a string that names a <see cref="ISerializer"/>
         /// </summary>
-        public string Name => name;
+        public string Name { get; private set; }
 
 
         /// <summary>
         /// Gets the type that the <see cref="ISerializer"/> converts to and from
         /// </summary>
-        public Type Type => type;
+        public Type Type { get; private set; }
 
 
         /// <summary>
@@ -36,9 +30,9 @@ namespace Pigeon.Serialization
         /// <param name="type"></param>
         public SerializationDescriptor(string name, string description, Type type)
         {
-            this.name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.description = description ?? throw new ArgumentNullException(nameof(description));
-            this.type = type ?? throw new ArgumentNullException(nameof(type));
+            this.Type = type ?? throw new ArgumentNullException(nameof(type));
         }
 
 
@@ -47,14 +41,14 @@ namespace Pigeon.Serialization
         /// </summary>
         /// <param name="obj">The object to compare with the current object</param>
         /// <returns>true if the specified object is equal to the current object; otherwise, false</returns>
-        public override bool Equals(object obj) => obj is SerializationDescriptor && ((SerializationDescriptor)obj).name == name;
+        public override bool Equals(object obj) => obj is SerializationDescriptor && ((SerializationDescriptor)obj).Name == Name;
 
 
         /// <summary>
         /// Returns a hash code for this object
         /// </summary>
         /// <returns>A hash code for this object</returns>
-        public override int GetHashCode() => name.GetHashCode();
+        public override int GetHashCode() => Name.GetHashCode();
 
         
         public static bool operator ==(SerializationDescriptor a, SerializationDescriptor b) => a.Equals(b);

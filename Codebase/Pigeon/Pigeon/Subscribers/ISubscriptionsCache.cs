@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Pigeon.Publishers;
+﻿using Pigeon.Publishers;
 
 namespace Pigeon.Subscribers
 {

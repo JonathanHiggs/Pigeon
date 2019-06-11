@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
+using NetMQ;
+using NetMQ.Sockets;
+
 using Pigeon.Addresses;
 using Pigeon.NetMQ.Common;
 using Pigeon.Packages;
-using Pigeon.Publishers;
-using Pigeon.Serialization;
 using Pigeon.Subscribers;
-using NetMQ;
-using NetMQ.Sockets;
 
 namespace Pigeon.NetMQ.Subscribers
 {
