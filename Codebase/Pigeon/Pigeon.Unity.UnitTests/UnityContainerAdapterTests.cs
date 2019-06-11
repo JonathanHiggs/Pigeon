@@ -87,8 +87,7 @@ namespace Pigeon.Unity.UnitTests
                         It.IsAny<Type>(),
                         It.IsAny<Type>(),
                         It.IsAny<string>(),
-                        It.IsAny<LifetimeManager>(),
-                        It.IsAny<InjectionMember[]>()),
+                        It.IsAny<ITypeLifetimeManager>()),
                     Times.Once);
         }
 
@@ -109,8 +108,7 @@ namespace Pigeon.Unity.UnitTests
                         It.IsAny<Type>(),
                         It.IsAny<Type>(),
                         It.IsAny<string>(),
-                        It.IsAny<LifetimeManager>(),
-                        It.IsAny<InjectionMember[]>()),
+                        It.IsAny<ITypeLifetimeManager>()),
                     Times.Once);
         }
 
@@ -132,7 +130,7 @@ namespace Pigeon.Unity.UnitTests
                         It.IsIn(typeof(Service)), 
                         It.IsAny<string>(),
                         It.IsAny<object>(),
-                        It.IsAny<LifetimeManager>()),
+                        It.IsAny<IInstanceLifetimeManager>()),
                     Times.Once);
         }
 
@@ -153,8 +151,7 @@ namespace Pigeon.Unity.UnitTests
                         It.IsIn(typeof(Service)),
                         It.IsIn(typeof(SubService)),
                         It.IsAny<string>(),
-                        It.IsAny<LifetimeManager>(),
-                        It.IsAny<InjectionMember[]>()),
+                        It.IsAny<ITypeLifetimeManager>()),
                     Times.Once);
         }
 
@@ -175,8 +172,7 @@ namespace Pigeon.Unity.UnitTests
                         It.IsIn(typeof(Service)),
                         It.IsIn(typeof(SubService)),
                         It.IsAny<string>(),
-                        It.IsAny<LifetimeManager>(),
-                        It.IsAny<InjectionMember[]>()),
+                        It.IsAny<ITypeLifetimeManager>()),
                     Times.Once);
         }
 
