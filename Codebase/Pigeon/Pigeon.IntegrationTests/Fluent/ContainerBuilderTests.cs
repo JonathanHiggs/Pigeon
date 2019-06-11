@@ -1,13 +1,10 @@
 ﻿using NUnit.Framework;
+
 using Pigeon.Fluent;
 using Pigeon.Requests;
 using Pigeon.Topics;
 using Pigeon.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Unity;
 
 namespace Pigeon.IntegrationTests.Fluent

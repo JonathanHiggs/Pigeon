@@ -1,15 +1,14 @@
-﻿using Pigeon.Addresses;
-using Pigeon.NetMQ.Subscribers;
-using Pigeon.Serialization;
-using Pigeon.Subscribers;
+﻿using System.Linq;
+
 using Moq;
+
 using NetMQ.Sockets;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Addresses;
+using Pigeon.NetMQ.Subscribers;
+using Pigeon.Subscribers;
 
 namespace Pigeon.NetMQ.UnitTests.Subscribers
 {

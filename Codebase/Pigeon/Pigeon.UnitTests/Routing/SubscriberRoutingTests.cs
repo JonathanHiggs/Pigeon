@@ -1,12 +1,8 @@
-﻿using Pigeon.Addresses;
+﻿using NUnit.Framework;
+
+using Pigeon.Addresses;
 using Pigeon.Routing;
 using Pigeon.Subscribers;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.UnitTests.Routing
 {

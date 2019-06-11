@@ -1,12 +1,13 @@
-﻿using System;
+﻿
+using System.Threading.Tasks;
 
-using Pigeon.Requests;
 using Moq;
 
 using NUnit.Framework;
-using System.Threading.Tasks;
-using Pigeon.UnitTests.TestFixtures;
+
 using Pigeon.Diagnostics;
+using Pigeon.Requests;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Requests
 {

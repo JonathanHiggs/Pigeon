@@ -1,14 +1,13 @@
-﻿using Pigeon.Addresses;
-using Pigeon.NetMQ.Publishers;
-using Pigeon.Serialization;
+﻿using System.Linq;
+
 using Moq;
+
 using NetMQ.Sockets;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Addresses;
+using Pigeon.NetMQ.Publishers;
 
 namespace Pigeon.NetMQ.UnitTests.Publishers
 {

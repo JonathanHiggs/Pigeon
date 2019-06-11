@@ -1,10 +1,9 @@
-﻿using Pigeon.Utils;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+
+using NUnit.Framework;
+
+using Pigeon.Utils;
 
 namespace Pigeon.UnitTests.Utils
 {

@@ -1,17 +1,17 @@
-﻿using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.NetMQ.Receivers;
-using Pigeon.NetMQ.Senders;
-using Pigeon.Serialization;
+﻿using System;
+using System.Threading.Tasks;
+
 using NetMQ;
 using NetMQ.Sockets;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Addresses;
+using Pigeon.NetMQ.Receivers;
+using Pigeon.NetMQ.Senders;
+using Pigeon.Packages;
 using Pigeon.Receivers;
+using Pigeon.Serialization;
 
 namespace Pigeon.NetMQ.IntegrationTests
 {

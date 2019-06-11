@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+
 using Pigeon.Serialization;
-using System;
 
 namespace Pigeon.UnitTests.Serialization
 {

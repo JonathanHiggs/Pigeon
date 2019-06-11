@@ -1,19 +1,18 @@
-﻿using Pigeon.NetMQ.Publishers;
+﻿using System.Threading.Tasks;
+
+using Moq;
+
+using NetMQ;
+
+using NUnit.Framework;
+
+using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
-using Pigeon.Packages;
 using Pigeon.Receivers;
 using Pigeon.Requests;
 using Pigeon.Topics;
-using Moq;
-using NetMQ;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.NetMQ.UnitTests
 {

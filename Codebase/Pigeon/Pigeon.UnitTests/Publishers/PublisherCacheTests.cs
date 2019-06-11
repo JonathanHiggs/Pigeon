@@ -1,15 +1,12 @@
-﻿using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.Monitors;
-using Pigeon.Publishers;
-using Moq;
+﻿using Moq;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Addresses;
 using Pigeon.Diagnostics;
+using Pigeon.Monitors;
+using Pigeon.Packages;
+using Pigeon.Publishers;
 
 namespace Pigeon.UnitTests.Publishers
 {

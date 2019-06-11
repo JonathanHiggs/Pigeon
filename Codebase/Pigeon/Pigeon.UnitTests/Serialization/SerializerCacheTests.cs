@@ -1,11 +1,8 @@
-﻿using Pigeon.Serialization;
-using Moq;
+﻿using Moq;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Serialization;
 
 namespace Pigeon.UnitTests.Serialization
 {

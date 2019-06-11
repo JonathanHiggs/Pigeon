@@ -1,13 +1,12 @@
-﻿using Moq;
+﻿using System.Threading.Tasks;
+
+using Moq;
+
 using NUnit.Framework;
+
 using Pigeon.Diagnostics;
 using Pigeon.Topics;
 using Pigeon.UnitTests.TestFixtures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pigeon.UnitTests.Topics
 {

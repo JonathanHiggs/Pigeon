@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pigeon.UnitTests.TestFixtures
+﻿namespace Pigeon.UnitTests.TestFixtures
 {
     public class UnserializableResponse
     { }

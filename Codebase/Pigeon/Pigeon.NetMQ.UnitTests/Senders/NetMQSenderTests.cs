@@ -1,16 +1,11 @@
-﻿using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.NetMQ.Senders;
-using Pigeon.Serialization;
-using Moq;
-using NetMQ;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Moq;
+
 using NetMQ.Sockets;
+
+using NUnit.Framework;
+
+using Pigeon.Addresses;
+using Pigeon.NetMQ.Senders;
 
 namespace Pigeon.NetMQ.UnitTests.Senders
 {

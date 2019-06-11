@@ -1,13 +1,9 @@
-﻿using Pigeon.Addresses;
+﻿using NUnit.Framework;
+
+using Pigeon.Addresses;
 using Pigeon.Diagnostics;
 using Pigeon.Routing;
 using Pigeon.Senders;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Routing

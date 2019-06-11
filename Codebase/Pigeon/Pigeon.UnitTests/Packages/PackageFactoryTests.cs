@@ -1,7 +1,9 @@
 ﻿using System;
-using NUnit.Framework;
-using Pigeon.Packages;
 using System.Collections.Generic;
+
+using NUnit.Framework;
+
+using Pigeon.Packages;
 
 namespace Pigeon.UnitTests.Packages
 {

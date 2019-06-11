@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Moq;
 
 using NUnit.Framework;
@@ -7,7 +8,6 @@ using Pigeon.Unity.UnitTests.TestFixtures;
 
 using Unity;
 using Unity.Lifetime;
-using Unity.Registration;
 using Unity.Resolution;
 
 namespace Pigeon.Unity.UnitTests

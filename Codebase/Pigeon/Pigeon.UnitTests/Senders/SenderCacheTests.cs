@@ -1,17 +1,15 @@
-﻿using Pigeon.Addresses;
-using Pigeon.Packages;
+﻿using System;
+using System.Threading.Tasks;
+
+using Moq;
+
+using NUnit.Framework;
+
+using Pigeon.Addresses;
+using Pigeon.Diagnostics;
 using Pigeon.Monitors;
 using Pigeon.Routing;
 using Pigeon.Senders;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pigeon.Diagnostics;
 
 namespace Pigeon.UnitTests.Senders
 {

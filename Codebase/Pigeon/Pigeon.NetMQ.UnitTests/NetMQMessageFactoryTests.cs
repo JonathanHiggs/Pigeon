@@ -1,13 +1,11 @@
-﻿using Pigeon.Packages;
-using Pigeon.Serialization;
-using Moq;
+﻿using Moq;
+
 using NetMQ;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Pigeon.Packages;
+using Pigeon.Serialization;
 
 namespace Pigeon.NetMQ.UnitTests
 {
@@ -27,7 +25,7 @@ namespace Pigeon.NetMQ.UnitTests
         private readonly byte[] data = new byte[] { 0, 1 };
         private readonly byte[] address = new byte[] { 0, 192, 168, 1, 1 };
         private DataPackage<string> package;
-                
+
 
         [SetUp]
         public void Setup()
@@ -123,7 +121,7 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockSerializer.Verify(m => m.Serialize(It.IsIn<Package>(package)), Times.Once);
         }
-        
+
 
         [Test]
         public void CreateTopicMessage_WithTopicEvent_MessageHasTwoFrames()

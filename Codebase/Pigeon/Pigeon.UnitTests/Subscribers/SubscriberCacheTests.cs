@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
 
-using Pigeon.Addresses;
-using Pigeon.Packages;
-using Pigeon.Monitors;
-using Pigeon.Routing;
-using Pigeon.Subscribers;
-using Pigeon.Topics;
-
 using Moq;
 
 using NUnit.Framework;
+
+using Pigeon.Addresses;
 using Pigeon.Diagnostics;
+using Pigeon.Monitors;
+using Pigeon.Routing;
+using Pigeon.Subscribers;
 using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Subscribers
