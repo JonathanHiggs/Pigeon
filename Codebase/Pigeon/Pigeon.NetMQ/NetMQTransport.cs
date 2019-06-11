@@ -24,7 +24,7 @@ namespace Pigeon.NetMQ
     public class NetMQTransport : ITransportConfig
     {
         private readonly INetMQFactory factory;
-        private ITransportSetup setup;
+        private readonly ITransportSetup setup;
         
 
         /// <summary>

@@ -7,9 +7,6 @@ namespace Pigeon.Serialization
     /// </summary>
     public struct SerializationDescriptor
     {
-        private readonly string description;
-
-
         /// <summary>
         /// Gets a string that names a <see cref="ISerializer"/>
         /// </summary>
@@ -26,12 +23,10 @@ namespace Pigeon.Serialization
         /// Initialzies a new instance of <see cref="SerializationDescriptor"/>
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="description"></param>
         /// <param name="type"></param>
-        public SerializationDescriptor(string name, string description, Type type)
+        public SerializationDescriptor(string name, Type type)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.description = description ?? throw new ArgumentNullException(nameof(description));
             this.Type = type ?? throw new ArgumentNullException(nameof(type));
         }
 
@@ -57,11 +52,12 @@ namespace Pigeon.Serialization
         public static bool operator !=(SerializationDescriptor a, SerializationDescriptor b) => !a.Equals(b);
 
 
-        public static readonly SerializationDescriptor DotNet = new SerializationDescriptor("DotNet", "Inbuilt .Net serialization", typeof(byte));
-        public static readonly SerializationDescriptor CSV = new SerializationDescriptor("CSV", "Comma seperated values", typeof(string));
-        public static readonly SerializationDescriptor JSON = new SerializationDescriptor("JSON", "json", typeof(string));
-        public static readonly SerializationDescriptor BSON = new SerializationDescriptor("BSON", "binary json", typeof(byte));
-        public static readonly SerializationDescriptor HTML = new SerializationDescriptor("HTML", "Hypertext markup language", typeof(string));
-        public static readonly SerializationDescriptor XML = new SerializationDescriptor("XML", "eXtensible markup language", typeof(string));
+        //public static readonly SerializationDescriptor Bson = new SerializationDescriptor("bson", typeof(byte));
+        //public static readonly SerializationDescriptor Csv = new SerializationDescriptor("csv", typeof(string));
+        public static readonly SerializationDescriptor DotNet = new SerializationDescriptor("DotNet", typeof(byte));
+        //public static readonly SerializationDescriptor Html = new SerializationDescriptor("html", typeof(string));
+        public static readonly SerializationDescriptor Json = new SerializationDescriptor("json", typeof(string));
+        public static readonly SerializationDescriptor Protobuf = new SerializationDescriptor("protobuf", typeof(byte));
+        //public static readonly SerializationDescriptor Xml = new SerializationDescriptor("xml", typeof(string));
     }
 }

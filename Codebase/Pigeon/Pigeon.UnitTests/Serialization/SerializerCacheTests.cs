@@ -12,7 +12,7 @@ namespace Pigeon.UnitTests.Serialization
         private readonly Mock<ISerializer> mockSerializer = new Mock<ISerializer>();
         private ISerializer serializer;
 
-        private readonly SerializationDescriptor descriptor = new SerializationDescriptor("test", "test", typeof(byte));
+        private readonly SerializationDescriptor descriptor = new SerializationDescriptor("test", typeof(byte));
 
 
         [SetUp]

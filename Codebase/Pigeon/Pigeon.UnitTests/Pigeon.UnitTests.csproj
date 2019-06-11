@@ -86,8 +86,8 @@
     <Compile Include="Routing\TopicRouterTests.cs" />
     <Compile Include="Senders\SenderCacheTests.cs" />
     <Compile Include="Routing\SenderRoutingTests.cs" />
-    <Compile Include="Serialization\BinarySerializerTests.cs" />
     <Compile Include="Requests\RequestDispatcherTests.cs" />
+    <Compile Include="Serialization\DotNetSerializerTests.cs" />
     <Compile Include="Serialization\SerializationHeaderTests.cs" />
     <Compile Include="Serialization\SerializerCacheTests.cs" />
     <Compile Include="Subscribers\SubscriberCacheTests.cs" />

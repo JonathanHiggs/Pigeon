@@ -56,8 +56,8 @@ namespace Pigeon.NetMQ.UnitTests
                 .Returns<byte[]>(d => dotNetSerializer.Deserialize<Package>(d));
 
             mockSerializer
-                .Setup(m => m.Deserialize(It.IsAny<byte[]>(), It.IsAny<int>()))
-                .Returns<byte[], int>((data, offset) => dotNetSerializer.Deserialize(data, offset));
+                .Setup(m => m.Deserialize<Package>(It.IsAny<byte[]>(), It.IsAny<int>()))
+                .Returns<byte[], int>((data, offset) => dotNetSerializer.Deserialize<Package>(data, offset));
         }
 
 

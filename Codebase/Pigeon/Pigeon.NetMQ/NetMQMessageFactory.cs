@@ -104,12 +104,8 @@ namespace Pigeon.NetMQ
 
             var data = message[4].ToByteArray();
             var (header, byteCount) = SerializationHeader.FromBytes(data);
-            var obj = serializer.Deserialize(data, byteCount);
-
-            if (!(obj is Package))
-                throw new InvalidOperationException("Unable to deserialize");
-            
-            var request = packageFactory.Unpack(obj as Package);
+            var package = serializer.Deserialize<Package>(data, byteCount);            
+            var request = packageFactory.Unpack(package);
             return (request, address, requestId);
         }
 
@@ -164,12 +160,8 @@ namespace Pigeon.NetMQ
             var requestId = message[1].ConvertToInt32();
             var data = message[3].ToByteArray();
             var (header, byteCount) = SerializationHeader.FromBytes(data);
-            var obj = serializer.Deserialize(data, byteCount);
-
-            if (!(obj is Package))
-                throw new InvalidOperationException("Unable to deserialize response");
-
-            var response = packageFactory.Unpack(obj as Package);
+            var package = serializer.Deserialize<Package>(data, byteCount);
+            var response = packageFactory.Unpack(package);
             return (requestId, response);
         }
 

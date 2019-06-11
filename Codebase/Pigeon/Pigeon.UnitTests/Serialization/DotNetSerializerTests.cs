@@ -8,7 +8,7 @@ using Pigeon.Serialization;
 namespace Pigeon.UnitTests.Serialization
 {
     [TestFixture]
-    public class BinarySerializerTests
+    public class DotNetSerializerTests
     {
         [Test]
         public void Serialize_WithString_ProducesByteArray()
@@ -68,7 +68,7 @@ namespace Pigeon.UnitTests.Serialization
             var data = serializer.Serialize(str);
 
             // Act
-            var deserializedStr = serializer.Deserialize(data, 0) as string;
+            var deserializedStr = serializer.Deserialize<string>(data, 0);
 
             // Assert
             Assert.AreEqual(str, deserializedStr);
@@ -85,7 +85,7 @@ namespace Pigeon.UnitTests.Serialization
             var data = serializer.Serialize(str, offset);
 
             // Act
-            var deserializedStr = serializer.Deserialize(data, offset);
+            var deserializedStr = serializer.Deserialize<string>(data, offset);
 
             // Assert
             Assert.AreEqual(str, deserializedStr);
