@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,7 +11,7 @@
     <Company />
     <Copyright>2017, Jonathan Higgs</Copyright>
     <RepositoryUrl>https://github.com/JonathanHiggs/Pigeon</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/JoanthanHiggs/Pigeon</PackageProjectUrl>
     <Description>Abstraction of microservice communication to remotes via various transports</Description>
     <LangVersion>7.3</LangVersion>
