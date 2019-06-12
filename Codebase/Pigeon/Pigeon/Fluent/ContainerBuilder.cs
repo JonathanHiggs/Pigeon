@@ -26,34 +26,41 @@ namespace Pigeon.Fluent
             this.name = name;
             this.container = container ?? throw new ArgumentNullException(nameof(container));
 
-            container.Register<ITopicRouter, TopicRouter>(true);
-            container.Register<IRequestRouter, RequestRouter>(true);
-            container.Register<IPackageFactory, PackageFactory>(true);
+            container
+                .Register<ITopicRouter, TopicRouter>(true)
+                .Register<IRequestRouter, RequestRouter>(true)
+                .Register<IPackageFactory, PackageFactory>(true);
 
             var topicDispatcher = container.Resolve<DITopicDispatcher>();
-            container.Register<ITopicDispatcher>(topicDispatcher);
-            container.Register<IDITopicDispatcher>(topicDispatcher);
+            container
+                .Register<ITopicDispatcher>(topicDispatcher)
+                .Register<IDITopicDispatcher>(topicDispatcher);
 
             var requestDispatcher = container.Resolve<DIRequestDispatcher>();
-            container.Register<IRequestDispatcher>(requestDispatcher);
-            container.Register<IDIRequestDispatcher>(requestDispatcher);
+            container
+                .Register<IRequestDispatcher>(requestDispatcher)
+                .Register<IDIRequestDispatcher>(requestDispatcher);
 
-            container.Register<ISubscriptionsCache, SubscriptionsCache>(true);
-
-            container.Register<ISenderCache, SenderCache>(true);
-            container.Register<IMonitorCache, MonitorCache>(true);
-            container.Register<IReceiverCache, ReceiverCache>(true);
-            container.Register<IPublisherCache, PublisherCache>(true);
-            container.Register<ISubscriberCache, SubscriberCache>(true);
+            container
+                .Register<ISubscriptionsCache, SubscriptionsCache>(true)
+                .Register<ISenderCache, SenderCache>(true)
+                .Register<IMonitorCache, MonitorCache>(true)
+                .Register<IReceiverCache, ReceiverCache>(true)
+                .Register<IPublisherCache, PublisherCache>(true)
+                .Register<ISubscriberCache, SubscriberCache>(true);
             
-            container.Register(new Router(
+            var router = new Router(
                 name,
                 container.Resolve<ISenderCache>(),
                 container.Resolve<IMonitorCache>(),
                 container.Resolve<IReceiverCache>(),
                 container.Resolve<IPublisherCache>(),
                 container.Resolve<ISubscriberCache>()
-            ));
+            );
+
+            container
+                .Register<IRouter<IRouterInfo>>(router)
+                .Register(router);
         }
 
 

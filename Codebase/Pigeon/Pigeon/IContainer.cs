@@ -18,7 +18,8 @@
         /// </summary>
         /// <typeparam name="T">Type to register</typeparam>
         /// <param name="singleton">If true the type is registered as a single instance</param>
-        void Register<T>(bool singleton);
+        /// <returns>Returns container for fluency</returns>
+        IContainer Register<T>(bool singleton);
 
 
         /// <summary>
@@ -26,7 +27,8 @@
         /// </summary>
         /// <typeparam name="T">Type to register the instance as</typeparam>
         /// <param name="instance">Instance to return when resolved</param>
-        void Register<T>(T instance);
+        /// <returns>Returns container for fluency</returns>
+        IContainer Register<T>(T instance);
 
 
         /// <summary>
@@ -35,7 +37,8 @@
         /// <typeparam name="TBase">Type of requested object</typeparam>
         /// <typeparam name="TImpl">Type of returned object</typeparam>
         /// <param name="singleton">If true the type is registered as a single instance</param>
-        void Register<TBase, TImpl>(bool singleton) where TImpl : TBase;
+        /// <returns>Returns container for fluency</returns>
+        IContainer Register<TBase, TImpl>(bool singleton) where TImpl : TBase;
 
 
         /// <summary>

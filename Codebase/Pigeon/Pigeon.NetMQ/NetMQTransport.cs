@@ -24,8 +24,7 @@ namespace Pigeon.NetMQ
     public class NetMQTransport : ITransportConfig
     {
         private readonly INetMQFactory factory;
-        private readonly ITransportSetup setup;
-        
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQTransport"/>
@@ -43,14 +42,14 @@ namespace Pigeon.NetMQ
             container.Register<INetMQFactory, NetMQFactory>(true);
             
             factory = container.Resolve<INetMQFactory>();
-            setup = container.Resolve<TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>>();
+            Configurer = container.Resolve<TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>>();
         }
 
 
         private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            setup = new TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>(requestRouter, receiverCache, topicRouter, publisherCache);
+            Configurer = new TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>(requestRouter, receiverCache, topicRouter, publisherCache);
         }
 
 
@@ -78,9 +77,9 @@ namespace Pigeon.NetMQ
         public ISubscriberFactory SubscriberFactory => factory;
 
 
-        public ITransportSetup Configurer => setup;
+        public ITransportSetup Configurer { get; private set; }
 
-        
+
         public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
             if (null == factory)

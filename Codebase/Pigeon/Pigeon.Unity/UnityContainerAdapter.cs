@@ -39,12 +39,15 @@ namespace Pigeon.Unity
         /// </summary>
         /// <typeparam name="T">Type to register</typeparam>
         /// <param name="singleton">If true the type is registered as a single instance</param>
-        public void Register<T>(bool singleton)
+        /// <returns>Returns container for fluency</returns>
+        public IContainer Register<T>(bool singleton)
         {
             if (singleton)
                 unityContainer.RegisterSingleton<T>();
             else
                 unityContainer.RegisterType<T>();
+
+            return this;
         }
 
 
@@ -53,9 +56,11 @@ namespace Pigeon.Unity
         /// </summary>
         /// <typeparam name="T">Type to register the instance as</typeparam>
         /// <param name="instance">Instance to return when resolved</param>
-        public void Register<T>(T instance)
+        /// <returns>Returns container for fluency</returns>
+        public IContainer Register<T>(T instance)
         {
             unityContainer.RegisterInstance(instance);
+            return this;
         }
 
 
@@ -65,12 +70,14 @@ namespace Pigeon.Unity
         /// <typeparam name="TBase">Type of requested object</typeparam>
         /// <typeparam name="TImpl">Type of returned object</typeparam>
         /// <param name="singleton">If true the type is registered as a single instance</param>
-        public void Register<TBase, TImpl>(bool singleton) where TImpl : TBase
+        /// <returns>Returns container for fluency</returns>
+        public IContainer Register<TBase, TImpl>(bool singleton) where TImpl : TBase
         {
             if (singleton)
                 unityContainer.RegisterSingleton<TBase, TImpl>();
             else
                 unityContainer.RegisterType<TBase, TImpl>();
+            return this;
         }
 
 
