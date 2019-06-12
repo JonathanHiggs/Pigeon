@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
+
 using Pigeon.Addresses;
 using Pigeon.NetMQ;
-using Pigeon.NetMQ.Receivers;
 using Pigeon.Sandbox.Contracts;
 using Pigeon.Unity;
-using Unity;
 
 namespace Pigeon.Sandbox.Programs
 {
