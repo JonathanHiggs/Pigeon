@@ -3,104 +3,147 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ExampleClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Chat Example" Height="450" Width="800">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal">
+        <!--Top bar-->
+        <Grid Grid.Row="0"
+              Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <TextBox Text="{Binding UserName}" />
-            <Button Content="Connect" Click="ConnectButton_Click" />
+            <TextBlock Grid.Column="0"
+                       Margin="0,0,10,0"
+                       Text="Username" />
 
-        </StackPanel>
+            <TextBox Grid.Column="1"
+                       Margin="0,0,10,0"
+                     Text="{Binding UserName}" />
+            
+            <Button Grid.Column="2"
+                    Content="Connect"
+                    Click="ConnectButton_Click" />
+
+        </Grid>
         
         <!--Middle Row-->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1"
+              Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-
             <!--Messages-->
-            <ListBox Grid.Column="0"
-                     ItemsSource="{Binding Messages}"
-                     IsEnabled="{Binding Connected}"
-                     Grid.IsSharedSizeScope="True">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" SharedSizeGroup="MesageRow1" />
-                                <RowDefinition Height="Auto" SharedSizeGroup="MesageRow2" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="MesageColumn1" />
-                                <ColumnDefinition Width="*" SharedSizeGroup="MesageColumn2" />
-                            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0"
+                  Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       Text="{Binding UserName}"/>
+                <TextBlock Grid.Row="0"
+                           Margin="0,0,0,10"
+                           Text="Messages" />
 
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Text="{Binding Timestamp}"/>
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Messages}"
+                         IsEnabled="{Binding Connected}"
+                         Grid.IsSharedSizeScope="True">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" SharedSizeGroup="MesageRow1" />
+                                    <RowDefinition Height="Auto" SharedSizeGroup="MesageRow2" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MesageColumn1" />
+                                    <ColumnDefinition Width="*" SharedSizeGroup="MesageColumn2" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Grid.RowSpan="2"
-                                       Grid.Column="1"
-                                       Text="{Binding Content}"/>
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="{Binding UserName}"/>
 
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="{Binding Timestamp}"/>
 
+                                <TextBlock Grid.Row="0"
+                                           Grid.RowSpan="2"
+                                           Grid.Column="1"
+                                           Text="{Binding Content}"/>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
 
             <!--Users-->
-            <ListBox Grid.Column="1"
-                     ItemsSource="{Binding Users}"
-                     IsEnabled="{Binding Connected}"
-                     Grid.IsSharedSizeScope="True">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" SharedSizeGroup="UsersColumn1" />
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="UsersColumn2" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding UserName}" />
-                            
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding ConnectedTimestamp}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Margin="0,0,0,10"
+                           Text="Users" />
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Users}"
+                         IsEnabled="{Binding Connected}"
+                         Grid.IsSharedSizeScope="True">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="UsersColumn1" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="UsersColumn2" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding UserName}" />
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding ConnectedTimestamp}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Grid>
 
         
-        <!--Input--> 
-        <Grid>
+        <!--Input-->
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0"
+            <TextBlock Grid.Column="0"
+                       Margin="0,0,10,0"
+                       Text="Message" />
+
+            <TextBox Grid.Column="1"
+                     Margin="0,0,10,0"
                      Text="{Binding InputContent}"/>
 
-            <Button Grid.Column="1"
+            <Button Grid.Column="2"
+                    Content="Send"
                     Click="InputButton_Click" />
 
         </Grid>

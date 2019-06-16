@@ -17,6 +17,7 @@ namespace ExampleClient
     public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<UserConnected>, ITopicHandler<UserDisconnected>
     {
         private readonly IRouter<IRouterInfo> router;
+        private readonly IDITopicDispatcher topicDispatcher;
 
         private readonly object messagesLock = new object();
         private readonly object usersLock = new object();
@@ -34,9 +35,10 @@ namespace ExampleClient
         private IDisposable userDisconnectedSubscription;
 
 
-        public ViewModel(IRouter<IRouterInfo> router)
+        public ViewModel(IRouter<IRouterInfo> router, IDITopicDispatcher topicDispatcher)
         {
             this.router = router ?? throw new ArgumentNullException(nameof(router));
+            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
 
             BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
             BindingOperations.EnableCollectionSynchronization(Users, usersLock);
@@ -102,8 +104,11 @@ namespace ExampleClient
                 Connected = true;
 
                 messageSubscription = router.Subscribe<Message>();
+                topicDispatcher.Register<Message, ViewModel>();
                 userConnectedSubscription = router.Subscribe<UserConnected>();
+                topicDispatcher.Register<UserConnected, ViewModel>();
                 userDisconnectedSubscription = router.Subscribe<UserDisconnected>();
+                topicDispatcher.Register<UserDisconnected, ViewModel>();
             }
             else
             {
