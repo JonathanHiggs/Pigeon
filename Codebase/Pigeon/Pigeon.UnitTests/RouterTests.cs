@@ -262,7 +262,7 @@ namespace Pigeon.UnitTests
             // Arrange
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
-            mockMonitorCache.ResetCalls();
+            mockMonitorCache.Invocations.Clear();
 
             // Act
             router.Start();
@@ -340,7 +340,7 @@ namespace Pigeon.UnitTests
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             router.Start();
             router.Stop();
-            mockMonitorCache.ResetCalls();
+            mockMonitorCache.Invocations.Clear();
 
             // Act
             router.Stop();

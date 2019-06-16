@@ -115,7 +115,7 @@ namespace Pigeon.UnitTests.Monitors
             var monitorCache = new MonitorCache();
             monitorCache.AddMonitor(monitor);
             monitorCache.StartAllMonitors();
-            mockMonitor.ResetCalls();
+            mockMonitor.Invocations.Clear();
 
             // Act
             monitorCache.StartAllMonitors();
@@ -182,7 +182,7 @@ namespace Pigeon.UnitTests.Monitors
             monitorCache.AddMonitor(monitor);
             monitorCache.StartAllMonitors();
             monitorCache.StopAllMonitors();
-            mockMonitor.ResetCalls();
+            mockMonitor.Invocations.Clear();
 
             // Act
             monitorCache.StopAllMonitors();
