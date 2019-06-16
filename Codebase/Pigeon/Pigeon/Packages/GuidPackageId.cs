@@ -39,7 +39,7 @@ namespace Pigeon.Packages
         {
             var guidMessageId = other as GuidPackageId;
 
-            if (null == guidMessageId) return false;
+            if (guidMessageId is null) return false;
 
             return guidMessageId.guid == guid;
         }

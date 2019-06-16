@@ -27,7 +27,7 @@ namespace Pigeon.Utils
             if (timeout.TotalMilliseconds < 0.0)
                 throw new ArgumentException("Timeout requires a positive TimeSpan");
 
-            if (null == onTimeout)
+            if (onTimeout is null)
                 throw new ArgumentNullException(nameof(onTimeout));
 
             this.taskCompletionSource = taskCompletionSource ?? throw new ArgumentNullException(nameof(taskCompletionSource));

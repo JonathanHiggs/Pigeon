@@ -150,7 +150,7 @@ namespace Pigeon.NetMQ
         private void Add<TConnection>(TConnection connection, HashSet<TConnection> connectionSet, Action<TConnection> runningAction)
             where TConnection : INetMQConnection
         {
-            if (null == connection)
+            if (connection is null)
                 return;
 
             poller.Add(connection.PollableSocket);

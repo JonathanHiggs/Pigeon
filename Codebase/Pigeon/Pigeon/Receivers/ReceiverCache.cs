@@ -40,7 +40,7 @@ namespace Pigeon.Receivers
         /// <see cref="AddReceiver{TReceiver}(IAddress)"/> is called</param>
         public void AddFactory(IReceiverFactory factory)
         {
-            if (null == factory)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
 
             if (factories.ContainsKey(factory.ReceiverType))
@@ -59,7 +59,7 @@ namespace Pigeon.Receivers
         /// <param name="address">The <see cref="IAddress"/> to which the <see cref="IReceiver"/> binds</param>
         public void AddReceiver<TReceiver>(IAddress address) where TReceiver : IReceiver
         {
-            if (null == address)
+            if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
             if (receivers.ContainsKey(address))

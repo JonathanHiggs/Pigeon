@@ -22,7 +22,7 @@ namespace Pigeon.Topics
         /// <param name="message">Topic message</param>
         public Task Handle(object message)
         {
-            if (null == message)
+            if (message is null)
                 return Task.CompletedTask;
 
             var eventType = message.GetType();
@@ -71,7 +71,7 @@ namespace Pigeon.Topics
 
         protected void Validate<TTopic>()
         {
-            if (null == typeof(TTopic).GetCustomAttribute<SerializableAttribute>())
+            if (typeof(TTopic).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TTopic));
         }
     }

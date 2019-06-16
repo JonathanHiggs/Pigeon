@@ -32,7 +32,7 @@ namespace Pigeon.NetMQ
         /// <param name="container">DI Container to wire up dependencies</param>
         public NetMQTransport(IContainer container)
         {
-            if (null == container)
+            if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
             container.Register<ISerializer, DotNetSerializer>(true);
@@ -82,7 +82,7 @@ namespace Pigeon.NetMQ
 
         public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
-            if (null == factory)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
 
             return new NetMQTransport(factory, requestRouter, receiverCache, topicRouter, publisherCache);

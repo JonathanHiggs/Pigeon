@@ -33,7 +33,7 @@ namespace Pigeon.Routing
         public void AddTopicRouting<TTopic, TSubscriber>(IAddress address)
             where TSubscriber : ISubscriber
         {
-            if (null == address)
+            if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
             var topicType = typeof(TTopic);

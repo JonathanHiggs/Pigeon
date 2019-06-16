@@ -42,7 +42,7 @@ namespace Pigeon.Publishers
         /// <param name="factory">Factory used to create <see cref="IPublisher"/>s at config-time</param>
         public void AddFactory(IPublisherFactory factory)
         {
-            if (null == factory)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
 
             if (factories.ContainsKey(factory.PublisherType))
@@ -60,7 +60,7 @@ namespace Pigeon.Publishers
         /// <param name="address">The <see cref="IAddress"/> to bind to on which <see cref="ISubscriber"/>s can connect to receive updates</param>
         public void AddPublisher<TPublisher>(IAddress address) where TPublisher : IPublisher
         {
-            if (null == address)
+            if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
             if (publishers.ContainsKey(address))
@@ -81,7 +81,7 @@ namespace Pigeon.Publishers
         /// <param name="topicEvent">The topic message to distribute</param>
         public void Publish<TMessage>(TMessage topicEvent) where TMessage : class
         {
-            if (null == topicEvent)
+            if (topicEvent is null)
                 throw new ArgumentNullException(nameof(topicEvent));
             
             foreach (var publisher in publishers.Values)

@@ -55,7 +55,7 @@ namespace Pigeon.NetMQ.Common
         /// <param name="address"><see cref="IAddress"/> to add</param>
         public void AddAddress(IAddress address)
         {
-            if (null == address)
+            if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
             if (addresses.Contains(address))
@@ -75,7 +75,7 @@ namespace Pigeon.NetMQ.Common
         /// <param name="address"><see cref="IAddress"/> to remove</param>
         public void RemoveAddress(IAddress address)
         {
-            if (null == address || !addresses.Contains(address))
+            if (address is null || !addresses.Contains(address))
                 return;
 
             if (isConnected)

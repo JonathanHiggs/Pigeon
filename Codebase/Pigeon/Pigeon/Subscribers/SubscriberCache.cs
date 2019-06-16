@@ -47,7 +47,7 @@ namespace Pigeon.Subscribers
         /// <see cref="AddSubscriber{TSubscriber}(IAddress)"/> is called</param>
         public void AddFactory(ISubscriberFactory factory)
         {
-            if (null == factory)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
 
             if (factories.ContainsKey(factory.SubscriberType))

@@ -33,10 +33,10 @@ namespace Pigeon.Routing
         public void AddRequestRouting<TRequest, TSender>(IAddress address)
             where TSender : ISender
         {
-            if (null == address)
+            if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
-            if (null == typeof(TRequest).GetCustomAttribute<SerializableAttribute>())
+            if (typeof(TRequest).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TRequest));
 
             var requestType = typeof(TRequest);

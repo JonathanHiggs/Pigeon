@@ -18,7 +18,7 @@ namespace Pigeon.Serialization
         /// <param name="serializer">The <see cref="ISerializer"/> to add to the cache</param>
         public void AddSerializer(ISerializer serializer)
         {
-            if (null == serializer)
+            if (serializer is null)
                 throw new ArgumentNullException(nameof(serializer));
 
             serializers.Add(serializer);

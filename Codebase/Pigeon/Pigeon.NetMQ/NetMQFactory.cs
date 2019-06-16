@@ -30,7 +30,7 @@ namespace Pigeon.NetMQ
         public NetMQFactory(INetMQMonitor monitor, INetMQMessageFactory messageFactory)
             : base(monitor, monitor, monitor, monitor)
         {
-            if (null == monitor)
+            if (monitor is null)
                 throw new ArgumentNullException(nameof(monitor));
 
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));

@@ -22,7 +22,7 @@ namespace Pigeon.Requests
         /// <returns>Response message</returns>
         public Task<object> Handle(object request)
         {
-            if (null == request)
+            if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
             var requestType = request.GetType();
@@ -85,10 +85,10 @@ namespace Pigeon.Requests
 
         protected void ValidateTypes<TRequest, TResponse>()
         {
-            if (null == typeof(TRequest).GetCustomAttribute<SerializableAttribute>())
+            if (typeof(TRequest).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TRequest));
 
-            if (null == typeof(TResponse).GetCustomAttribute<SerializableAttribute>())
+            if (typeof(TResponse).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TResponse));
         }
     }

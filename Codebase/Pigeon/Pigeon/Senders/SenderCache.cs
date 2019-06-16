@@ -68,7 +68,7 @@ namespace Pigeon.Senders
         /// <param name="factory">Factory used to create <see cref="ISender"/>s at when required to send first message to remote <see cref="IReceiver"/></param>
         public void AddFactory(ISenderFactory factory)
         {
-            if (null == factory)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
 
             if (factories.ContainsKey(factory.SenderType))
@@ -108,7 +108,7 @@ namespace Pigeon.Senders
             where TRequest : class
             where TResponse : class
         {
-            if (null == request)
+            if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
             var sender = SenderFor<TRequest>();
