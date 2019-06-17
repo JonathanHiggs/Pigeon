@@ -122,19 +122,19 @@
       <Project>{022F9761-61F8-4314-8464-DDDE1B28ABA7}</Project>
       <Name>ExampleContracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pigeon.Json\Pigeon.Json.csproj">
+    <ProjectReference Include="..\..\Pigeon\Pigeon.Json\Pigeon.Json.csproj">
       <Project>{f5702e1c-3efe-43cd-91d6-b257ee006670}</Project>
       <Name>Pigeon.Json</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pigeon.NetMQ\Pigeon.NetMQ.csproj">
+    <ProjectReference Include="..\..\Pigeon\Pigeon.NetMQ\Pigeon.NetMQ.csproj">
       <Project>{8e603ba1-ceb3-4af7-92f4-d49eb2e76599}</Project>
       <Name>Pigeon.NetMQ</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pigeon.Unity\Pigeon.Unity.csproj">
+    <ProjectReference Include="..\..\Pigeon\Pigeon.Unity\Pigeon.Unity.csproj">
       <Project>{89c03f24-7e90-4f20-b438-b9587e060f64}</Project>
       <Name>Pigeon.Unity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pigeon\Pigeon.csproj">
+    <ProjectReference Include="..\..\Pigeon\Pigeon\Pigeon.csproj">
       <Project>{C2A46FA7-DA9E-4F04-8D00-58CDD401D5F2}</Project>
       <Name>Pigeon</Name>
     </ProjectReference>

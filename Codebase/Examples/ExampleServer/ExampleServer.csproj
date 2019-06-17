@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Pigeon\Pigeon.Json\Pigeon.Json.csproj" />
+    <ProjectReference Include="..\..\Pigeon\Pigeon.NetMQ\Pigeon.NetMQ.csproj" />
+    <ProjectReference Include="..\..\Pigeon\Pigeon.Unity\Pigeon.Unity.csproj" />
+    <ProjectReference Include="..\..\Pigeon\Pigeon\Pigeon.csproj" />
     <ProjectReference Include="..\ExampleContracts\ExampleContracts.csproj" />
-    <ProjectReference Include="..\Pigeon.Json\Pigeon.Json.csproj" />
-    <ProjectReference Include="..\Pigeon.NetMQ\Pigeon.NetMQ.csproj" />
-    <ProjectReference Include="..\Pigeon.Unity\Pigeon.Unity.csproj" />
-    <ProjectReference Include="..\Pigeon\Pigeon.csproj" />
   </ItemGroup>
 
 </Project>
