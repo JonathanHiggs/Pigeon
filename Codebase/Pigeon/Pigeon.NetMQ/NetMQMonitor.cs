@@ -31,8 +31,9 @@ namespace Pigeon.NetMQ
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
         private readonly HashSet<INetMQPublisher> publishers = new HashSet<INetMQPublisher>();
         private readonly HashSet<INetMQSubscriber> subscribers = new HashSet<INetMQSubscriber>();
+        private readonly object lockObj = new object();
+
         private bool running = false;
-        private object lockObj = new object();
 
 
         /// <summary>
@@ -148,7 +149,7 @@ namespace Pigeon.NetMQ
 
 
         private void Add<TConnection>(TConnection connection, HashSet<TConnection> connectionSet, Action<TConnection> runningAction)
-            where TConnection : INetMQConnection
+            where TConnection : class, INetMQConnection
         {
             if (connection is null)
                 return;
