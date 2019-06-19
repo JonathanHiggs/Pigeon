@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 using Pigeon.Addresses;
+using Pigeon.Annotations;
 using Pigeon.Diagnostics;
 using Pigeon.Publishers;
 using Pigeon.Subscribers;
@@ -35,8 +37,12 @@ namespace Pigeon.Routing
         {
             if (address is null)
                 throw new ArgumentNullException(nameof(address));
-
+            
             var topicType = typeof(TTopic);
+
+            if (topicType.GetCustomAttribute<TopicAttribute>() is null)
+                throw new MissingAttributeException(topicType, typeof(TopicAttribute));
+
             var newRouting = SubscriberRouting.For<TSubscriber>(address);
 
             if (routingTable.TryGetValue(topicType, out var existingRouting))

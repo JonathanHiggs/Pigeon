@@ -85,6 +85,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Pigeon\Pigeon.Annotations\Pigeon.Annotations.csproj">
+      <Project>{e79a60c3-0687-49ce-97d7-95bd0033e498}</Project>
+      <Name>Pigeon.Annotations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Pigeon\Pigeon.NetMQ\Pigeon.NetMQ.csproj">
       <Project>{8e603ba1-ceb3-4af7-92f4-d49eb2e76599}</Project>
       <Name>Pigeon.NetMQ</Name>

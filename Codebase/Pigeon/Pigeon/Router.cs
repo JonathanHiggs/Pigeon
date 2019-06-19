@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
+using Pigeon.Annotations;
+using Pigeon.Diagnostics;
 using Pigeon.Fluent;
 using Pigeon.Fluent.Simple;
 using Pigeon.Monitors;
@@ -78,6 +81,9 @@ namespace Pigeon
         /// <param name="message">The topic message to distribute</param>
         public void Publish<TTopic>(TTopic message) where TTopic : class
         {
+            if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
+                throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
+
             publisherCache.Publish(message);
         }
 
@@ -94,6 +100,14 @@ namespace Pigeon
             where TRequest : class
             where TResponse : class
         {
+            var requestAttribute = typeof(TRequest).GetCustomAttribute<RequestAttribute>();
+
+            if (requestAttribute is null)
+                throw new MissingAttributeException(typeof(TRequest), typeof(TResponse));
+
+            if (requestAttribute.ResponseType != typeof(TResponse))
+                throw new MismatchingResponseTypeException(typeof(TRequest), typeof(TResponse));
+
             return await senderCache.Send<TRequest, TResponse>(request);
         }
 
@@ -111,12 +125,23 @@ namespace Pigeon
             where TRequest : class
             where TResponse : class
         {
+            var requestAttribute = typeof(TRequest).GetCustomAttribute<RequestAttribute>();
+
+            if (requestAttribute is null)
+                throw new MissingAttributeException(typeof(TRequest), typeof(TResponse));
+
+            if (requestAttribute.ResponseType != typeof(TResponse))
+                throw new MismatchingResponseTypeException(typeof(TRequest), typeof(TResponse));
+
             return await senderCache.Send<TRequest, TResponse>(request, timeout);
         }
 
 
         public IDisposable Subscribe<TTopic>()
         {
+            if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
+                throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
+
             return subscriberCache.Subscribe<TTopic>();
         }
 

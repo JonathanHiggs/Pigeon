@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 
+using Pigeon.Annotations;
+
 namespace ExampleContracts.Topics
 {
     [Serializable]
     [ImmutableObject(true)]
+    [Topic]
     public class MessagePosted
     {
         private MessagePosted(int messageId, bool success, string reason)

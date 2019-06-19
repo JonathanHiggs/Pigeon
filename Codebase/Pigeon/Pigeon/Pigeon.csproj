@@ -21,4 +21,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pigeon.Annotations\Pigeon.Annotations.csproj" />
+  </ItemGroup>
+
 </Project>

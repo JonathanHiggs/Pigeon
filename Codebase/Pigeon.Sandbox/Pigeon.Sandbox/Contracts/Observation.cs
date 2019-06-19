@@ -1,8 +1,11 @@
 ﻿using System;
 
+using Pigeon.Annotations;
+
 namespace Pigeon.Sandbox.Contracts
 {
     [Serializable]
+    [Topic]
     public class Observation
     {
         public readonly string Name;

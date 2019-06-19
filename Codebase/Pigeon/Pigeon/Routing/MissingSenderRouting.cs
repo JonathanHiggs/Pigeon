@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
+using Pigeon.Diagnostics;
 using Pigeon.Senders;
 
 namespace Pigeon.Routing
@@ -10,7 +11,7 @@ namespace Pigeon.Routing
     /// for a request
     /// </summary>
     [Serializable]
-    public class MissingSenderRouting : Exception
+    public class MissingSenderRouting : PigeonException
     {
         /// <summary>
         /// Initializes a new instance of <see cref="MissingSenderRouting"/>
