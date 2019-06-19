@@ -11,14 +11,18 @@ using Pigeon.Requests;
 
 namespace ExampleServer
 {
-    public class Server : IRequestHandler<UserConnecting, UserConnect>, IRequestHandler<UserDisconecting, UserDisconnect>, IRequestHandler<ExampleContracts.Models.Message, MessagePosted>
+    public class Server 
+        : IRequestHandler<UserConnecting, UserConnect>,
+        IRequestHandler<UserDisconecting, UserDisconnect>,
+        IRequestHandler<ConnectedUsers, ConnectedUserList>,
+        IRequestHandler<ExampleContracts.Models.Message, MessagePosted>
     {
         private readonly IRouter<IRouterInfo> router;
-
-        private readonly List<User> users = new List<User>();
-        private readonly List<Message> messages = new List<Message>();
-
         private int id = 1;
+
+        public List<User> users { get; } = new List<User>();
+        public List<Message> messages { get; } = new List<Message>();
+
 
         private readonly object usersLock = new object();
         private readonly object messagesLock = new object();
@@ -86,6 +90,25 @@ namespace ExampleServer
 
                 return MessagePosted.Ok(request.MessageId);
             }
+        }
+
+
+        public ConnectedUserList Handle(ConnectedUsers request)
+        {
+            return new ConnectedUserList(
+                users
+                    .Select(u => new ExampleContracts.Models.User(u.Id, u.Name, u.ConnectedTimestamp, u.DisconnectedTimestamp))
+                    .ToList());
+        }
+
+
+        public void Reset()
+        {
+            foreach (var user in users)
+                router.Publish(new UserDisconnected(user.Id, user.Name, DateTime.UtcNow));
+
+            users.Clear();
+            messages.Clear();
         }
     }
 }

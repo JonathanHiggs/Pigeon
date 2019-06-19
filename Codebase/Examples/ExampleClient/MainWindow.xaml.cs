@@ -1,16 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
 using System.Windows;
-
-using ExampleContracts.Models;
-using ExampleContracts.Requests;
-using ExampleContracts.Topics;
-
-using Pigeon;
-using Pigeon.Addresses;
-using Pigeon.NetMQ;
-using Pigeon.Unity;
-
-using Unity;
 
 namespace ExampleClient
 {
@@ -19,35 +8,12 @@ namespace ExampleClient
     /// </summary>
     public partial class MainWindow
     {
-        private UnityContainer container;
-        private Router router;
         private ViewModel viewModel;
         
 
-        public MainWindow()
+        public MainWindow(ViewModel viewModel)
         {
-            container = new UnityContainer();
-            container.RegisterSingleton<ViewModel>();
-            
-            router =
-                UnityBuilder
-                    .FromContainer(container)
-                    .WithName("ExampleClient")
-                    .WithTransport<NetMQTransport>(t =>
-                    {
-                        t.WithSender(TcpAddress.Localhost(5555))
-                            .For<UserConnecting>()
-                            .For<UserDisconecting>()
-                            .For<Message>();
-
-                        t.WithSubscriber(TcpAddress.Localhost(5556))
-                            .Handles<UserConnected>()
-                            .Handles<UserDisconnected>()
-                            .Handles<Message>();
-                    })
-                    .BuildAndStart();
-
-            DataContext = viewModel = container.Resolve<ViewModel>();
+            DataContext = this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
             InitializeComponent();
         }
@@ -62,12 +28,6 @@ namespace ExampleClient
         private async void InputButton_Click(object sender, RoutedEventArgs e)
         {
             await viewModel.PostMessage();
-        }
-
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            router.Stop();
         }
     }
 }

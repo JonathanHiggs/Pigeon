@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -17,7 +18,7 @@ using Pigeon.Topics;
 
 namespace ExampleClient
 {
-    public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<ExampleContracts.Topics.UserConnected>, ITopicHandler<ExampleContracts.Topics.UserDisconnected>
+    public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<UserConnected>, ITopicHandler<UserDisconnected>
     {
         private readonly IRouter<IRouterInfo> router;
         private readonly IDITopicDispatcher topicDispatcher;
@@ -99,19 +100,22 @@ namespace ExampleClient
 
             var connected = new UserConnecting(UserName);
 
-            var response = await router.Send<UserConnecting, ExampleContracts.Responses.UserConnect>(connected);
+            var response = await router.Send<UserConnecting, UserConnect>(connected);
 
             if (response.Success)
             {
                 UserId = response.UserId;
                 Connected = true;
 
+                // This is a bit messy... need to clean up how the subscriptions work
                 messageSubscription = router.Subscribe<Message>();
                 topicDispatcher.Register<Message, ViewModel>();
-                userConnectedSubscription = router.Subscribe<ExampleContracts.Topics.UserConnected>();
-                topicDispatcher.Register<ExampleContracts.Topics.UserConnected, ViewModel>();
-                userDisconnectedSubscription = router.Subscribe<ExampleContracts.Topics.UserDisconnected>();
-                topicDispatcher.Register<ExampleContracts.Topics.UserDisconnected, ViewModel>();
+                userConnectedSubscription = router.Subscribe<UserConnected>();
+                topicDispatcher.Register<UserConnected, ViewModel>();
+                userDisconnectedSubscription = router.Subscribe<UserDisconnected>();
+                topicDispatcher.Register<UserDisconnected, ViewModel>();
+
+                await UpdateUserList();
             }
             else
             {
@@ -126,7 +130,7 @@ namespace ExampleClient
                 return;
 
             var disconnect = new UserDisconecting(UserId, UserName);
-            var response = await router.Send<UserDisconecting, ExampleContracts.Responses.UserDisconnect>(disconnect);
+            var response = await router.Send<UserDisconecting, UserDisconnect>(disconnect);
 
             if (response.Success)
             {
@@ -142,6 +146,21 @@ namespace ExampleClient
         }
 
 
+        public async Task UpdateUserList()
+        {
+            var request = new ConnectedUsers();
+            var response = await router.Send<ConnectedUsers, ConnectedUserList>(request);
+
+            var users = response
+                .Users
+                .Select(u => new User(u.UserId, u.UserName, u.ConnectedTimestamp));
+
+            foreach (var user in users)
+                if (!Users.Any(u => u.UserId == user.UserId))
+                    Users.Add(user);
+        }
+
+
         public async Task PostMessage()
         {
             Sending = true;
@@ -152,7 +171,7 @@ namespace ExampleClient
                 newMessageId = messageId++;
             }
 
-            var message = new Message(UserId, UserName, newMessageId++, InputContent, DateTime.UtcNow);
+            var message = new Message(UserId, UserName, newMessageId, InputContent, DateTime.UtcNow);
 
             var response = await router.Send<Message, MessagePosted>(message);
 
@@ -175,7 +194,7 @@ namespace ExampleClient
         }
 
 
-        public void Handle(ExampleContracts.Topics.UserConnected message)
+        public void Handle(UserConnected message)
         {
             if (Users.Any(u => u.UserId == message.UserId))
                 return;
@@ -184,7 +203,7 @@ namespace ExampleClient
         }
 
 
-        public void Handle(ExampleContracts.Topics.UserDisconnected message)
+        public void Handle(UserDisconnected message)
         {
             var user = Users.SingleOrDefault(u => u.UserId == message.UserId);
 
@@ -195,6 +214,7 @@ namespace ExampleClient
         }
 
 
+        #region ViewModel stuffs
 
         private void Set<T>(ref T store, T value, [CallerMemberName] string propertyName = "")
         {
@@ -207,5 +227,7 @@ namespace ExampleClient
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #endregion
     }
 }

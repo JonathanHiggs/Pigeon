@@ -31,14 +31,33 @@ namespace ExampleServer
                     })
                     .WithHandlers(config =>
                         config
-                            .WithRequestHandler<UserConnecting, ExampleContracts.Responses.UserConnect, Server>()
-                            .WithRequestHandler<UserDisconecting, ExampleContracts.Responses.UserDisconnect, Server>()
+                            .WithRequestHandler<UserConnecting, UserConnect, Server>()
+                            .WithRequestHandler<UserDisconecting, UserDisconnect, Server>()
+                            .WithRequestHandler<ConnectedUsers, ConnectedUserList, Server>()
                             .WithRequestHandler<ExampleContracts.Models.Message, MessagePosted, Server>())
                     .BuildAndStart();
 
             Console.Title = "Chat Server";
             Console.WriteLine("Press enter to stop server");
-            Console.ReadLine();
+
+            var server = container.Resolve<Server>();
+            var running = true;
+
+            while (running)
+            {
+                var input = Console.ReadLine();
+
+                switch(input)
+                {
+                    case "reset":
+                        server.Reset();
+                        break;
+
+                    case "exit":
+                        running = false;
+                        break;
+                }
+            }
 
             router.Stop();
         }

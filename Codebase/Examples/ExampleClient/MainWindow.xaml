@@ -6,6 +6,7 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  mc:Ignorable="d"
                  Title="Chat Example" Height="450" Width="800">
+    
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -138,6 +139,8 @@
 
             <TextBox Grid.Column="1"
                      Margin="0,0,10,0"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
                      Text="{Binding InputContent}"/>
 
             <Button Grid.Column="2"
