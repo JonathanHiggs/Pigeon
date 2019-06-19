@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ExampleContracts
+namespace ExampleContracts.Topics
 {
     [Serializable]
     [ImmutableObject(true)]

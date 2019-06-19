@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
-using ExampleContracts;
+using ExampleContracts.Models;
+using ExampleContracts.Requests;
+using ExampleContracts.Topics;
 
 using Pigeon;
 using Pigeon.Addresses;
@@ -34,8 +36,8 @@ namespace ExampleClient
                     .WithTransport<NetMQTransport>(t =>
                     {
                         t.WithSender(TcpAddress.Localhost(5555))
-                            .For<Connect>()
-                            .For<Disconect>()
+                            .For<UserConnecting>()
+                            .For<UserDisconecting>()
                             .For<Message>();
 
                         t.WithSubscriber(TcpAddress.Localhost(5556))

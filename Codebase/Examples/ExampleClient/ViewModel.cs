@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-using ExampleContracts;
+using ExampleContracts.Models;
+using ExampleContracts.Requests;
+using ExampleContracts.Responses;
+using ExampleContracts.Topics;
 
 using Pigeon;
 using Pigeon.Topics;
 
 namespace ExampleClient
 {
-    public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<UserConnected>, ITopicHandler<UserDisconnected>
+    public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<ExampleContracts.Topics.UserConnected>, ITopicHandler<ExampleContracts.Topics.UserDisconnected>
     {
         private readonly IRouter<IRouterInfo> router;
         private readonly IDITopicDispatcher topicDispatcher;
@@ -94,9 +97,9 @@ namespace ExampleClient
             if (Connected)
                 return;
 
-            var connected = new Connect(UserName);
+            var connected = new UserConnecting(UserName);
 
-            var response = await router.Send<Connect, Connected>(connected);
+            var response = await router.Send<UserConnecting, ExampleContracts.Responses.UserConnect>(connected);
 
             if (response.Success)
             {
@@ -105,10 +108,10 @@ namespace ExampleClient
 
                 messageSubscription = router.Subscribe<Message>();
                 topicDispatcher.Register<Message, ViewModel>();
-                userConnectedSubscription = router.Subscribe<UserConnected>();
-                topicDispatcher.Register<UserConnected, ViewModel>();
-                userDisconnectedSubscription = router.Subscribe<UserDisconnected>();
-                topicDispatcher.Register<UserDisconnected, ViewModel>();
+                userConnectedSubscription = router.Subscribe<ExampleContracts.Topics.UserConnected>();
+                topicDispatcher.Register<ExampleContracts.Topics.UserConnected, ViewModel>();
+                userDisconnectedSubscription = router.Subscribe<ExampleContracts.Topics.UserDisconnected>();
+                topicDispatcher.Register<ExampleContracts.Topics.UserDisconnected, ViewModel>();
             }
             else
             {
@@ -122,8 +125,8 @@ namespace ExampleClient
             if (!Connected)
                 return;
 
-            var disconnect = new Disconect(UserId, UserName);
-            var response = await router.Send<Disconect, Disconnected>(disconnect);
+            var disconnect = new UserDisconecting(UserId, UserName);
+            var response = await router.Send<UserDisconecting, ExampleContracts.Responses.UserDisconnect>(disconnect);
 
             if (response.Success)
             {
@@ -172,7 +175,7 @@ namespace ExampleClient
         }
 
 
-        public void Handle(UserConnected message)
+        public void Handle(ExampleContracts.Topics.UserConnected message)
         {
             if (Users.Any(u => u.UserId == message.UserId))
                 return;
@@ -181,7 +184,7 @@ namespace ExampleClient
         }
 
 
-        public void Handle(UserDisconnected message)
+        public void Handle(ExampleContracts.Topics.UserDisconnected message)
         {
             var user = Users.SingleOrDefault(u => u.UserId == message.UserId);
 

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ExampleContracts
+namespace ExampleContracts.Responses
 {
     [Serializable]
     [ImmutableObject(true)]
-    public class Disconnected
+    public class UserDisconnect
     {
-        public Disconnected(bool success, string reason = "")
+        public UserDisconnect(bool success, string reason = "")
         {
             Success = success;
             Reason = reason;

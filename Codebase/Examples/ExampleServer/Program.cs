@@ -1,5 +1,8 @@
 ﻿using System;
-using ExampleContracts;
+
+using ExampleContracts.Requests;
+using ExampleContracts.Responses;
+using ExampleContracts.Topics;
 
 using Pigeon.Addresses;
 using Pigeon.NetMQ;
@@ -28,11 +31,12 @@ namespace ExampleServer
                     })
                     .WithHandlers(config =>
                         config
-                            .WithRequestHandler<Connect, Connected, Server>()
-                            .WithRequestHandler<Disconect, Disconnected, Server>()
-                            .WithRequestHandler<ExampleContracts.Message, MessagePosted, Server>())
+                            .WithRequestHandler<UserConnecting, ExampleContracts.Responses.UserConnect, Server>()
+                            .WithRequestHandler<UserDisconecting, ExampleContracts.Responses.UserDisconnect, Server>()
+                            .WithRequestHandler<ExampleContracts.Models.Message, MessagePosted, Server>())
                     .BuildAndStart();
 
+            Console.Title = "Chat Server";
             Console.WriteLine("Press enter to stop server");
             Console.ReadLine();
 

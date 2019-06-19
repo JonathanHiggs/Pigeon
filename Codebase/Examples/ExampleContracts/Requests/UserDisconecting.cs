@@ -1,22 +1,20 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ExampleContracts
+namespace ExampleContracts.Requests
 {
     [Serializable]
     [ImmutableObject(true)]
-    public class UserConnected
+    public class UserDisconecting
     {
-        public UserConnected(int id, string userName, DateTime timestamp)
+        public UserDisconecting(int userId, string userName)
         {
-            UserId = id;
+            UserId = userId;
             UserName = userName;
-            Timestamp = timestamp;
         }
 
 
         public int UserId { get; }
         public string UserName { get; }
-        public DateTime Timestamp { get; }
     }
 }

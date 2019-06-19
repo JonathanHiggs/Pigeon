@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ExampleContracts
+namespace ExampleContracts.Requests
 {
     [Serializable]
     [ImmutableObject(true)]
-    public class Connect
+    public class UserConnecting
     {
-        public Connect(string userName) => UserName = userName;
+        public UserConnecting(string userName) => UserName = userName;
 
 
         public string UserName { get; }

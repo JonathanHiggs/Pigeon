@@ -1,26 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ExampleContracts
+namespace ExampleContracts.Topics
 {
     [Serializable]
     [ImmutableObject(true)]
-    public class Message
+    public class UserConnected
     {
-        public Message(int userId, string userName, int messageId, string content, DateTime timestamp)
+        public UserConnected(int userId, string userName, DateTime timestamp)
         {
             UserId = userId;
             UserName = userName;
-            MessageId = messageId;
-            Content = content;
             Timestamp = timestamp;
         }
 
 
         public int UserId { get; }
         public string UserName { get; }
-        public int MessageId { get; }
-        public string Content { get; }
         public DateTime Timestamp { get; }
     }
 }
