@@ -99,6 +99,8 @@
     <Compile Include="TestFixtures\SubRequest.cs" />
     <Compile Include="TestFixtures\SubTopic.cs" />
     <Compile Include="TestFixtures\Topic.cs" />
+    <Compile Include="TestFixtures\UnannotatedRequest.cs" />
+    <Compile Include="TestFixtures\UnannotatedTopic.cs" />
     <Compile Include="TestFixtures\UnserializableRequest.cs" />
     <Compile Include="TestFixtures\UnserializableResponse.cs" />
     <Compile Include="TestFixtures\UnserializableTopic.cs" />
@@ -112,6 +114,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Pigeon.Annotations\Pigeon.Annotations.csproj">
+      <Project>{E79A60C3-0687-49CE-97D7-95BD0033E498}</Project>
+      <Name>Pigeon.Annotations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pigeon\Pigeon.csproj">
       <Project>{c2a46fa7-da9e-4f04-8d00-58cdd401d5f2}</Project>
       <Name>Pigeon</Name>

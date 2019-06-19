@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Moq;
 
 using NUnit.Framework;
-
+using Pigeon.Diagnostics;
 using Pigeon.Monitors;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Senders;
 using Pigeon.Subscribers;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests
 {
@@ -32,6 +33,8 @@ namespace Pigeon.UnitTests
         private ISubscriberCache subscriberCache;
         
         private readonly string name = "some name";
+        private readonly Request request = new Request();
+        private readonly Topic topic = new Topic();
 
 
         [SetUp]
@@ -57,6 +60,7 @@ namespace Pigeon.UnitTests
 
 
         #region Constructor
+
         [Test]
         public void Router_WithNullName_ThrowsArgumentNullException()
         {
@@ -121,10 +125,12 @@ namespace Pigeon.UnitTests
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
         }
+        
         #endregion
 
 
         #region Info
+
         [Test]
         public void Info_WithName_RetunsSameName()
         {
@@ -179,16 +185,18 @@ namespace Pigeon.UnitTests
             // Assert
             Assert.That(running, Is.False);
         }
+        
         #endregion
 
 
         #region Publish
+
         [Test]
         public void Publish_CallsPublisherCache()
         {
             // Arrange
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
-            var message = "something";
+            var message = new Topic();
 
             // Act
             router.Publish(message);
@@ -196,26 +204,43 @@ namespace Pigeon.UnitTests
             // Assert
             mockPublisherCache.Verify(m => m.Publish(It.IsIn(message)), Times.Once);
         }
+        
+
+        [Test]
+        public void Publish_WithUnannotatedTopic_ThrowsMissingAttributeException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var message = new UnannotatedTopic();
+
+            // Act
+            void Publish() => router.Publish(message);
+
+            // Assert
+            Assert.That(Publish, Throws.TypeOf<MissingAttributeException>());
+        }
+
         #endregion
 
 
         #region Send
+
         [Test]
         public async Task Send_WithNoTimeout_CallsSenderCache()
         {
             // Arrange
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             mockSenderCache
-                .Setup(m => m.Send<string, string>(It.IsAny<string>()))
-                .ReturnsAsync("something");
-            
+                .Setup(m => m.Send<Request, Response>(It.IsAny<Request>()))
+                .ReturnsAsync(new Response());
+
             // Act
-            var response = await router.Send<string, string>("something");
+            var response = await router.Send<Request, Response>(request);
 
             // Assert
             mockSenderCache
                 .Verify(
-                    m => m.Send<string, string>(It.IsAny<string>()), 
+                    m => m.Send<Request, Response>(It.IsIn(request)),
                     Times.Once);
         }
 
@@ -226,22 +251,82 @@ namespace Pigeon.UnitTests
             // Arrange
             var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
             mockSenderCache
-                .Setup(m => m.Send<string, string>(It.IsAny<string>()))
-                .ReturnsAsync("something");
-            
+                .Setup(m => m.Send<Request, Response>(It.IsAny<Request>()))
+                .ReturnsAsync(new Response());
+
             // Act
-            var response = await router.Send<string, string>("something", TimeSpan.FromMilliseconds(10));
+            var response = await router.Send<Request, Response>(request, TimeSpan.FromMilliseconds(10));
 
             // Assert
             mockSenderCache
                 .Verify(
-                    m => m.Send<string, string>(It.IsAny<string>(), It.IsAny<TimeSpan>()), 
+                    m => m.Send<Request, Response>(It.IsIn(request), It.IsAny<TimeSpan>()), 
                     Times.Once);
         }
+        
+
+        [Test]
+        public void Send_WithUnannotatedRequest_ThrowsMissingAttributeException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var request = new UnannotatedRequest();
+
+            // Act
+            async Task Send() => await router.Send<UnannotatedRequest, Response>(request);
+
+            // Assert
+            Assert.ThrowsAsync<MissingAttributeException>(async () => await Send());
+        }
+        
+
+        [Test]
+        public void Send_WithUnannotatedRequest_AndTimeout_ThrowsMissingAttributeException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var request = new UnannotatedRequest();
+
+            // Act
+            async Task Send() => await router.Send<UnannotatedRequest, Response>(request, TimeSpan.FromMilliseconds(10));
+
+            // Assert
+            Assert.ThrowsAsync<MissingAttributeException>(async () => await Send());
+        }
+
+
+        [Test]
+        public void Send_WithMismatchingResponse_ThrowsMismatchingResponseException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+
+            // Act
+            async Task Send() => await router.Send<Request, string>(request);
+
+            // Assert
+            Assert.ThrowsAsync<MismatchingResponseTypeException>(async () => await Send());
+        }
+
+
+        [Test]
+        public void Send_WithMismatchingResponse_AndTimeout_ThrowsMismatchingResponseException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+
+            // Act
+            async Task Send() => await router.Send<Request, string>(request, TimeSpan.FromMilliseconds(10));
+
+            // Assert
+            Assert.ThrowsAsync<MismatchingResponseTypeException>(async () => await Send());
+        }
+
         #endregion
 
 
         #region Start
+
         [Test]
         public void Start_BeforeStarted_StartsMonitors()
         {
@@ -300,10 +385,12 @@ namespace Pigeon.UnitTests
             // Assert
             Assert.That(router.Info.StartedTimestamp.Value, Is.EqualTo(startedTimestamp));
         }
+        
         #endregion
 
 
         #region Stop
+
         [Test]
         public void Stop_BeforeStarted_DoesNothing()
         {
@@ -377,6 +464,63 @@ namespace Pigeon.UnitTests
             // Assert
             Assert.That(router.Info.StoppedTimestamp.HasValue, Is.True);
         }
+
+        #endregion
+
+
+        #region Subscribe
+
+        [Test]
+        public void Subscribe_CallsSubscriberCache()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+
+            // Act
+            var subscription = router.Subscribe<Topic>();
+
+            // Assert
+            mockSubscriberCache
+                .Verify(
+                    m => m.Subscribe<Topic>(),
+                    Times.Once);
+        }
+
+
+        [Test]
+        public void Subscribe_WithUnannotatedTopic_ThrowsMissingAttributeException()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+
+            // Act
+            void Subscribe() => router.Subscribe<UnannotatedTopic>();
+
+            // Assert
+            Assert.That(Subscribe, Throws.TypeOf<MissingAttributeException>());
+        }
+
+        #endregion
+
+
+        #region Unsubscribe
+
+        [Test]
+        public void Unsubscribe_CallsSubscriberCache()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+
+            // Act
+            router.Unsubscribe<Topic>();
+
+            // Assert
+            mockSubscriberCache
+                .Verify(
+                    m => m.Unsubscribe<Topic>(),
+                    Times.Once);
+        }
+
         #endregion
     }
 }
