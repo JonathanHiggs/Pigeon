@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Windows;
 
 using ExampleContracts;
@@ -15,7 +15,7 @@ namespace ExampleClient
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private UnityContainer container;
         private Router router;
@@ -60,6 +60,12 @@ namespace ExampleClient
         private async void InputButton_Click(object sender, RoutedEventArgs e)
         {
             await viewModel.PostMessage();
+        }
+
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            router.Stop();
         }
     }
 }
