@@ -47,7 +47,7 @@ namespace Pigeon.Senders
         public ISender SenderFor<TRequest>()
         {
             if (!requestRouter.RoutingFor<TRequest>(out var senderRouting))
-                throw new KeyNotFoundException($"No mapping found for {typeof(TRequest).Name}");
+                throw new MissingSenderRouting(typeof(TRequest));
 
             if (!senders.TryGetValue(senderRouting, out var sender))
             {
