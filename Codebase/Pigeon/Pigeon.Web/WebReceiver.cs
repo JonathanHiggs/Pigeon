@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Pigeon.Addresses;
+using Pigeon.Receivers;
 
 namespace Pigeon.Web
 {
@@ -14,14 +16,30 @@ namespace Pigeon.Web
     /// </summary>
     public class WebReceiver : IWebReceiver
     {
+        private readonly IWebMessageFactory messageFactory;
+
         private readonly List<IAddress> addresses = new List<IAddress>();
         private readonly ManualResetEvent requestWait = new ManualResetEvent(false);
-        private HttpListener listener;
-        private WebTaskHandler handler;
-        private Thread thread;
-        private bool running = false;
-        private object lockObj = new object();
 
+        private HttpListener listener;
+        private Thread thread;
+
+        private readonly object lockObj = new object();
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="WebReceiver"/>
+        /// </summary>
+        /// <param name="listener">Inner <see cref="HttpListener"/> that creates a socket and listens for requests</param>
+        /// <param name="handler"><see cref="RequestTaskHandler"/> is called when an incoming message is received</param>
+        public WebReceiver(HttpListener listener, IWebMessageFactory messageFactory, AsyncRequestTaskHandler handler)
+        {
+            this.listener = listener ?? throw new ArgumentNullException(nameof(listener));
+            this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
+
+            Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+        }
+        
 
         /// Gets an enumerable of <see cref="IAddress"/> that the receiver is listening to
         /// </summary>
@@ -31,26 +49,14 @@ namespace Pigeon.Web
         /// <summary>
         /// Gets a bool that returns true when the <see cref="IConnection"/> is connected; otherwise false
         /// </summary>
-        public bool IsConnected => running;
+        public bool IsConnected { get; private set; } = false;
 
 
         /// <summary>
-        /// Gets the <see cref="WebTaskHandler"/> delegate that the <see cref="WebReceiver"/> calls upon receiving an incoming
-        /// http request
+        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
+        /// an incoming message is received
         /// </summary>
-        public WebTaskHandler Handler => handler;
-
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="WebReceiver"/>
-        /// </summary>
-        /// <param name="listener">Inner <see cref="HttpListener"/> that creates a socket and listens for requests</param>
-        /// <param name="handler"><see cref="WebTaskHandler"/> delegate that is called when an incoming http request is received</param>
-        public WebReceiver(HttpListener listener, WebTaskHandler handler)
-        {
-            this.listener = listener ?? throw new ArgumentNullException(nameof(listener));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
-        }
+        public AsyncRequestTaskHandler Handler { get; }
 
 
         /// <summary>
@@ -95,17 +101,17 @@ namespace Pigeon.Web
         {
             lock (lockObj)
             {
-                if (running)
+                if (IsConnected)
                     return;
 
                 listener.Start();
 
                 thread = new Thread(new ThreadStart(Run));
-                thread.Name = "WebReceiver";
+                thread.Name = $"WebReceiver-{addresses.First().ToString()}";
                 thread.IsBackground = false;
                 thread.Start();
 
-                running = true;
+                IsConnected = true;
             }
         }
 
@@ -125,9 +131,7 @@ namespace Pigeon.Web
 
                     requestWait.Set(); // Allow outer loop to continue and create new 
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    Task.Run(async () => await handler(this, context)); // Delegate generating response to the handler
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    await OnRequestReceived(context);
                 });
 
                 requestWait.WaitOne(); // Wait until a request is received before spawning a new task listening for a request
@@ -142,7 +146,7 @@ namespace Pigeon.Web
         {
             lock (lockObj)
             {
-                if (!running)
+                if (!IsConnected)
                     return;
 
                 listener.Stop();
@@ -150,8 +154,22 @@ namespace Pigeon.Web
                 requestWait.Set();
                 thread.Join(TimeSpan.FromMinutes(1));
 
-                running = false;
+                IsConnected = false;
             }
+        }
+
+
+        private async Task OnRequestReceived(HttpListenerContext context)
+        {
+            var request = messageFactory.ExtractRequestMessage(context.Request);
+
+            var requestTask = new AsyncRequestTask(request, async (response) =>
+            {
+                await messageFactory.SetResponseMessage(context.Response, response);
+                context.Response.Close();
+            });
+
+            await Handler(this, requestTask);
         }
     }
 }

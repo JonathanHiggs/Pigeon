@@ -8,10 +8,6 @@ namespace Pigeon.Web
     /// </summary>
     public interface IWebReceiver : IReceiver
     {
-        /// <summary>
-        /// Gets the <see cref="WebTaskHandler"/> delegate that the <see cref="IWebReceiver"/> calls upon receiving an incoming
-        /// http request
-        /// </summary>
-        WebTaskHandler Handler { get; }
+        AsyncRequestTaskHandler Handler { get; }
     }
 }
