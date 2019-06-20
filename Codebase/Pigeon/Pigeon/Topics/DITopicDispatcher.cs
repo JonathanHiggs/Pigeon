@@ -19,6 +19,7 @@ namespace Pigeon.Topics
         public void Register<TTopic, THandler>() where THandler : ITopicHandler<TTopic>
         {
             Validate<TTopic>();
+
             if (!container.IsRegistered<THandler>())
                 throw new NotRegisteredException(typeof(THandler));
 

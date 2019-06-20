@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Pigeon.Annotations;
 using Pigeon.Diagnostics;
 
 namespace Pigeon.Topics
@@ -73,6 +74,9 @@ namespace Pigeon.Topics
         {
             if (typeof(TTopic).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TTopic));
+
+            if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
+                throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
         }
     }
 }
