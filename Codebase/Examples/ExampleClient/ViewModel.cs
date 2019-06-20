@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -130,7 +129,7 @@ namespace ExampleClient
                 return;
 
             var disconnect = new UserDisconecting(UserId, UserName);
-            var response = await router.Send<UserDisconecting, UserDisconnect>(disconnect);
+            var response = await router.Send<UserDisconecting, UserDisconnect>(disconnect, TimeSpan.FromSeconds(3));
 
             if (response.Success)
             {
