@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 
+using ExampleContracts.Models;
+
 using Pigeon.Annotations;
 
 namespace ExampleContracts.Topics
@@ -10,16 +12,10 @@ namespace ExampleContracts.Topics
     [Topic]
     public class UserConnected
     {
-        public UserConnected(int userId, string userName, DateTime timestamp)
-        {
-            UserId = userId;
-            UserName = userName;
-            Timestamp = timestamp;
-        }
+        public UserConnected(User user) =>
+            User = user;
 
 
-        public int UserId { get; }
-        public string UserName { get; }
-        public DateTime Timestamp { get; }
+        public User User { get; }
     }
 }

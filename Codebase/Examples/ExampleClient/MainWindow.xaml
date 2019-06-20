@@ -30,7 +30,7 @@
 
             <TextBox Grid.Column="1"
                        Margin="0,0,10,0"
-                     Text="{Binding UserName}" />
+                     Text="{Binding User.Name}" />
             
             <Button Grid.Column="2"
                     Content="Connect"
@@ -67,7 +67,7 @@
                             <TextBlock Grid.Row="0"
                                        Grid.Column="0"
                                        Margin="0,0,20,5"
-                                       Text="{Binding UserName}"/>
+                                       Text="{Binding User.Name}"/>
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
@@ -111,7 +111,7 @@
 
                                 <TextBlock Grid.Column="0"
                                            Margin="0,0,20,0"
-                                           Text="{Binding UserName}" />
+                                           Text="{Binding Name}" />
 
                                 <TextBlock Grid.Column="1"
                                            FontSize="10"
@@ -141,9 +141,11 @@
                      Margin="0,0,10,0"
                      TextWrapping="Wrap"
                      AcceptsReturn="True"
-                     Text="{Binding InputContent}"/>
+                     IsEnabled="{Binding Connected}"
+                     Text="{Binding Input}"/>
 
             <Button Grid.Column="2"
+                    IsEnabled="{Binding Connected}"
                     Content="Send"
                     Click="InputButton_Click" />
 

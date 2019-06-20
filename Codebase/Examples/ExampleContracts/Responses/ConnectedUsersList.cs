@@ -8,9 +8,9 @@ namespace ExampleContracts.Responses
 {
     [Serializable]
     [ImmutableObject(true)]
-    public class ConnectedUserList
+    public class ConnectedUsersList
     {
-        public ConnectedUserList(List<User> users)
+        public ConnectedUsersList(List<User> users)
         {
             Users = users;
         }

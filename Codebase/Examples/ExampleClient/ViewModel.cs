@@ -7,41 +7,41 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-using ExampleContracts.Models;
-using ExampleContracts.Requests;
-using ExampleContracts.Responses;
-using ExampleContracts.Topics;
-
-using Pigeon;
-using Pigeon.Topics;
+using ExampleClient.Models;
 
 namespace ExampleClient
 {
-    public class ViewModel : INotifyPropertyChanged, ITopicHandler<Message>, ITopicHandler<UserConnected>, ITopicHandler<UserDisconnected>
+    public class ViewModel : INotifyPropertyChanged
     {
-        private readonly IRouter<IRouterInfo> router;
-        private readonly IDITopicDispatcher topicDispatcher;
-
+        private readonly MessagingService messagingService;
+        
         private readonly object messagesLock = new object();
         private readonly object usersLock = new object();
-        private readonly object messageIdLock = new object();
 
-        private int userId;
-        private string userName;
         private bool connected;
-        private string inputContent;
-        private bool sending;
-
-        private int messageId = 1;
-        private IDisposable messageSubscription;
-        private IDisposable userConnectedSubscription;
-        private IDisposable userDisconnectedSubscription;
+        private string input;
+        private User user = new User(-1, string.Empty, null, null);
 
 
-        public ViewModel(IRouter<IRouterInfo> router, IDITopicDispatcher topicDispatcher)
+        public ViewModel(MessagingService messagingService)
         {
-            this.router = router ?? throw new ArgumentNullException(nameof(router));
-            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
+            this.messagingService = messagingService ?? throw new ArgumentNullException(nameof(messagingService));
+
+            messagingService.OnMessagePosted = message => Messages.Add(message);
+
+            messagingService.OnUserConnected = user =>
+            {
+                if (!Users.Contains(user, User.Comparer.Default))
+                    Users.Add(user);
+            };
+
+            messagingService.OnUserDisconnected = user =>
+            {
+                var listUser = Users.SingleOrDefault(u => User.Comparer.Default.Equals(user, u));
+                if (listUser is null)
+                    return;
+                Users.Remove(listUser);
+            };
 
             BindingOperations.EnableCollectionSynchronization(Messages, messagesLock);
             BindingOperations.EnableCollectionSynchronization(Users, usersLock);
@@ -51,20 +51,6 @@ namespace ExampleClient
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        public int UserId
-        {
-            get => userId;
-            set => Set(ref userId, value);
-        }
-
-
-        public string UserName
-        {
-            get => userName;
-            set => Set(ref userName, value);
-        }
-
-
         public bool Connected
         {
             get => connected;
@@ -72,21 +58,21 @@ namespace ExampleClient
         }
 
 
-        public string InputContent
+        public string Input
         {
-            get => inputContent;
-            set => Set(ref inputContent, value);
+            get => input;
+            set => Set(ref input, value);
+        }
+        
+        
+        public User User
+        {
+            get => user;
+            set => Set(ref user, value);
         }
 
 
-        public bool Sending
-        {
-            get => sending;
-            set => Set(ref sending, value);
-        }
-
-
-        public ObservableCollection<ReceivedMessage> Messages { get; } = new ObservableCollection<ReceivedMessage>();
+        public ObservableCollection<Message> Messages { get; } = new ObservableCollection<Message>();
 
 
         public ObservableCollection<User> Users { get; } = new ObservableCollection<User>();
@@ -94,122 +80,69 @@ namespace ExampleClient
 
         public async Task Connect()
         {
-            if (Connected)
-                return;
-
-            var connected = new UserConnecting(UserName);
-
-            var response = await router.Send<UserConnecting, UserConnect>(connected);
-
-            if (response.Success)
+            try
             {
-                UserId = response.UserId;
-                Connected = true;
+                if (Connected)
+                    return;
 
-                // This is a bit messy... need to clean up how the subscriptions work
-                messageSubscription = router.Subscribe<Message>();
-                topicDispatcher.Register<Message, ViewModel>();
-                userConnectedSubscription = router.Subscribe<UserConnected>();
-                topicDispatcher.Register<UserConnected, ViewModel>();
-                userDisconnectedSubscription = router.Subscribe<UserDisconnected>();
-                topicDispatcher.Register<UserDisconnected, ViewModel>();
-
+                User = await messagingService.Connect(user.Name);
                 await UpdateUserList();
+                messagingService.SubscribeToTopics();
+
+                Connected = true;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show($"Failed to connect\n\n{response.Reason}");
+                MessageBox.Show($"Failed to connect\n\n{ex.Message}");
             }
         }
 
 
         public async Task Disconnect()
         {
-            if (!Connected)
-                return;
-
-            var disconnect = new UserDisconecting(UserId, UserName);
-            var response = await router.Send<UserDisconecting, UserDisconnect>(disconnect, TimeSpan.FromSeconds(3));
-
-            if (response.Success)
+            try
             {
-                UserId = -1;
-                Connected = false;
-                messageSubscription?.Dispose();
-                messageSubscription = null;
+                if (!Connected)
+                    return;
+
+                User = await messagingService.Disconnect();
+                messagingService.UnsubscribeFromTopics();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show($"Failed to disconnect\n\n{response.Reason}");
+                MessageBox.Show($"Failed to disconnect\n\n{ex.Message}");
             }
         }
 
 
         public async Task UpdateUserList()
         {
-            var request = new ConnectedUsers();
-            var response = await router.Send<ConnectedUsers, ConnectedUserList>(request);
+            try
+            {
+                var users = await messagingService.GetAllUsers();
 
-            var users = response
-                .Users
-                .Select(u => new User(u.UserId, u.UserName, u.ConnectedTimestamp));
-
-            foreach (var user in users)
-                if (!Users.Any(u => u.UserId == user.UserId))
-                    Users.Add(user);
+                foreach (var user in users)
+                    if (!Users.Any(u => u.Id == user.Id))
+                        Users.Add(user);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to retrieve users list\n\n{ex.Message}");
+            }
         }
 
 
         public async Task PostMessage()
         {
-            Sending = true;
-
-            int newMessageId;
-            lock (messageIdLock)
+            try
             {
-                newMessageId = messageId++;
+                await messagingService.PostMessage(new Message(User, Input, DateTime.UtcNow));
+                Input = "";
             }
-
-            var message = new Message(UserId, UserName, newMessageId, InputContent, DateTime.UtcNow);
-
-            var response = await router.Send<Message, MessagePosted>(message);
-
-            if (response.Success)
+            catch (Exception ex)
             {
-                InputContent = "";
+                MessageBox.Show($"Unable to send message\n\n{ex.Message}");
             }
-            else
-            {
-                MessageBox.Show($"Unable to send message\n\n{response.Reason}");
-            }
-
-            Sending = false;
-        }
-
-
-        public void Handle(Message message)
-        {
-            Messages.Add(new ReceivedMessage(message.UserId, message.UserName, message.Content, message.Timestamp));
-        }
-
-
-        public void Handle(UserConnected message)
-        {
-            if (Users.Any(u => u.UserId == message.UserId))
-                return;
-
-            Users.Add(new User(message.UserId, message.UserName, message.Timestamp));
-        }
-
-
-        public void Handle(UserDisconnected message)
-        {
-            var user = Users.SingleOrDefault(u => u.UserId == message.UserId);
-
-            if (user is null)
-                return;
-
-            Users.Remove(user);
         }
 
 

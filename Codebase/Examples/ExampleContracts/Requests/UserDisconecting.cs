@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
+using ExampleContracts.Models;
 using ExampleContracts.Responses;
 
 using Pigeon.Annotations;
@@ -9,17 +10,13 @@ namespace ExampleContracts.Requests
 {
     [Serializable]
     [ImmutableObject(true)]
-    [Request(ResponseType = typeof(UserDisconnect))]
+    [Request(ResponseType = typeof(Response<User>))]
     public class UserDisconecting
     {
-        public UserDisconecting(int userId, string userName)
-        {
-            UserId = userId;
-            UserName = userName;
-        }
+        public UserDisconecting(User user) =>
+            User = user;
 
 
-        public int UserId { get; }
-        public string UserName { get; }
+        public User User { get; }
     }
 }

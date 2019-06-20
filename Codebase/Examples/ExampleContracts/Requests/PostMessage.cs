@@ -10,13 +10,13 @@ namespace ExampleContracts.Requests
 {
     [Serializable]
     [ImmutableObject(true)]
-    [Request(ResponseType = typeof(Response<User>))]
-    public class UserConnecting
+    [Request(ResponseType = typeof(Response<Message>))]
+    public class PostMessage
     {
-        public UserConnecting(User user) =>
-            User = user;
+        public PostMessage(Message message) =>
+            Message = message;
 
 
-        public User User { get; }
+        public Message Message { get; }
     }
 }

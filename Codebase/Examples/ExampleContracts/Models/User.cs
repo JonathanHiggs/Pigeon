@@ -7,26 +7,26 @@ namespace ExampleContracts.Models
     [ImmutableObject(true)]
     public class User
     {
-        public User(int userId, string userName, DateTime connectedTimestamp)
+        public User(int id, string name, DateTime? connectedTimestamp)
         {
-            UserId = userId;
-            UserName = userName;
+            Id = id;
+            Name = name;
             ConnectedTimestamp = connectedTimestamp;
         }
 
 
-        public User(int userId, string userName, DateTime connectedTimestamp, DateTime? disconnectedTimestamp)
+        public User(int id, string name, DateTime? connectedTimestamp, DateTime? disconnectedTimestamp)
         {
-            UserId = userId;
-            UserName = userName;
+            Id = id;
+            Name = name;
             ConnectedTimestamp = connectedTimestamp;
             DisconnectedTimestamp = disconnectedTimestamp;
         }
 
 
-        public int UserId { get; }
-        public string UserName { get; }
-        public DateTime ConnectedTimestamp { get; }
+        public int Id { get; }
+        public string Name { get; }
+        public DateTime? ConnectedTimestamp { get; }
         public DateTime? DisconnectedTimestamp { get; } = null;
     }
 }

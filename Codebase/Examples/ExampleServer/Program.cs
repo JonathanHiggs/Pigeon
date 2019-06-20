@@ -1,8 +1,8 @@
 ﻿using System;
 
+using ExampleContracts.Models;
 using ExampleContracts.Requests;
 using ExampleContracts.Responses;
-using ExampleContracts.Topics;
 
 using Pigeon.Addresses;
 using Pigeon.NetMQ;
@@ -18,7 +18,7 @@ namespace ExampleServer
         {
             var container = new UnityContainer();
 
-            container.RegisterSingleton<Server>();
+            container.RegisterSingleton<UserMessageService>();
 
             var router =
                 UnityBuilder
@@ -31,16 +31,16 @@ namespace ExampleServer
                     })
                     .WithHandlers(config =>
                         config
-                            .WithRequestHandler<UserConnecting, UserConnect, Server>()
-                            .WithRequestHandler<UserDisconecting, UserDisconnect, Server>()
-                            .WithRequestHandler<ConnectedUsers, ConnectedUserList, Server>()
-                            .WithRequestHandler<ExampleContracts.Models.Message, MessagePosted, Server>())
+                            .WithRequestHandler<UserConnecting, Response<User>, UserMessageService>()
+                            .WithRequestHandler<UserDisconecting, Response<User>, UserMessageService>()
+                            .WithRequestHandler<ConnectedUsers, ConnectedUsersList, UserMessageService>()
+                            .WithRequestHandler<PostMessage, Response<Message>, UserMessageService>())
                     .BuildAndStart();
 
             Console.Title = "Chat Server";
             Console.WriteLine("Press enter to stop server");
 
-            var server = container.Resolve<Server>();
+            var server = container.Resolve<UserMessageService>();
             var running = true;
 
             while (running)

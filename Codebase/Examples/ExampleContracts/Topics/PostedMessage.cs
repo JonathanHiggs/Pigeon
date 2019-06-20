@@ -10,12 +10,12 @@ namespace ExampleContracts.Topics
     [Serializable]
     [ImmutableObject(true)]
     [Topic]
-    public class UserDisconnected
+    public class PostedMessage
     {
-        public UserDisconnected(User user) =>
-            User = user;
+        public PostedMessage(Message message) =>
+            Message = message;
 
 
-        public User User { get; }
+        public Message Message { get; }
     }
 }

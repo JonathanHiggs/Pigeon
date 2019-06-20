@@ -1,31 +1,21 @@
 ﻿using System;
 using System.ComponentModel;
 
-using ExampleContracts.Topics;
-
-using Pigeon.Annotations;
-
 namespace ExampleContracts.Models
 {
     [Serializable]
     [ImmutableObject(true)]
-    [Request(ResponseType = typeof(MessagePosted))]
-    [Topic]
     public class Message
     {
-        public Message(int userId, string userName, int messageId, string content, DateTime timestamp)
+        public Message(User user, string content, DateTime timestamp)
         {
-            UserId = userId;
-            UserName = userName;
-            MessageId = messageId;
+            User = user;
             Content = content;
             Timestamp = timestamp;
         }
 
 
-        public int UserId { get; }
-        public string UserName { get; }
-        public int MessageId { get; }
+        public User User { get; }
         public string Content { get; }
         public DateTime Timestamp { get; }
     }

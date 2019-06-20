@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
+
 using ExampleContracts.Models;
 using ExampleContracts.Requests;
 using ExampleContracts.Topics;
@@ -19,36 +18,42 @@ namespace ExampleClient
         public static void Main(string[] args)
         {
             var container = new UnityContainer();
-            
+
             container
                 .RegisterSingleton<UnityContainer>()
                 .RegisterSingleton<App>()
-                .RegisterSingleton<MainWindow>()
-                .RegisterSingleton<ViewModel>();
+                .RegisterSingleton<MessagingService>();
 
             var router =
                 UnityBuilder
                     .FromContainer(container)
                     .WithName("ExampleClient")
-                    .WithTransport<NetMQTransport>(t =>
-                    {
+                    .WithTransport<NetMQTransport>(t => {
                         t.WithSender(TcpAddress.Localhost(5555))
                             .For<UserConnecting>()
                             .For<UserDisconecting>()
                             .For<ConnectedUsers>()
-                            .For<Message>();
+                            .For<PostMessage>();
 
                         t.WithSubscriber(TcpAddress.Localhost(5556))
                             .Handles<UserConnected>()
                             .Handles<UserDisconnected>()
-                            .Handles<Message>();
+                            .Handles<PostedMessage>();
+                    })
+                    .WithHandlers(c => {
+                        c.WithTopicHandler<UserConnected, MessagingService>()
+                            .WithTopicHandler<UserDisconnected, MessagingService>()
+                            .WithTopicHandler<PostedMessage, MessagingService>();
                     })
                     .BuildAndStart();
-
-            var app = container.Resolve<App>();
-            app.Container = container;
-            app.InitializeComponent();
-            app.Run();
+            
+            using (container.Resolve<MessagingService>())
+            {
+                var app = container.Resolve<App>();
+                app.Container = container;
+                app.InitializeComponent();
+                app.Run();
+            }
 
             router.Stop();
         }

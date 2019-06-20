@@ -9,7 +9,7 @@ namespace ExampleContracts.Requests
 {
     [Serializable]
     [ImmutableObject(true)]
-    [Request(ResponseType = typeof(ConnectedUserList))]
+    [Request(ResponseType = typeof(ConnectedUsersList))]
     public class ConnectedUsers
     { }
 }
