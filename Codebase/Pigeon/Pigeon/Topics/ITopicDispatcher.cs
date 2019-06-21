@@ -11,7 +11,7 @@ namespace Pigeon.Topics
         /// Dispatches the handling of a published message
         /// </summary>
         /// <param name="message">The message published by a remote source to be handled</param>
-        Task Handle(object message);
+        void Handle(object message);
 
 
         /// <summary>

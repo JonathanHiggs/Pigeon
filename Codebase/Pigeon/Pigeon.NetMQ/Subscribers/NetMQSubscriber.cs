@@ -18,13 +18,12 @@ namespace Pigeon.NetMQ.Subscribers
     public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber, IDisposable
     {
         private SubscriberSocket socket;
-        private TopicEventHandler handler;
 
 
         /// <summary>
         /// Raised when an incoming message is received
         /// </summary>
-        public TopicEventHandler Handler => handler;
+        public TopicEventHandler Handler { get; private set; }
 
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace Pigeon.NetMQ.Subscribers
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
             socket.ReceiveReady += OnMessageReceived;
         }
@@ -116,7 +115,7 @@ namespace Pigeon.NetMQ.Subscribers
                     socket.ReceiveReady -= OnMessageReceived;
                     socket.Dispose();
                     socket = null;
-                    handler = null;
+                    Handler = null;
                 }
                 
                 disposedValue = true;

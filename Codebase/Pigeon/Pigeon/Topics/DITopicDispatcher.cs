@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 using Pigeon.Diagnostics;
 
@@ -23,7 +22,7 @@ namespace Pigeon.Topics
             if (!container.IsRegistered<THandler>())
                 throw new NotRegisteredException(typeof(THandler));
 
-            handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => container.Resolve<THandler>().Handle((TTopic)eventMessage)));
+            handlers.Add(typeof(TTopic), eventMessage => container.Resolve<THandler>().Handle((TTopic)eventMessage));
         }
     }
 }

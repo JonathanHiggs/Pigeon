@@ -21,16 +21,16 @@ namespace Pigeon.Topics
         /// Finds and invokes a registered handler for the topic message
         /// </summary>
         /// <param name="message">Topic message</param>
-        public Task Handle(object message)
+        public void Handle(object message)
         {
             if (message is null)
-                return Task.CompletedTask;
+                return;
 
             var eventType = message.GetType();
             if (!handlers.TryGetValue(eventType, out var handler))
-                return Task.CompletedTask;
+                return; // ToDo: add some logging?
 
-            return handler(message);
+            handler(message);
         }
 
 
@@ -42,7 +42,7 @@ namespace Pigeon.Topics
         public void Register<TTopic>(ITopicHandler<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler.Handle((TTopic)eventMessage)));
+            handlers.Add(typeof(TTopic), eventMessage => handler.Handle((TTopic)eventMessage));
         }
 
 
@@ -54,7 +54,7 @@ namespace Pigeon.Topics
         public void Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => Task.Run(() => handler((TTopic)eventMessage)));
+            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
         }
 
 
@@ -66,7 +66,7 @@ namespace Pigeon.Topics
         public void RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
+            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage).GetAwaiter().GetResult());
         }
 
 

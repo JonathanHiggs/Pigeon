@@ -151,7 +151,7 @@ namespace Pigeon.UnitTests.Topics
             var dispatcher = new DITopicDispatcher(container);
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(null);
+            TestDelegate handle = () => dispatcher.Handle(null);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -165,7 +165,7 @@ namespace Pigeon.UnitTests.Topics
             var dispatcher = new DITopicDispatcher(container);
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(topic);
+            TestDelegate handle = () => dispatcher.Handle(topic);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -173,14 +173,14 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
-        public async Task Handle_WithHandlerRegistered_CallsHandler()
+        public void Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
             var dispatcher = new DITopicDispatcher(container);
             dispatcher.Register(handler);
 
             // Act
-            await dispatcher.Handle(topic);
+            dispatcher.Handle(topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -188,7 +188,7 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
-        public async Task Handle_WithHandlerDelegateRegistered_CallsHandler()
+        public void Handle_WithHandlerDelegateRegistered_CallsHandler()
         {
             // Arrange
             var handled = false;
@@ -196,7 +196,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.RegisterAsync<Topic>(e => Task.Run(() => { handled = true; }));
 
             // Act
-            await dispatcher.Handle(topic);
+            dispatcher.Handle(topic);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -204,7 +204,7 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
-        public async Task Handle_WithBaseClassHandlerRegistered_DoesNothing()
+        public void Handle_WithBaseClassHandlerRegistered_DoesNothing()
         {
             // Arrange
             var dispatcher = new DITopicDispatcher(container);
@@ -212,7 +212,7 @@ namespace Pigeon.UnitTests.Topics
             var topic = new SubTopic();
 
             // Act
-            await dispatcher.Handle(topic);
+            dispatcher.Handle(topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsAny<Topic>()), Times.Never);
@@ -220,7 +220,7 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
-        public async Task Handle_WithContainerResolvedHandler_HandlesTopic()
+        public void Handle_WithContainerResolvedHandler_HandlesTopic()
         {
             // Arrange
             var dispatcher = new DITopicDispatcher(container);
@@ -229,7 +229,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register<Topic, ITopicHandler<Topic>>();
 
             // Act
-            await dispatcher.Handle(topic);
+            dispatcher.Handle(topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -237,7 +237,7 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
-        public async Task Handle_WithContainerResolvedHandler_ResolvesFromContainer()
+        public void Handle_WithContainerResolvedHandler_ResolvesFromContainer()
         {
             // Arrange
             var dispatcher = new DITopicDispatcher(container);
@@ -246,7 +246,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register<Topic, ITopicHandler<Topic>>();
 
             // Act
-            await dispatcher.Handle(topic);
+            dispatcher.Handle(topic);
 
             // Assert
             mockContainer.Verify(m => m.Resolve<ITopicHandler<Topic>>(), Times.Once);

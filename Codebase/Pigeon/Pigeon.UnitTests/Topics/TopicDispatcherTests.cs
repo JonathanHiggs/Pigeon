@@ -88,7 +88,7 @@ namespace Pigeon.UnitTests.Subscripions
             var dispatcher = new TopicDispatcher();
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(null);
+            TestDelegate handle = () => dispatcher.Handle(null);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -103,7 +103,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(message);
+            TestDelegate handle = () => dispatcher.Handle(message);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -111,7 +111,7 @@ namespace Pigeon.UnitTests.Subscripions
 
 
         [Test]
-        public async Task Handle_WithHandlerRegistered_CallsHandler()
+        public void Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
             var dispatcher = new TopicDispatcher();
@@ -119,7 +119,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            await dispatcher.Handle(message);
+            dispatcher.Handle(message);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(message)), Times.Once);
@@ -127,7 +127,7 @@ namespace Pigeon.UnitTests.Subscripions
 
 
         [Test]
-        public async Task Handle_WithHandlerDelegateRegistered_CallsHandler()
+        public void Handle_WithHandlerDelegateRegistered_CallsHandler()
         {
             // Arrange
             var handled = false;
@@ -136,7 +136,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            await dispatcher.Handle(message);
+            dispatcher.Handle(message);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -144,7 +144,7 @@ namespace Pigeon.UnitTests.Subscripions
 
 
         [Test]
-        public async Task Handle_WithBaseClassHandlerRegistered_DoesNothing()
+        public void Handle_WithBaseClassHandlerRegistered_DoesNothing()
         {
             // Arrange
             var dispatcher = new TopicDispatcher();
@@ -152,7 +152,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new SubTopic();
 
             // Act
-            await dispatcher.Handle(message);
+            dispatcher.Handle(message);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsAny<Topic>()), Times.Never);
