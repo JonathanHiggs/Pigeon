@@ -147,7 +147,7 @@ namespace Pigeon.Fluent.Simple
 
         public Builder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
-            topicDispatcher.RegisterAsync(handler);
+            topicDispatcher.Register(handler);
             return this;
         }
 

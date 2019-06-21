@@ -14,7 +14,10 @@ namespace Pigeon.UnitTests.Topics
     public class DITopicDispatcherTests
     {
         private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
+        private readonly Mock<IAsyncTopicHandler<Topic>> mockAsyncHandler = new Mock<IAsyncTopicHandler<Topic>>();
+        
         private ITopicHandler<Topic> handler;
+        private IAsyncTopicHandler<Topic> asyncHandler;
 
         private readonly Mock<IContainer> mockContainer = new Mock<IContainer>();
         private IContainer container;
@@ -26,6 +29,7 @@ namespace Pigeon.UnitTests.Topics
         public void Setup()
         {
             handler = mockHandler.Object;
+            asyncHandler = mockAsyncHandler.Object;
             container = mockContainer.Object;
         }
 
@@ -34,6 +38,7 @@ namespace Pigeon.UnitTests.Topics
         public void Teardown()
         {
             mockHandler.Reset();
+            mockAsyncHandler.Reset();
             mockContainer.Reset();
         }
 
@@ -50,6 +55,7 @@ namespace Pigeon.UnitTests.Topics
 
 
         #region Register
+
         [Test]
         public void Register_WithTopicHandler_WithUnserializableTopic_ThrowsUnserializableTypeException()
         {
@@ -123,10 +129,57 @@ namespace Pigeon.UnitTests.Topics
             // Assert
             mockContainer.Verify(m => m.IsRegistered<ITopicHandler<Topic>>(), Times.Once);
         }
+
         #endregion
 
 
         #region AsyncRegister
+
+        [Test]
+        public void Register_WithAsyncTopicHandler_WithUnserializableTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DITopicDispatcher(container);
+            var asyncHandler = new Mock<IAsyncTopicHandler<UnserializableTopic>>().Object;
+            container.Register(asyncHandler);
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync<UnserializableTopic, IAsyncTopicHandler< UnserializableTopic>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void Register_WithAsyncTopicHandler_WithUnresgisteredTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DITopicDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync<Topic, IAsyncTopicHandler<Topic>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<NotRegisteredException>());
+        }
+
+
+        [Test]
+        public void Register_WithAsyncTopicHandlerInstance_WithUnserializableTopic_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DITopicDispatcher(container);
+            var handler = new Mock<IAsyncTopicHandler<UnserializableTopic>>().Object;
+
+            // Act
+            TestDelegate register = () => dispatcher.Register(handler);
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
         [Test]
         public void RegisterAsync_WithUnserializableTopic_ThrowsUnserializableTypeException()
         {
@@ -135,15 +188,17 @@ namespace Pigeon.UnitTests.Topics
             AsyncTopicHandlerDelegate<UnserializableTopic> handler = _ => Task.CompletedTask;
 
             // Act
-            TestDelegate register = () => dispatcher.RegisterAsync(handler);
+            TestDelegate register = () => dispatcher.Register(handler);
 
             // Assert
             Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
         }
+        
         #endregion
 
 
         #region Handle
+
         [Test]
         public void Handle_WithNull_DoesNothing()
         {
@@ -188,12 +243,27 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
+        public void Handle_WithAsyncHandlerRegistered_CallsHandler()
+        {
+            // Arrange
+            var dispatcher = new DITopicDispatcher(container);
+            dispatcher.Register(asyncHandler);
+
+            // Act
+            dispatcher.Handle(topic);
+
+            // Assert
+            mockAsyncHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
+        }
+
+
+        [Test]
         public void Handle_WithHandlerDelegateRegistered_CallsHandler()
         {
             // Arrange
             var handled = false;
             var dispatcher = new DITopicDispatcher(container);
-            dispatcher.RegisterAsync<Topic>(e => Task.Run(() => { handled = true; }));
+            dispatcher.Register<Topic>(e => { handled = true; });
 
             // Act
             dispatcher.Handle(topic);
@@ -237,6 +307,23 @@ namespace Pigeon.UnitTests.Topics
 
 
         [Test]
+        public void Handle_WithContainerResolvedAsyncHandler_HandlesTopic()
+        {
+            // Arrange
+            var dispatcher = new DITopicDispatcher(container);
+            mockContainer.Setup(m => m.IsRegistered<IAsyncTopicHandler<Topic>>()).Returns(true);
+            mockContainer.Setup(m => m.Resolve<IAsyncTopicHandler<Topic>>()).Returns(asyncHandler);
+            dispatcher.RegisterAsync<Topic, IAsyncTopicHandler<Topic>>();
+
+            // Act
+            dispatcher.Handle(topic);
+
+            // Assert
+            mockAsyncHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
+        }
+
+
+        [Test]
         public void Handle_WithContainerResolvedHandler_ResolvesFromContainer()
         {
             // Arrange
@@ -251,6 +338,7 @@ namespace Pigeon.UnitTests.Topics
             // Assert
             mockContainer.Verify(m => m.Resolve<ITopicHandler<Topic>>(), Times.Once);
         }
+        
         #endregion
     }
 }

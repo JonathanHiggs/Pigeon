@@ -40,5 +40,26 @@ namespace Pigeon.Fluent.Handlers
         IHandlerSetup WithTopicHandler<TTopic, THandler>()
             where TTopic : class
             where THandler : ITopicHandler<TTopic>;
+
+
+        IHandlerSetup WithAsyncTopicHandler<TTopic, THandler>()
+            where TTopic : class
+            where THandler : IAsyncTopicHandler<TTopic>;
+
+
+        IHandlerSetup WithTopicHandler<TTopic, THandler>(ITopicHandler<TTopic> handler)
+            where TTopic : class;
+
+
+        IHandlerSetup WithTopicHandler<TTopic, THandler>(IAsyncTopicHandler<TTopic> handler)
+            where TTopic : class;
+
+
+        IHandlerSetup WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
+            where TTopic : class;
+
+
+        IHandlerSetup WithTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+            where TTopic : class;
     }
 }

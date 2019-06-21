@@ -80,5 +80,41 @@ namespace Pigeon.Fluent.Handlers
             topicDispatcher.Register<TTopic, THandler>();
             return this;
         }
+
+        public IHandlerSetup WithAsyncTopicHandler<TTopic, THandler>()
+            where TTopic : class
+            where THandler : IAsyncTopicHandler<TTopic>
+        {
+            topicDispatcher.RegisterAsync<TTopic, THandler>();
+            return this;
+        }
+
+
+        public IHandlerSetup WithTopicHandler<TTopic, THandler>(ITopicHandler<TTopic> handler) where TTopic : class
+        {
+            topicDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithTopicHandler<TTopic, THandler>(IAsyncTopicHandler<TTopic> handler) where TTopic : class
+        {
+            topicDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler) where TTopic : class
+        {
+            topicDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler) where TTopic : class
+        {
+            topicDispatcher.Register(handler);
+            return this;
+        }
     }
 }

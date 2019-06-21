@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 
 using Pigeon.Annotations;
 using Pigeon.Diagnostics;
@@ -42,7 +41,23 @@ namespace Pigeon.Topics
         public void Register<TTopic>(ITopicHandler<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => handler.Handle((TTopic)eventMessage));
+            handlers.Add(
+                typeof(TTopic), 
+                eventMessage => handler.Handle((TTopic)eventMessage));
+        }
+
+
+        /// <summary>
+        /// Registeres a <see cref="ITopicHandler{TEvent}"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        public void Register<TTopic>(IAsyncTopicHandler<TTopic> handler)
+        {
+            Validate<TTopic>();
+            handlers.Add(
+                typeof(TTopic), 
+                eventMessage => handler.Handle((TTopic)eventMessage));
         }
 
 
@@ -54,7 +69,11 @@ namespace Pigeon.Topics
         public void Register<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage));
+
+            // Note: don't need to GetAwaiter().GetResult() since there is no return
+            handlers.Add(
+                typeof(TTopic), 
+                eventMessage => handler((TTopic)eventMessage));
         }
 
 
@@ -63,13 +82,21 @@ namespace Pigeon.Topics
         /// </summary>
         /// <typeparam name="TTopic">Type of the topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        public void RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
+        public void Register<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
             Validate<TTopic>();
-            handlers.Add(typeof(TTopic), eventMessage => handler((TTopic)eventMessage).GetAwaiter().GetResult());
+
+            // Note: don't need to GetAwaiter().GetResult() since there is no return
+            handlers.Add(
+                typeof(TTopic), 
+                eventMessage => handler((TTopic)eventMessage));
         }
 
 
+        /// <summary>
+        /// Performs correctness checks on the registering type
+        /// </summary>
+        /// <typeparam name="TTopic"></typeparam>
         protected void Validate<TTopic>()
         {
             if (typeof(TTopic).GetCustomAttribute<SerializableAttribute>() is null)

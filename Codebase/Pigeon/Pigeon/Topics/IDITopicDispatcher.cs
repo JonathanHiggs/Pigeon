@@ -4,5 +4,9 @@
     {
         void Register<TTopic, THandler>()
             where THandler : ITopicHandler<TTopic>;
+
+
+        void RegisterAsync<TTopic, THandler>()
+            where THandler : IAsyncTopicHandler<TTopic>;
     }
 }

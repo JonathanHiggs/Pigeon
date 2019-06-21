@@ -17,15 +17,23 @@ namespace Pigeon.Topics
         /// <summary>
         /// Registeres a <see cref="ITopicHandler{TEvent}"/>
         /// </summary>
-        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <typeparam name="TTopic">Type of topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
         void Register<TTopic>(ITopicHandler<TTopic> handler);
 
 
         /// <summary>
+        /// Registers a <see cref="IAsyncTopicHandler{TTopic}"/>
+        /// </summary>
+        /// <typeparam name="TTopic">Type of topic message</typeparam>
+        /// <param name="handler">Topic message handler</param>
+        void Register<TTopic>(IAsyncTopicHandler<TTopic> handler);
+
+
+        /// <summary>
         /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
         /// </summary>
-        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <typeparam name="TTopic">Type of topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
         void Register<TTopic>(TopicHandlerDelegate<TTopic> handler);
 
@@ -33,8 +41,8 @@ namespace Pigeon.Topics
         /// <summary>
         /// Registers a <see cref="TopicHandlerDelegate{TEvent}"/>
         /// </summary>
-        /// <typeparam name="TTopic">Type of the topic message</typeparam>
+        /// <typeparam name="TTopic">Type of topic message</typeparam>
         /// <param name="handler">Topic message handler</param>
-        void RegisterAsync<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
+        void Register<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
     }
 }
