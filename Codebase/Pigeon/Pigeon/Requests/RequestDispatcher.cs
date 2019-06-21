@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Pigeon.Annotations;
 using Pigeon.Diagnostics;
+using Pigeon.Receivers;
 
 namespace Pigeon.Requests
 {
@@ -16,20 +17,18 @@ namespace Pigeon.Requests
 
 
         /// <summary>
-        /// Finds and invokes a registered handler for the reuqest to prepare a response
+        /// Dispatches a request and returns the result to the client through the receiver
         /// </summary>
-        /// <param name="request">Request message</param>
-        /// <returns>Response message</returns>
-        public object Handle(object request)
+        /// <param name="receiver"><see cref="IReceiver"/> that the request was sent to</param>
+        /// <param name="requestTask">Combines all details needed to handle the incoming request</param>
+        public void Handle(IReceiver receiver, ref RequestTask requestTask)
         {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request)); // ToDo: maybe just don't do anything?
-
-            var requestType = request.GetType();
+            var requestType = requestTask.Request.GetType();
             if (!requestHandlers.TryGetValue(requestType, out var handler))
                 throw new RequestHandlerNotFoundException(requestType);
 
-            return handler(request);
+            var response = handler(requestTask.Request);
+            requestTask.ResponseHandler(response);
         }
 
 

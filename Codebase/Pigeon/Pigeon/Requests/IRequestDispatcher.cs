@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Pigeon.Receivers;
 
 namespace Pigeon.Requests
 {
@@ -9,11 +10,11 @@ namespace Pigeon.Requests
     public interface IRequestDispatcher
     {
         /// <summary>
-        /// Dispatching the handling of a message and returns the response
+        /// Dispatches a request and returns the result to the client through the receiver
         /// </summary>
-        /// <param name="request">Request message</param>
-        /// <returns>Response to the request</returns>
-        object Handle(object request);
+        /// <param name="receiver"><see cref="IReceiver"/> that the request was sent to</param>
+        /// <param name="requestTask">Combines all details needed to handle the incoming request</param>
+        void Handle(IReceiver receiver, ref RequestTask requestTask);
 
 
         /// <summary>

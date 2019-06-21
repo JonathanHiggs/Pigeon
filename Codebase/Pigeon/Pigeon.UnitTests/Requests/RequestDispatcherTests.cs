@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 
 using Pigeon.Diagnostics;
+using Pigeon.Receivers;
 using Pigeon.Requests;
 using Pigeon.UnitTests.TestFixtures;
 
@@ -13,9 +14,11 @@ namespace Pigeon.UnitTests.Requests
     [TestFixture]
     public class RequestDispatcherTests
     {
+        private readonly Mock<IReceiver> mockReceiver = new Mock<IReceiver>();
         private readonly Mock<IRequestHandler<Request, Response>> mockHandler = new Mock<IRequestHandler<Request, Response>>();
         private readonly Mock<IAsyncRequestHandler<Request, Response>> mockAsyncHandler = new Mock<IAsyncRequestHandler<Request, Response>>();
 
+        private IReceiver receiver;
         private IRequestHandler<Request, Response> handler;
         private IAsyncRequestHandler<Request, Response> asyncHandler;
 
@@ -26,6 +29,7 @@ namespace Pigeon.UnitTests.Requests
         [SetUp]
         public void Setup()
         {
+            receiver = mockReceiver.Object;
             handler = mockHandler.Object;
             asyncHandler = mockAsyncHandler.Object;
 
@@ -42,6 +46,7 @@ namespace Pigeon.UnitTests.Requests
         [TearDown]
         public void Teaddown()
         {
+            mockReceiver.Reset();
             mockHandler.Reset();
             mockAsyncHandler.Reset();
         }
@@ -148,27 +153,14 @@ namespace Pigeon.UnitTests.Requests
         #region Handle
 
         [Test]
-        public void Handle_WithNull_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var dispatcher = new RequestDispatcher();
-
-            // Act
-            TestDelegate handleNull = () => dispatcher.Handle(null);
-
-            // Assert
-            Assert.That(handleNull, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
         public void Handle_WithNoRegisteredHandler_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, _ => { });
 
             // Act
-            TestDelegate handleUnregistered = () => dispatcher.Handle(request);
+            TestDelegate handleUnregistered = () => dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(handleUnregistered, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -180,10 +172,11 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, _ => { });
             dispatcher.Register(handler);
 
             // Act
-            var response = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -195,10 +188,11 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, _ => { });
             dispatcher.Register(asyncHandler);
 
             // Act
-            var response = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             mockAsyncHandler.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -210,11 +204,11 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
+            var request = new RequestTask(new SubRequest(), _ => { });
             dispatcher.Register(handler);
-            var request = new SubRequest();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(request);
+            TestDelegate handle = () => dispatcher.Handle(receiver, ref request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -227,10 +221,11 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             var handled = false;
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, _ => { });
             dispatcher.Register<Request, Response>(dt => { handled = true; return response; });
 
             // Act
-            var _ = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -242,11 +237,11 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
+            var request = new RequestTask(new SubRequest(), _ => { });
             dispatcher.Register<Request, Response>(r => response);
-            var request = new SubRequest();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(request);
+            TestDelegate handle = () => dispatcher.Handle(receiver, ref request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -257,11 +252,13 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithHandlerRegistered_ReturnsResponse()
         {
             // Arrange
+            Response ret = null;
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, r => ret = (Response)r);
             dispatcher.Register<Request, Response>(r => response);
 
             // Act
-            var ret = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -273,12 +270,14 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithAsyncHandlerRegistered_ReturnsResponse()
         {
             // Arrange
+            Response ret = null;
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, r => ret = (Response)r);
             AsyncRequestHandlerDelegate<Request, Response> handler = request => Task.FromResult(response);
             dispatcher.RegisterAsync(handler);
 
             // Act
-            var ret = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -290,11 +289,13 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithHandlerClassRegistered_ReturnsResponse()
         {
             // Arrange
+            Response ret = null;
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, r => ret = (Response)r);
             dispatcher.Register(handler);
 
             // Act
-            var ret = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -306,11 +307,13 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithAsyncHandlerClassRegistered_ReturnsResponse()
         {
             // Arrange
+            Response ret = null;
             var dispatcher = new RequestDispatcher();
+            var requestTask = new RequestTask(request, r => ret = (Response)r);
             dispatcher.Register(asyncHandler);
 
             // Act
-            var ret = dispatcher.Handle(request);
+            dispatcher.Handle(receiver, ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);

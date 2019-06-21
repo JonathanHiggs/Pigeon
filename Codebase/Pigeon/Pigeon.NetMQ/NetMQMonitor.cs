@@ -10,7 +10,6 @@ using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
 using Pigeon.Publishers;
 using Pigeon.Receivers;
-using Pigeon.Requests;
 using Pigeon.Senders;
 using Pigeon.Subscribers;
 using Pigeon.Topics;
@@ -24,7 +23,6 @@ namespace Pigeon.NetMQ
     public class NetMQMonitor : INetMQMonitor
     {
         private readonly INetMQPoller poller;
-        private readonly IRequestDispatcher requestDispatcher;
         private readonly ITopicDispatcher topicDispatcher;
         private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
@@ -33,12 +31,6 @@ namespace Pigeon.NetMQ
         private readonly object lockObj = new object();
 
         private bool running = false;
-
-
-        /// <summary>
-        /// Gets a handler delegate for incoming requests
-        /// </summary>
-        public RequestTaskHandler RequestHandler => HandleRequest;
 
         
         /// <summary>
@@ -53,10 +45,9 @@ namespace Pigeon.NetMQ
         /// <param name="poller">The <see cref="INetMQPoller"/> polls the sender and receiver connections for incoming messages</param>
         /// <param name="requestDispatcher">Delegates handling of incoming requests to registered handlers</param>
         /// <param name="topicDispatcher">Delegates handling of incoming topic events to registered handlers</param>
-        public NetMQMonitor(INetMQPoller poller, IRequestDispatcher requestDispatcher, ITopicDispatcher topicDispatcher)
+        public NetMQMonitor(INetMQPoller poller, ITopicDispatcher topicDispatcher)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
-            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
             this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
         }
 
@@ -161,13 +152,6 @@ namespace Pigeon.NetMQ
                 if (running)
                     runningAction(connection);
             }
-        }
-
-        
-        private void HandleRequest(IReceiver receiver, ref RequestTask requestTask)
-        {
-            var response = requestDispatcher.Handle(requestTask.Request);
-            requestTask.ResponseHandler(response);
         }
 
 

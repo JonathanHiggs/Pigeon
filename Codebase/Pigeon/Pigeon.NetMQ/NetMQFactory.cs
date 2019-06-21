@@ -8,6 +8,7 @@ using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
+using Pigeon.Requests;
 using Pigeon.Subscribers;
 using Pigeon.Transport;
 
@@ -18,6 +19,7 @@ namespace Pigeon.NetMQ
     /// </summary>
     public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, INetMQFactory
     {
+        private IRequestDispatcher requestDispatcher;
         private readonly INetMQMessageFactory messageFactory;
         private readonly INetMQMonitor monitor;
 
@@ -27,12 +29,13 @@ namespace Pigeon.NetMQ
         /// </summary>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQFactory(INetMQMonitor monitor, INetMQMessageFactory messageFactory)
+        public NetMQFactory(IRequestDispatcher requestDispatcher, INetMQMonitor monitor, INetMQMessageFactory messageFactory)
             : base(monitor, monitor, monitor, monitor)
         {
             if (monitor is null)
                 throw new ArgumentNullException(nameof(monitor));
 
+            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
@@ -46,7 +49,7 @@ namespace Pigeon.NetMQ
         protected override INetMQReceiver CreateNewReceiver(IAddress address)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, monitor.RequestHandler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher.Handle);
 
             receiver.AddAddress(address);
 

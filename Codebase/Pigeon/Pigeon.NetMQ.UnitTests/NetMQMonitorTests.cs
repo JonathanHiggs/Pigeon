@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using Moq;
+﻿using Moq;
 
 using NetMQ;
 
@@ -10,8 +8,6 @@ using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
-using Pigeon.Receivers;
-using Pigeon.Requests;
 using Pigeon.Topics;
 
 namespace Pigeon.NetMQ.UnitTests
@@ -21,9 +17,6 @@ namespace Pigeon.NetMQ.UnitTests
     {
         private readonly Mock<INetMQPoller> mockPoller = new Mock<INetMQPoller>();
         private INetMQPoller poller;
-
-        private readonly Mock<IRequestDispatcher> mockRequestDispatcher = new Mock<IRequestDispatcher>();
-        private IRequestDispatcher requestDispatcher;
 
         private readonly Mock<ITopicDispatcher> mockTopicDispatcher = new Mock<ITopicDispatcher>();
         private ITopicDispatcher topicDispatcher;
@@ -44,15 +37,14 @@ namespace Pigeon.NetMQ.UnitTests
         private ISocketPollable pollableSocket;
 
         private readonly string request = "hello";
-        private readonly string response = "world";
         
 
         #region Setup
+
         [SetUp]
         public void Setup()
         {
             poller = mockPoller.Object;
-            requestDispatcher = mockRequestDispatcher.Object;
             topicDispatcher = mockTopicDispatcher.Object;
             sender = mockSender.Object;
             receiver = mockReceiver.Object;
@@ -75,10 +67,6 @@ namespace Pigeon.NetMQ.UnitTests
             mockSubscriber
                 .SetupGet(m => m.PollableSocket)
                 .Returns(pollableSocket);
-
-            mockRequestDispatcher
-                .Setup(m => m.Handle(It.IsIn<object>(request)))
-                .Returns(Task.FromResult<object>(response));
         }
 
 
@@ -86,33 +74,23 @@ namespace Pigeon.NetMQ.UnitTests
         public void TearDown()
         {
             mockPoller.Reset();
-            mockRequestDispatcher.Reset();
             mockSender.Reset();
             mockReceiver.Reset();
             mockPublisher.Reset();
             mockSubscriber.Reset();
             mockPollableSocket.Reset();
         }
+
         #endregion
 
 
         #region Constructor
+
         [Test]
         public void NetMQMonitor_WithNullPoller_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQMonitor(null, requestDispatcher, topicDispatcher);
-
-            // Assert
-            Assert.That(construct, Throws.ArgumentNullException);
-        }
-
-
-        [Test]
-        public void NetMQMonitor_WithNullRequestDispatcher_ThrowsArgumentNullException()
-        {
-            // Act
-            TestDelegate construct = () => new NetMQMonitor(poller, null, topicDispatcher);
+            TestDelegate construct = () => new NetMQMonitor(null, topicDispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -123,20 +101,22 @@ namespace Pigeon.NetMQ.UnitTests
         public void NetMQMonitor_WithNullTopicDispatcher_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQMonitor(poller, requestDispatcher, null);
+            TestDelegate construct = () => new NetMQMonitor(poller, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
         }
+        
         #endregion
 
 
         #region AddSender
+
         [Test]
         public void AddSender_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddSender(null);
@@ -150,7 +130,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSender_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddSender(sender);
@@ -164,7 +144,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSender_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddSender(sender);
@@ -178,7 +158,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSender_AfterStarted_ConnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -193,7 +173,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSender_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -203,15 +183,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
+        
         #endregion
 
 
         #region AddReceiver
+
         [Test]
         public void AddReceiver_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddReceiver(null);
@@ -225,7 +207,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddReceiver_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddReceiver(receiver);
@@ -239,7 +221,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddReceiver_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddReceiver(receiver);
@@ -253,7 +235,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddReceiver_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -268,7 +250,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddReceiver_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -278,15 +260,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockReceiver.Verify(m => m.InitializeConnection(), Times.Never);
         }
+        
         #endregion
 
 
         #region AddPublisher
+
         [Test]
         public void AddPublisher_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddPublisher(null);
@@ -300,7 +284,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddPublisher_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddPublisher(publisher);
@@ -314,7 +298,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddPublisher_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddPublisher(publisher);
@@ -328,7 +312,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddPublisher_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -343,7 +327,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddPublisher_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -353,15 +337,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockPublisher.Verify(m => m.InitializeConnection(), Times.Never);
         }
+        
         #endregion
 
 
         #region AddSubscriber
+
         [Test]
         public void AddSubscriber_WithNullReceiver_DoesNotThrow()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             TestDelegate add = () => monitor.AddSubscriber(null);
@@ -375,7 +361,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSubscriber_WithReceiver_AddsPollableSocketToPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddSubscriber(subscriber);
@@ -389,7 +375,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSubscriber_BeforeRunning_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.AddSubscriber(subscriber);
@@ -403,7 +389,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSubscriber_AfterStarted_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -418,7 +404,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void AddSubscriber_AfterStopped_DoesNotBindReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
             monitor.StopMonitoring();
 
@@ -428,15 +414,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockSubscriber.Verify(m => m.InitializeConnection(), Times.Never);
         }
+        
         #endregion
 
 
         #region StartMonitoring
+
         [Test]
         public void StartMonitoring_BeforeStarted_RunsPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.StartMonitoring();
@@ -450,7 +438,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StartMonitor_WhenRunning_DoesNotRecallStartMethods()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
             monitor.AddSender(sender);
             monitor.AddReceiver(receiver);
@@ -473,7 +461,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StartMonitor_WithSenderAdded_ConnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddSender(sender);
 
             // Act
@@ -488,7 +476,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StartMonitor_WithReceiverAdded_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddReceiver(receiver);
 
             // Act
@@ -503,7 +491,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StartMonitor_WithPublisherAdded_BindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddPublisher(publisher);
 
             // Act
@@ -518,7 +506,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StartMonitor_WithSubscriberAdded_ConnectsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddSubscriber(subscriber);
 
             // Act
@@ -527,15 +515,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockSubscriber.Verify(m => m.InitializeConnection(), Times.Once);
         }
+        
         #endregion
 
 
         #region StopMonitoring
+
         [Test]
         public void StopMonitoring_BeforeStarted_DoesNothing()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddSender(sender);
             monitor.AddReceiver(receiver);
             monitor.AddPublisher(publisher);
@@ -557,7 +547,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StopMonitoring_WhenRunning_StopsPoller()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.StartMonitoring();
 
             // Act
@@ -572,7 +562,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StopMonitoring_WithSenderAdded_DisconnectsSender()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddSender(sender);
             monitor.StartMonitoring();
 
@@ -588,7 +578,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StopMonitoring_WithReceiverAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddReceiver(receiver);
             monitor.StartMonitoring();
 
@@ -604,7 +594,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StopMonitoring_WithPublisherAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddPublisher(publisher);
             monitor.StartMonitoring();
 
@@ -620,7 +610,7 @@ namespace Pigeon.NetMQ.UnitTests
         public void StopMonitoring_WithSubscriberAdded_UnbindsReceiver()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
             monitor.AddSubscriber(subscriber);
             monitor.StartMonitoring();
 
@@ -630,48 +620,17 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockSubscriber.Verify(m => m.TerminateConnection(), Times.Once);
         }
-        #endregion
-
-
-        #region RequestHandler
-        [Test]
-        public void RequestHandler_WithRequest_CallsRequestDispatcher()
-        {
-            // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
-            var requestTask = new RequestTask(request, p => { });
-
-            // Act
-            monitor.RequestHandler(receiver, ref requestTask);
-
-            // Assert
-            mockRequestDispatcher.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
-        }
-
-
-        [Test]
-        public void RequestHandler_WithRequest_CallsResponseAction()
-        {
-            // Arrange
-            var called = false;
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
-            var requestTask = new RequestTask(request, p => { called = true; });
-
-            // Act
-            monitor.RequestHandler(receiver, ref requestTask);
-
-            // Assert
-            Assert.That(called, Is.True);
-        }
+        
         #endregion
 
 
         #region TopicHandler
+
         [Test]
         public void TopicHandler_WithTopicPackage_CallsTopicDispatcher()
         {
             // Arrange
-            var monitor = new NetMQMonitor(poller, requestDispatcher, topicDispatcher);
+            var monitor = new NetMQMonitor(poller, topicDispatcher);
 
             // Act
             monitor.TopicHandler(subscriber, request);
@@ -679,6 +638,7 @@ namespace Pigeon.NetMQ.UnitTests
             // Assert
             mockTopicDispatcher.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
         }
+        
         #endregion
     }
 }
