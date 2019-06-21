@@ -7,5 +7,5 @@ namespace Pigeon.Receivers
     /// </summary>
     /// <param name="raisingReceiver">The source <see cref="IReceiver"/></param>
     /// <param name="requestTask">The <see cref="RequestTask"/> that combines the incoming request data and a response handler</param>
-    public delegate Task RequestTaskHandler(IReceiver raisingReceiver, RequestTask requestTask);
+    public delegate void RequestTaskHandler(IReceiver raisingReceiver, RequestTask requestTask);
 }

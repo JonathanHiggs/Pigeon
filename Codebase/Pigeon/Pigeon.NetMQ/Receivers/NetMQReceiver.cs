@@ -19,14 +19,13 @@ namespace Pigeon.NetMQ.Receivers
     public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
     {
         private RouterSocket socket;
-        private RequestTaskHandler handler;
 
 
         /// <summary>
         /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
         /// an incoming message is received
         /// </summary>
-        public RequestTaskHandler Handler => handler;
+        public RequestTaskHandler Handler { get; private set; }
 
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Pigeon.NetMQ.Receivers
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
             socket.ReceiveReady += OnRequestReceived;
         }
@@ -86,7 +85,7 @@ namespace Pigeon.NetMQ.Receivers
                     socket.SendMultipartMessage(message);
                 });
 
-                handler(this, requestTask);
+                Handler(this, requestTask);
             });
         }
         
@@ -105,7 +104,7 @@ namespace Pigeon.NetMQ.Receivers
                     socket.ReceiveReady -= OnRequestReceived;
                     socket.Dispose();
                     socket = null;
-                    handler = null;
+                    Handler = null;
                 }
                 
                 disposedValue = true;

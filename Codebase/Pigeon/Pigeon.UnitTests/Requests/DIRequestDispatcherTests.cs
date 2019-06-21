@@ -216,7 +216,7 @@ namespace Pigeon.UnitTests.Requests
             var dispatcher = new DIRequestDispatcher(container);
 
             // Act
-            AsyncTestDelegate handleNull = async () => await dispatcher.Handle(null);
+            TestDelegate handleNull = () => dispatcher.Handle(null);
 
             // Assert
             Assert.That(handleNull, Throws.ArgumentNullException);
@@ -230,7 +230,7 @@ namespace Pigeon.UnitTests.Requests
             var dispatcher = new DIRequestDispatcher(container);
 
             // Act
-            AsyncTestDelegate handleUnregistered = async () => await dispatcher.Handle(request);
+            TestDelegate handleUnregistered = () => dispatcher.Handle(request);
 
             // Assert
             Assert.That(handleUnregistered, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -238,14 +238,14 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithHandlerRegistered_CallsHandler()
+        public void Handle_WithHandlerRegistered_CallsHandler()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register(handler);
 
             // Act
-            var response = await dispatcher.Handle(request);
+            var response = dispatcher.Handle(request);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -261,7 +261,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new SubRequest();
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(request);
+            TestDelegate handle = () => dispatcher.Handle(request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -269,7 +269,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithHandlerFunctionRegistered_CallsHandler()
+        public void Handle_WithHandlerFunctionRegistered_CallsHandler()
         {
             // Arrange
             var handled = false;
@@ -277,7 +277,7 @@ namespace Pigeon.UnitTests.Requests
             dispatcher.Register<Request, Response>(dt => { handled = true; return response; });
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -293,7 +293,7 @@ namespace Pigeon.UnitTests.Requests
             var request = new SubRequest();
 
             // Act
-            AsyncTestDelegate handle = async () => await dispatcher.Handle(request);
+            TestDelegate handle = () => dispatcher.Handle(request);
 
             // Assert
             Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
@@ -301,14 +301,14 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithHandlerRegistered_ReturnsResponse()
+        public void Handle_WithHandlerRegistered_ReturnsResponse()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register<Request, Response>(r => response);
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -317,7 +317,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithAsyncHandlerRegistered_ReturnsResponse()
+        public void Handle_WithAsyncHandlerRegistered_ReturnsResponse()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
@@ -325,7 +325,7 @@ namespace Pigeon.UnitTests.Requests
             dispatcher.RegisterAsync(handler);
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -334,14 +334,14 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithHandlerClassRegistered_ReturnsResponse()
+        public void Handle_WithHandlerClassRegistered_ReturnsResponse()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
             dispatcher.Register(handler);
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -350,7 +350,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithResolvableHandlerClassRegistered_ReturnsResponse()
+        public void Handle_WithResolvableHandlerClassRegistered_ReturnsResponse()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
@@ -359,7 +359,7 @@ namespace Pigeon.UnitTests.Requests
             dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -368,7 +368,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public async Task Handle_WithResolvableHandlerClassRegistered_ResolvesFromContainer()
+        public void Handle_WithResolvableHandlerClassRegistered_ResolvesFromContainer()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
@@ -377,7 +377,7 @@ namespace Pigeon.UnitTests.Requests
             dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
 
             // Act
-            var ret = await dispatcher.Handle(request);
+            var ret = dispatcher.Handle(request);
 
             // Assert
             mockContainer.Verify(m => m.Resolve<IRequestHandler<Request, Response>>(), Times.Once);

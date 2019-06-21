@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 
 using Pigeon.Diagnostics;
 
@@ -20,7 +19,7 @@ namespace Pigeon.Requests
         /// </summary>
         /// <param name="request">Request message</param>
         /// <returns>Response message</returns>
-        public Task<object> Handle(object request)
+        public object Handle(object request)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -42,7 +41,7 @@ namespace Pigeon.Requests
         public void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
-            requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler.Handle((TRequest)request)));
+            requestHandlers.Add(typeof(TRequest), request => handler.Handle((TRequest)request));
         }
 
 
@@ -55,7 +54,7 @@ namespace Pigeon.Requests
         public void Register<TRequest, TResponse>(RequestHandlerDelegate<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
-            requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)handler((TRequest)request)));
+            requestHandlers.Add(typeof(TRequest), request => handler((TRequest)request));
         }
 
 
@@ -69,7 +68,7 @@ namespace Pigeon.Requests
         {
             ValidateTypes<TRequest, TResponse>();
 
-            requestHandlers.Add(typeof(TRequest), request => Task.Run(async () => (object)(await handler((TRequest)request))));
+            requestHandlers.Add(typeof(TRequest), request => handler((TRequest)request).GetAwaiter().GetResult());
         }
 
 

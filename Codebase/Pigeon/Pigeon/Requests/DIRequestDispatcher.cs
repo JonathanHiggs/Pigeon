@@ -35,7 +35,7 @@ namespace Pigeon.Requests
             if (!container.IsRegistered<THandler>())
                 throw new NotRegisteredException(typeof(THandler));
 
-            requestHandlers.Add(typeof(TRequest), request => Task.Run(() => (object)container.Resolve<THandler>().Handle((TRequest)request)));
+            requestHandlers.Add(typeof(TRequest), request => container.Resolve<THandler>().Handle((TRequest)request));
         }
     }
 }

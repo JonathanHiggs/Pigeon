@@ -13,7 +13,7 @@ namespace Pigeon.Requests
         /// </summary>
         /// <param name="request">Request message</param>
         /// <returns>Response to the request</returns>
-        Task<object> Handle(object request);
+        object Handle(object request);
 
 
         /// <summary>
