@@ -15,7 +15,10 @@ namespace Pigeon.UnitTests.Requests
     public class DIRequestDispatcherTests
     {
         private readonly Mock<IRequestHandler<Request, Response>> mockHandler = new Mock<IRequestHandler<Request, Response>>();
+        private readonly Mock<IAsyncRequestHandler<Request, Response>> mockAsyncHandler = new Mock<IAsyncRequestHandler<Request, Response>>();
+
         private IRequestHandler<Request, Response> handler;
+        private IAsyncRequestHandler<Request, Response> asyncHandler;
 
         private readonly Mock<IContainer> mockContainer = new Mock<IContainer>();
         private IContainer container;
@@ -28,11 +31,16 @@ namespace Pigeon.UnitTests.Requests
         public void Setup()
         {
             handler = mockHandler.Object;
+            asyncHandler = mockAsyncHandler.Object;
             container = mockContainer.Object;
 
             mockHandler
                 .Setup(m => m.Handle(It.IsAny<Request>()))
                 .Returns(response);
+
+            mockAsyncHandler
+                .Setup(m => m.Handle(It.IsAny<Request>()))
+                .Returns(Task.FromResult(response));
         }
 
 
@@ -40,6 +48,7 @@ namespace Pigeon.UnitTests.Requests
         public void Teaddown()
         {
             mockHandler.Reset();
+            mockAsyncHandler.Reset();
             mockContainer.Reset();
         }
 
@@ -56,6 +65,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         #region Register
+
         [Test]
         public void Register_WithRequestHandler_WithUnserializableRequestType_ThrowsUnserializableTypeException()
         {
@@ -173,12 +183,14 @@ namespace Pigeon.UnitTests.Requests
             // Assert
             mockContainer.Verify(m => m.IsRegistered<IRequestHandler<Request, Response>>(), Times.Once);
         }
+        
         #endregion
 
 
         #region RegisterAsync
+
         [Test]
-        public void RegisterAsync_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        public void RegisterAsync_WithAsyncHandlerFunction_WithUnserializableRequestType_ThrowsUnserializableTypeException()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
@@ -193,7 +205,7 @@ namespace Pigeon.UnitTests.Requests
 
 
         [Test]
-        public void RegisterAsync_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        public void RegisterAsync_WithAsyncHandlerFunction_WithUnserializableResponseType_ThrowsUnserializableTypeException()
         {
             // Arrange
             var dispatcher = new DIRequestDispatcher(container);
@@ -205,10 +217,39 @@ namespace Pigeon.UnitTests.Requests
             // Assert
             Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
         }
+
+        [Test]
+        public void RegisterAsync_WithAsyncHandlerClass_WithUnserializableRequestType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync<UnserializableRequest, Response, IAsyncRequestHandler<UnserializableRequest, Response>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+
+
+        [Test]
+        public void RegisterAsync_WithAsyncHandlerClass_WithUnserializableResponseType_ThrowsUnserializableTypeException()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+
+            // Act
+            TestDelegate register = () => dispatcher.RegisterAsync<Request, UnserializableResponse, IAsyncRequestHandler<Request, UnserializableResponse>>();
+
+            // Assert
+            Assert.That(register, Throws.TypeOf<UnserializableTypeException>());
+        }
+        
         #endregion
 
 
         #region Handle
+
         [Test]
         public void Handle_WithNull_ThrowsArgumentNullException()
         {
@@ -382,6 +423,42 @@ namespace Pigeon.UnitTests.Requests
             // Assert
             mockContainer.Verify(m => m.Resolve<IRequestHandler<Request, Response>>(), Times.Once);
         }
+
+
+        [Test]
+        public void Handle_WithResolvableAsyncHandlerClassRegistered_ReturnsResponse()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+            mockContainer.Setup(m => m.IsRegistered<IAsyncRequestHandler<Request, Response>>()).Returns(true);
+            mockContainer.Setup(m => m.Resolve<IAsyncRequestHandler<Request, Response>>()).Returns(asyncHandler);
+            dispatcher.RegisterAsync<Request, Response, IAsyncRequestHandler<Request, Response>>();
+
+            // Act
+            var ret = dispatcher.Handle(request);
+
+            // Assert
+            Assert.That(ret is Response, Is.True);
+            Assert.That(ret, Is.SameAs(response));
+        }
+
+
+        [Test]
+        public void Handle_WithResolvableAsyncHandlerClassRegistered_ResolvesFromContainer()
+        {
+            // Arrange
+            var dispatcher = new DIRequestDispatcher(container);
+            mockContainer.Setup(m => m.IsRegistered<IAsyncRequestHandler<Request, Response>>()).Returns(true);
+            mockContainer.Setup(m => m.Resolve<IAsyncRequestHandler<Request, Response>>()).Returns(asyncHandler);
+            dispatcher.RegisterAsync<Request, Response, IAsyncRequestHandler<Request, Response>>();
+
+            // Act
+            var ret = dispatcher.Handle(request);
+
+            // Assert
+            mockContainer.Verify(m => m.Resolve<IAsyncRequestHandler<Request, Response>>(), Times.Once);
+        }
+        
         #endregion
     }
 }

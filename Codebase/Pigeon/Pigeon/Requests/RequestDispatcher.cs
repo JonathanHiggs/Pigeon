@@ -22,7 +22,7 @@ namespace Pigeon.Requests
         public object Handle(object request)
         {
             if (request is null)
-                throw new ArgumentNullException(nameof(request));
+                throw new ArgumentNullException(nameof(request)); // ToDo: maybe just don't do anything?
 
             var requestType = request.GetType();
             if (!requestHandlers.TryGetValue(requestType, out var handler))
@@ -41,7 +41,28 @@ namespace Pigeon.Requests
         public void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         {
             ValidateTypes<TRequest, TResponse>();
-            requestHandlers.Add(typeof(TRequest), request => handler.Handle((TRequest)request));
+            requestHandlers.Add(
+                typeof(TRequest), 
+                request => handler.Handle((TRequest)request));
+        }
+
+
+        /// <summary>
+        /// Registers an <see cref="IAsyncRequestHandler{TRequest, TResponse}"/>
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request message</typeparam>
+        /// <typeparam name="TResponse">Type of response message</typeparam>
+        /// <param name="handler">Request handler instance</param>
+        public void Register<TRequest, TResponse>(IAsyncRequestHandler<TRequest, TResponse> handler)
+        {
+            ValidateTypes<TRequest, TResponse>();
+            requestHandlers.Add(
+                typeof(TRequest), 
+                request => 
+                    handler
+                        .Handle((TRequest)request)
+                        .GetAwaiter()
+                        .GetResult());
         }
 
 
@@ -68,20 +89,20 @@ namespace Pigeon.Requests
         {
             ValidateTypes<TRequest, TResponse>();
 
-            requestHandlers.Add(typeof(TRequest), request => handler((TRequest)request).GetAwaiter().GetResult());
+            requestHandlers.Add(
+                typeof(TRequest), 
+                request => 
+                    handler((TRequest)request)
+                        .GetAwaiter()
+                        .GetResult());
         }
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="RequestDispatcher"/> used for fluent construction
+        /// Performs checks on the registering types
         /// </summary>
-        /// <returns>An empty <see cref="RequestDispatcher"/></returns>
-        public static RequestDispatcher Create()
-        {
-            return new RequestDispatcher();
-        }
-
-
+        /// <typeparam name="TRequest">Type of request message</typeparam>
+        /// <typeparam name="TResponse">Type of response message</typeparam>
         protected void ValidateTypes<TRequest, TResponse>()
         {
             if (typeof(TRequest).GetCustomAttribute<SerializableAttribute>() is null)

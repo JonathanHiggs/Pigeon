@@ -35,7 +35,36 @@ namespace Pigeon.Requests
             if (!container.IsRegistered<THandler>())
                 throw new NotRegisteredException(typeof(THandler));
 
-            requestHandlers.Add(typeof(TRequest), request => container.Resolve<THandler>().Handle((TRequest)request));
+            requestHandlers.Add(
+                typeof(TRequest), 
+                request => 
+                    container
+                        .Resolve<THandler>()
+                        .Handle((TRequest)request));
+        }
+
+
+        /// <summary>
+        /// Registers an async handler that will be resolved when needed
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request message</typeparam>
+        /// <typeparam name="TResponse">Type of response message</typeparam>
+        /// <typeparam name="THandler">Type of handler</typeparam>
+        public void RegisterAsync<TRequest, TResponse, THandler>()
+            where THandler : IAsyncRequestHandler<TRequest, TResponse>
+        {
+            ValidateTypes<TRequest, TResponse>();
+            if (!container.IsRegistered<THandler>())
+                throw new NotRegisteredException(typeof(THandler));
+
+            requestHandlers.Add(
+                typeof(TRequest), 
+                request => 
+                    container
+                        .Resolve<THandler>()
+                        .Handle((TRequest)request)
+                        .GetAwaiter()
+                        .GetResult());
         }
     }
 }

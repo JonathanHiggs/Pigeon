@@ -7,22 +7,13 @@ namespace Pigeon.Fluent.Handlers
 {
     public class HandlerSetup : IHandlerSetup
     {
-        private IDIRequestDispatcher requestdispatcher;
+        private IDIRequestDispatcher requestDispatcher;
         private IDITopicDispatcher topicDispatcher;
 
         public HandlerSetup(IDIRequestDispatcher requestDispatcher, IDITopicDispatcher topicDispatcher)
         {
-            this.requestdispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
+            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
             this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
-        }
-
-
-        public IHandlerSetup WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
-            where TRequest : class
-            where TResponse : class
-        {
-            requestdispatcher.RegisterAsync(handler);
-            return this;
         }
 
 
@@ -31,7 +22,17 @@ namespace Pigeon.Fluent.Handlers
             where TResponse : class
             where THandler : IRequestHandler<TRequest, TResponse>
         {
-            requestdispatcher.Register<TRequest, TResponse, THandler>();
+            requestDispatcher.Register<TRequest, TResponse, THandler>();
+            return this;
+        }
+
+
+        public IHandlerSetup WithAsyncRequestHandler<TRequest, TResponse, THandler>()
+            where TRequest : class
+            where TResponse : class
+            where THandler : IAsyncRequestHandler<TRequest, TResponse>
+        {
+            requestDispatcher.RegisterAsync<TRequest, TResponse, THandler>();
             return this;
         }
 
@@ -40,7 +41,16 @@ namespace Pigeon.Fluent.Handlers
             where TRequest : class
             where TResponse : class
         {
-            requestdispatcher.Register(handler);
+            requestDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithRequestHandler<TRequest, TResponse>(IAsyncRequestHandler<TRequest, TResponse> handler)
+            where TRequest : class
+            where TResponse : class
+        {
+            requestDispatcher.Register(handler);
             return this;
         }
 
@@ -49,7 +59,16 @@ namespace Pigeon.Fluent.Handlers
             where TRequest : class
             where TResponse : class
         {
-            requestdispatcher.Register(handler);
+            requestDispatcher.Register(handler);
+            return this;
+        }
+
+
+        public IHandlerSetup WithAsyncRequestHandler<TRequest, TResponse>(AsyncRequestHandlerDelegate<TRequest, TResponse> handler)
+            where TRequest : class
+            where TResponse : class
+        {
+            requestDispatcher.RegisterAsync(handler);
             return this;
         }
 

@@ -26,6 +26,15 @@ namespace Pigeon.Requests
 
 
         /// <summary>
+        /// Registers an <see cref="IAsyncRequestHandler{TRequest, TResponse}"/>
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request message</typeparam>
+        /// <typeparam name="TResponse">Type of response message</typeparam>
+        /// <param name="handler">Request handler instance</param>
+        void Register<TRequest, TResponse>(IAsyncRequestHandler<TRequest, TResponse> handler);
+
+
+        /// <summary>
         /// Registers a <see cref="RequestHandlerDelegate{TRequest, TResponse}"/>
         /// </summary>
         /// <typeparam name="TRequest">Type of request object</typeparam>
