@@ -52,6 +52,9 @@ namespace ExampleServer
         /// <returns></returns>
         public User Connect(User requestUser)
         {
+            if (string.IsNullOrEmpty(requestUser.Name))
+                throw new InvalidOperationException("Username is blank");
+
             lock (usersLock)
             {
                 var user = users.SingleOrDefault(u => u.Name == requestUser.Name);

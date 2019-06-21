@@ -106,6 +106,7 @@ namespace ExampleClient
         public void Handle(UserDisconnected message) =>
             OnUserDisconnected?.Invoke(User.FromDTO(message.User));
 
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
