@@ -227,10 +227,10 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             var handled = false;
             var dispatcher = new RequestDispatcher();
-            dispatcher.Register<Request, Request>(dt => { handled = true; return dt; });
+            dispatcher.Register<Request, Response>(dt => { handled = true; return response; });
 
             // Act
-            var response = dispatcher.Handle(request);
+            var _ = dispatcher.Handle(request);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -242,7 +242,7 @@ namespace Pigeon.UnitTests.Requests
         {
             // Arrange
             var dispatcher = new RequestDispatcher();
-            dispatcher.Register<Request, Request>(r => r);
+            dispatcher.Register<Request, Response>(r => response);
             var request = new SubRequest();
 
             // Act

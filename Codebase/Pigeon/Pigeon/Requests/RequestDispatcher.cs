@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
+using Pigeon.Annotations;
 using Pigeon.Diagnostics;
 
 namespace Pigeon.Requests
@@ -110,6 +111,13 @@ namespace Pigeon.Requests
 
             if (typeof(TResponse).GetCustomAttribute<SerializableAttribute>() is null)
                 throw new UnserializableTypeException(typeof(TResponse));
+
+            var requestAttribute = typeof(TRequest).GetCustomAttribute<RequestAttribute>();
+            if (requestAttribute is null)
+                throw new MissingAttributeException(typeof(TRequest), typeof(RequestAttribute));
+
+            if (requestAttribute.ResponseType != typeof(TResponse))
+                throw new MismatchingResponseTypeException(typeof(TRequest), typeof(TResponse));
         }
     }
 }
