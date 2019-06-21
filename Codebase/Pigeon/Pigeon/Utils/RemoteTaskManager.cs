@@ -71,13 +71,30 @@ namespace Pigeon.Utils
         /// </summary>
         /// <param name="id">Task identifier</param>
         /// <param name="result">Result to set on the underlying task</param>
-        public void CompleteTask(TId id, TResult result)
+        public void CompleteTask(TId id, object result)
         {
             if (!tasks.TryGetValue(id, out var asyncTask))
                 return;
 
-            tasks.Remove(id);
-            asyncTask.CompleteWithResult(result);
+            try
+            { 
+                tasks.Remove(id);
+
+                if (result is Exception ex && !typeof(Exception).IsAssignableFrom(typeof(TResult)))
+                {
+                    asyncTask.CompleteWithException(ex);
+                    return;
+                }
+
+                if (!(result is TResult tResult))
+                    throw new InvalidOperationException($"Unexpected result type received {result.GetType().FullName}, expected {typeof(TResult).FullName}");
+
+                asyncTask.CompleteWithResult(tResult);
+            }
+            catch (Exception exception)
+            {
+                asyncTask.CompleteWithException(exception);
+            }
         }
     }
 }

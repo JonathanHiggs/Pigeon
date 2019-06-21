@@ -13,6 +13,8 @@ namespace Pigeon.Utils
         private TaskCompletionSource<T> taskCompletionSource;
         private Timer timeoutTimer;
 
+        private object lockObj;
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="RemoteTask{T}"/>
@@ -31,6 +33,7 @@ namespace Pigeon.Utils
                 throw new ArgumentNullException(nameof(onTimeout));
 
             this.taskCompletionSource = taskCompletionSource ?? throw new ArgumentNullException(nameof(taskCompletionSource));
+            this.lockObj = new object();
 
             timeoutTimer = new Timer
             {
@@ -43,12 +46,18 @@ namespace Pigeon.Utils
 
             timeoutTimer.Elapsed += (sender, args) =>
             {
-                at.timeoutTimer.Stop();
-                var exception = onTimeout();
-                at.taskCompletionSource.TrySetException(exception ?? new TimeoutException());
-                at.taskCompletionSource = null;
-                at.timeoutTimer = null;
-                at.timeoutTimer = null;
+                lock (at.lockObj)
+                {
+                    if (at.timeoutTimer is null)
+                        return;
+
+                    at.timeoutTimer.Stop();
+                    var exception = onTimeout();
+                    at.taskCompletionSource.TrySetException(exception ?? new TimeoutException());
+                    at.taskCompletionSource = null;
+                    at.timeoutTimer = null;
+                    at.timeoutTimer = null;
+                }
             };
 
             timeoutTimer.Enabled = true;
@@ -61,11 +70,37 @@ namespace Pigeon.Utils
         /// <param name="result">Result to return on the underlying task</param>
         public void CompleteWithResult(T result)
         {
-            timeoutTimer.Stop();
-            taskCompletionSource.TrySetResult(result);
-            taskCompletionSource = null;
-            timeoutTimer.Dispose();
-            timeoutTimer = null;
+            lock (lockObj)
+            {
+                if (timeoutTimer is null)
+                    return;
+
+                timeoutTimer.Stop();
+                taskCompletionSource.TrySetResult(result);
+                taskCompletionSource = null;
+                timeoutTimer.Dispose();
+                timeoutTimer = null;
+            }
+        }
+
+
+        /// <summary>
+        /// Transitions the underlying task to faulted status and throws the supplied <see cref="Exception"/>
+        /// </summary>
+        /// <param name="ex"><see cref="Exception"/> to throw</param>
+        public void CompleteWithException(Exception ex)
+        {
+            lock (lockObj)
+            {
+                if (timeoutTimer is null)
+                    return;
+
+                timeoutTimer.Stop();
+                taskCompletionSource.TrySetException(ex);
+                taskCompletionSource = null;
+                timeoutTimer.Dispose();
+                timeoutTimer = null;
+            }
         }
     }
 }
