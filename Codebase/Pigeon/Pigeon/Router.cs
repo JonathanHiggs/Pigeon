@@ -81,8 +81,11 @@ namespace Pigeon
         /// <param name="message">The topic message to distribute</param>
         public void Publish<TTopic>(TTopic message) where TTopic : class
         {
+#if DEBUG
+            // Try to catch missing attributes in debug only for performance reasons
             if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
                 throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
+#endif
 
             publisherCache.Publish(message);
         }
@@ -100,6 +103,8 @@ namespace Pigeon
             where TRequest : class
             where TResponse : class
         {
+#if DEBUG
+            // Try to catch missing attributes in debug only for performance reasons
             var requestAttribute = typeof(TRequest).GetCustomAttribute<RequestAttribute>();
 
             if (requestAttribute is null)
@@ -107,6 +112,7 @@ namespace Pigeon
 
             if (requestAttribute.ResponseType != typeof(TResponse))
                 throw new MismatchingResponseTypeException(typeof(TRequest), typeof(TResponse));
+#endif
 
             return await senderCache.Send<TRequest, TResponse>(request);
         }
@@ -125,6 +131,8 @@ namespace Pigeon
             where TRequest : class
             where TResponse : class
         {
+#if DEBUG
+            // Try to catch missing attributes in debug only for performance reasons
             var requestAttribute = typeof(TRequest).GetCustomAttribute<RequestAttribute>();
 
             if (requestAttribute is null)
@@ -132,6 +140,7 @@ namespace Pigeon
 
             if (requestAttribute.ResponseType != typeof(TResponse))
                 throw new MismatchingResponseTypeException(typeof(TRequest), typeof(TResponse));
+#endif
 
             return await senderCache.Send<TRequest, TResponse>(request, timeout);
         }
@@ -139,8 +148,11 @@ namespace Pigeon
 
         public IDisposable Subscribe<TTopic>()
         {
+#if DEBUG
+            // Try to catch missing attributes in debug only for performance reasons
             if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
                 throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
+#endif
 
             return subscriberCache.Subscribe<TTopic>();
         }
