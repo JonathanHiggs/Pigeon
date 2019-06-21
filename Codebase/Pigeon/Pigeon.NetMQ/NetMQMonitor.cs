@@ -164,7 +164,7 @@ namespace Pigeon.NetMQ
         }
 
         
-        private void HandleRequest(IReceiver receiver, RequestTask requestTask)
+        private void HandleRequest(IReceiver receiver, ref RequestTask requestTask)
         {
             var response = requestDispatcher.Handle(requestTask.Request);
             requestTask.ResponseHandler(response);

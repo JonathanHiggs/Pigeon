@@ -85,7 +85,7 @@ namespace Pigeon.NetMQ.Receivers
                     socket.SendMultipartMessage(message);
                 });
 
-                Handler(this, requestTask);
+                Handler(this, ref requestTask);
             });
         }
         

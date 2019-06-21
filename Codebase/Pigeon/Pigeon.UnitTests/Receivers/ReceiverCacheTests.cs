@@ -29,7 +29,8 @@ namespace Pigeon.UnitTests.Receivers
         private readonly Mock<IReceiverMonitor<IReceiver>> mockReceiverMonitor = new Mock<IReceiverMonitor<IReceiver>>();
         private IReceiverMonitor<IReceiver> receiverMonitor;
 
-        private readonly RequestTaskHandler handler = (rec, task) => Task.Run(() => { });
+        private void Handler(IReceiver rec, ref RequestTask task)
+        { }
         
         
         [SetUp]

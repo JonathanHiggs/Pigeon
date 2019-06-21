@@ -642,7 +642,7 @@ namespace Pigeon.NetMQ.UnitTests
             var requestTask = new RequestTask(request, p => { });
 
             // Act
-            monitor.RequestHandler(receiver, requestTask);
+            monitor.RequestHandler(receiver, ref requestTask);
 
             // Assert
             mockRequestDispatcher.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -658,7 +658,7 @@ namespace Pigeon.NetMQ.UnitTests
             var requestTask = new RequestTask(request, p => { called = true; });
 
             // Act
-            monitor.RequestHandler(receiver, requestTask);
+            monitor.RequestHandler(receiver, ref requestTask);
 
             // Assert
             Assert.That(called, Is.True);

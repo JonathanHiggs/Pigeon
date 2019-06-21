@@ -19,12 +19,15 @@ namespace Pigeon.NetMQ.UnitTests
     {
         private readonly Mock<INetMQMonitor> mockMonitor = new Mock<INetMQMonitor>();
         private INetMQMonitor monitor;
-        
+
         private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
         private INetMQMessageFactory messageFactory;
-        
-        private readonly RequestTaskHandler requestHandler = (rec, task) => Task.Run(() => { });
+
+        ///private readonly RequestTaskHandler requestHandler = (rec, ref task) => Task.Run(() => { });
         private readonly TopicEventHandler topicHandler = (sub, topic) => { };
+
+        private void RequestHandler(IReceiver rec, ref RequestTask task)
+        { }
 
 
         [SetUp]
@@ -35,7 +38,7 @@ namespace Pigeon.NetMQ.UnitTests
 
             mockMonitor
                 .SetupGet(m => m.RequestHandler)
-                .Returns(requestHandler);
+                .Returns(RequestHandler);
 
             mockMonitor
                 .SetupGet(m => m.TopicHandler)

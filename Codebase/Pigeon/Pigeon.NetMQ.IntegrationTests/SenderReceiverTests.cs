@@ -24,22 +24,22 @@ namespace Pigeon.NetMQ.IntegrationTests
             // Arrange
             var responseStr = "Hello, World!";
             var requestStr = "Hello";
-            var receivedRequest = String.Empty;
+            var receivedRequest = string.Empty;
             ushort port = 6555;
             var called = false;
 
-            RequestTaskHandler handler = (rec, task) => Task.Run(() =>
+            void Handler(IReceiver rec, ref RequestTask task) 
             {
                 called = true;
                 receivedRequest = (string)task.Request;
                 task.ResponseHandler(responseStr);
-            });
+            }
 
             var serializer = new DotNetSerializer();
             var packageFactory = new PackageFactory();
             var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
             var sender = new NetMQSender(new DealerSocket(), messageFactory);
-            var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, handler);
+            var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, Handler);
             var poller = new NetMQPoller();
 
             sender.AddAddress(TcpAddress.Localhost(port));
