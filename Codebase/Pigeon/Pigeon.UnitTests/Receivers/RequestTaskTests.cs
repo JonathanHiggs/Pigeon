@@ -1,28 +1,48 @@
 ﻿using System;
-
+using Moq;
 using NUnit.Framework;
 
 using Pigeon.Packages;
 using Pigeon.Receivers;
+using Pigeon.UnitTests.TestFixtures;
 
 namespace Pigeon.UnitTests.Receivers
 {
     [TestFixture]
     public class RequestTaskTests
     {
+        private readonly Mock<IReceiver> mockReceiver = new Mock<IReceiver>();
+        private IReceiver receiver;
+
+
+        [SetUp]
+        public void Setup()
+        {
+            receiver = mockReceiver.Object;
+        }
+
+
+        [TearDown]
+        public void Teardown()
+        {
+            mockReceiver.Reset();
+        }
+
+
+        private void SendResponse(object message) { }
+
+
         [Test]
         public void RequestTask_WithAllRequiredFields_InitializesObject()
         {
             // Arrange
-            var request = new object();
-            Action<object> handler = _ => { };
+            var request = new Request();
 
             // Act
-            var requestTask = new RequestTask(request, handler);
+            var requestTask = new RequestTask(receiver, request, SendResponse, SendResponse);
 
             // Assert
-            Assert.AreSame(request, requestTask.Request);
-            Assert.AreSame(handler, requestTask.ResponseHandler);
+            Assert.That(request, Is.EqualTo(requestTask.Request));
         }
 
 
@@ -33,7 +53,7 @@ namespace Pigeon.UnitTests.Receivers
             Action<object> handler = _ => { };
 
             // Act
-            TestDelegate test = () => new RequestTask(null, handler);
+            TestDelegate test = () => new RequestTask(receiver, null, SendResponse, SendResponse);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -44,10 +64,10 @@ namespace Pigeon.UnitTests.Receivers
         public void RequestTask_WithNullRequestHandler_ThrowsArgumentNullException()
         {
             // Arrange
-            var package = new DataPackage<object>(new GuidPackageId(), new object());
+            var request = new Request();
 
             // Act
-            TestDelegate test = () => new RequestTask(package, null);
+            TestDelegate test = () => new RequestTask(receiver, request, null, SendResponse);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);

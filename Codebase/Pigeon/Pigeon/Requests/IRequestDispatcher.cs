@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Pigeon.Receivers;
+﻿using Pigeon.Receivers;
 
 namespace Pigeon.Requests
 {
@@ -14,7 +13,7 @@ namespace Pigeon.Requests
         /// </summary>
         /// <param name="receiver"><see cref="IReceiver"/> that the request was sent to</param>
         /// <param name="requestTask">Combines all details needed to handle the incoming request</param>
-        void Handle(IReceiver receiver, ref RequestTask requestTask);
+        void Handle(ref RequestTask requestTask);
 
 
         /// <summary>

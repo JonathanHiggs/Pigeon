@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Moq;
 
@@ -258,14 +259,15 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithNoRegisteredHandler_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
+            Exception ex = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, _ => { });
+            var requestTask = new RequestTask(receiver, request, _ => { }, e => ex = e);
 
             // Act
-            TestDelegate handleUnregistered = () => dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
-            Assert.That(handleUnregistered, Throws.TypeOf<RequestHandlerNotFoundException>());
+            Assert.That(ex, Is.TypeOf<RequestHandlerNotFoundException>());
         }
 
 
@@ -275,11 +277,11 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             dispatcher.Register(handler);
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(request)), Times.Once);
@@ -290,16 +292,17 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
+            Exception ex = null;
             var request = new SubRequest();
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, _ => { });
+            var requestTask = new RequestTask(receiver, request, _ => { }, e => ex = e);
             dispatcher.Register(handler);
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
-            Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
+            Assert.That(ex, Is.TypeOf<RequestHandlerNotFoundException>());
         }
 
 
@@ -310,11 +313,11 @@ namespace Pigeon.UnitTests.Requests
             Response ret = null;
             var handled = false;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             dispatcher.Register<Request, Response>(dt => { handled = true; return response; });
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -325,16 +328,17 @@ namespace Pigeon.UnitTests.Requests
         public void Handle_WithBaseClassHandlerFunctionRegistered_ThrowsRequestHandlerNotFoundException()
         {
             // Arrange
+            Exception ex = null;
             var request = new SubRequest();
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, _ => { });
+            var requestTask = new RequestTask(receiver, request, _ => { }, e => ex = e);
             dispatcher.Register<Request, Response>(r => response);
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
-            Assert.That(handle, Throws.TypeOf<RequestHandlerNotFoundException>());
+            Assert.That(ex, Is.TypeOf<RequestHandlerNotFoundException>());
         }
 
 
@@ -344,11 +348,11 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             dispatcher.Register<Request, Response>(r => response);
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -362,12 +366,12 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             AsyncRequestHandlerDelegate<Request, Response> handler = request => Task.FromResult(response);
             dispatcher.RegisterAsync(handler);
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -381,11 +385,11 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             dispatcher.Register(handler);
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -399,13 +403,13 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             mockContainer.Setup(m => m.IsRegistered<IRequestHandler<Request, Response>>()).Returns(true);
             mockContainer.Setup(m => m.Resolve<IRequestHandler<Request, Response>>()).Returns(handler);
             dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -419,13 +423,13 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             mockContainer.Setup(m => m.IsRegistered<IRequestHandler<Request, Response>>()).Returns(true);
             mockContainer.Setup(m => m.Resolve<IRequestHandler<Request, Response>>()).Returns(handler);
             dispatcher.Register<Request, Response, IRequestHandler<Request, Response>>();
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             mockContainer.Verify(m => m.Resolve<IRequestHandler<Request, Response>>(), Times.Once);
@@ -438,13 +442,13 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             mockContainer.Setup(m => m.IsRegistered<IAsyncRequestHandler<Request, Response>>()).Returns(true);
             mockContainer.Setup(m => m.Resolve<IAsyncRequestHandler<Request, Response>>()).Returns(asyncHandler);
             dispatcher.RegisterAsync<Request, Response, IAsyncRequestHandler<Request, Response>>();
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             Assert.That(ret is Response, Is.True);
@@ -458,13 +462,13 @@ namespace Pigeon.UnitTests.Requests
             // Arrange
             Response ret = null;
             var dispatcher = new DIRequestDispatcher(container);
-            var requestTask = new RequestTask(request, r => ret = (Response)r);
+            var requestTask = new RequestTask(receiver, request, r => ret = (Response)r, _ => { });
             mockContainer.Setup(m => m.IsRegistered<IAsyncRequestHandler<Request, Response>>()).Returns(true);
             mockContainer.Setup(m => m.Resolve<IAsyncRequestHandler<Request, Response>>()).Returns(asyncHandler);
             dispatcher.RegisterAsync<Request, Response, IAsyncRequestHandler<Request, Response>>();
 
             // Act
-            dispatcher.Handle(receiver, ref requestTask);
+            dispatcher.Handle(ref requestTask);
 
             // Assert
             mockContainer.Verify(m => m.Resolve<IAsyncRequestHandler<Request, Response>>(), Times.Once);

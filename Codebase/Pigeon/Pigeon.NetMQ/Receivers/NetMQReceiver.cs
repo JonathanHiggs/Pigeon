@@ -64,6 +64,11 @@ namespace Pigeon.NetMQ.Receivers
         }
 
 
+        /// <summary>
+        /// Called by <see cref="NetMQPoller"/> when there is an incoming message
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnRequestReceived(object sender, NetMQSocketEventArgs e)
         {
             NetMQMessage requestMessage = null;
@@ -76,16 +81,16 @@ namespace Pigeon.NetMQ.Receivers
                 if (!messageFactory.IsValidRequestMessage(requestMessage))
                     return;
 
-                // So this is some pretty cool shit, yo
                 var (request, address, requestId) = messageFactory.ExtractRequest(requestMessage);
 
-                var requestTask = new RequestTask(request, (response) =>
-                {
+                void SendResponse(object response) {
                     var message = messageFactory.CreateResponseMessage(response, address, requestId);
                     socket.SendMultipartMessage(message);
-                });
+                }
 
-                Handler(this, ref requestTask);
+                var requestTask = new RequestTask(this, request, SendResponse, SendResponse);
+
+                Handler(ref requestTask);
             });
         }
         

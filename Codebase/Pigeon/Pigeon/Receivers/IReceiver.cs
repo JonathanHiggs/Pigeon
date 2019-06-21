@@ -8,11 +8,5 @@ namespace Pigeon.Receivers
     /// to incoming messages from remote <see cref="ISender"/>
     /// </summary>
     public interface IReceiver : IConnection
-    {
-        /// <summary>
-        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
-        /// an incoming request message is received
-        /// </summary>
-        //RequestTaskHandler Handler { get; }
-    }
+    { }
 }

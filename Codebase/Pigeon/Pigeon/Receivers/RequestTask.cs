@@ -5,29 +5,45 @@ namespace Pigeon.Receivers
     /// <summary>
     /// Struct to combine an incoming request with a handler to return the response
     /// </summary>
-    public struct RequestTask
+    public readonly struct RequestTask
     {
         /// <summary>
-        /// Stores a readonly reference to an incoming request
+        /// Stores a readonly reference to the <see cref="IReceiver"/>
+        /// </summary>
+        public readonly IReceiver Receiver;
+
+
+        /// <summary>
+        /// Stores a readonly reference to an incoming request message
         /// </summary>
         public readonly object Request;
 
 
         /// <summary>
-        /// Stores a readonly reference to an action that will send a response
+        /// Stores a readonly reference to a delegate to send a response
         /// </summary>
-        public readonly Action<object> ResponseHandler;
+        public readonly ResponseSenderDelegate ResponseSender;
+
+
+        /// <summary>
+        /// Stores a readonly reference to a delegate to send an error response
+        /// </summary>
+        public readonly ErrorSenderDelegate ErrorSender;
         
 
         /// <summary>
         /// Initializes a new instance of a RequestTask composed of the supplied request object and handler
         /// </summary>
-        /// <param name="request">The incoming request</param>
-        /// <param name="responseHandler">Action to return a response</param>
-        public RequestTask(object request, Action<object> responseHandler)
+        /// <param name="receiver"><see cref="IReceiver"/> that received the request message</param>
+        /// <param name="request">Incoming request message</param>
+        /// <param name="responseSender">Delegate to return the response to the client</param>
+        /// <param name="errorSender">Delegate to return an error response to the client</param>
+        public RequestTask(IReceiver receiver, object request, ResponseSenderDelegate responseSender, ErrorSenderDelegate errorSender)
         {
+            Receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             Request = request ?? throw new ArgumentNullException(nameof(request));
-            ResponseHandler = responseHandler ?? throw new ArgumentNullException(nameof(responseHandler));
+            ResponseSender = responseSender ?? throw new ArgumentNullException(nameof(responseSender));
+            ErrorSender = errorSender ?? throw new ArgumentNullException(nameof(errorSender));
         }
     }
 }

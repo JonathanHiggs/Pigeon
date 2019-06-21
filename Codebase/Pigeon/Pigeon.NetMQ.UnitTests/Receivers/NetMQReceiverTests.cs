@@ -18,7 +18,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
         private INetMQMessageFactory messageFactory;
 
-        private void Handler(IReceiver rec, ref RequestTask task)
+        private void Handler(ref RequestTask task)
         { }
 
 
@@ -68,22 +68,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
         }
-
-
-        //[Test]
-        //public void NetMQReceiver_WithHandler_HandlerPropertyReturnsSameHandler()
-        //{
-        //    // Arrange
-        //    var routerSocket = new RouterSocket();
-
-        //    // Act
-        //    var receiver = new NetMQReceiver(routerSocket, messageFactory, handler);
-
-        //    // Assert
-        //    Assert.That(receiver.Handler, Is.SameAs(handler));
-        //}
-        
-            #endregion
+                
+        #endregion
 
 
         #region IsConnected

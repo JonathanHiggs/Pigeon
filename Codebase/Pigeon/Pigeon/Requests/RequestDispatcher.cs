@@ -21,14 +21,21 @@ namespace Pigeon.Requests
         /// </summary>
         /// <param name="receiver"><see cref="IReceiver"/> that the request was sent to</param>
         /// <param name="requestTask">Combines all details needed to handle the incoming request</param>
-        public void Handle(IReceiver receiver, ref RequestTask requestTask)
+        public void Handle(ref RequestTask requestTask)
         {
-            var requestType = requestTask.Request.GetType();
-            if (!requestHandlers.TryGetValue(requestType, out var handler))
-                throw new RequestHandlerNotFoundException(requestType);
+            try
+            {
+                var requestType = requestTask.Request.GetType();
+                if (!requestHandlers.TryGetValue(requestType, out var handler))
+                    throw new RequestHandlerNotFoundException(requestType);
 
-            var response = handler(requestTask.Request);
-            requestTask.ResponseHandler(response);
+                var response = handler(requestTask.Request);
+                requestTask.ResponseSender(response);
+            }
+            catch (Exception ex)
+            {
+                requestTask.ErrorSender(ex);
+            }
         }
 
 
