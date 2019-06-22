@@ -70,6 +70,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Context.cs" />
     <Compile Include="NetMQMessageFactoryTests.cs" />
     <Compile Include="NetMQConfigTests.cs" />
     <Compile Include="NetMQFactoryTests.cs" />

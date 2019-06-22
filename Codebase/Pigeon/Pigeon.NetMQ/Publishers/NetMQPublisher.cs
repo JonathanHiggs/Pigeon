@@ -15,7 +15,7 @@ namespace Pigeon.NetMQ.Publishers
     /// </summary>
     public sealed class NetMQPublisher : NetMQConnection, INetMQPublisher
     {
-        private readonly PublisherSocket socket;
+        private PublisherSocket socket;
 
 
         /// <summary>
@@ -36,6 +36,9 @@ namespace Pigeon.NetMQ.Publishers
         /// <param name="topicEvent">Topic event to be sent to all remote <see cref="Subscribers.ISubscriber"/>s</param>
         public void Publish(object package)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQPublisher has been disposed");
+
             socket.SendMultipartMessage(messageFactory.CreateTopicMessage(package));
         }
 
@@ -46,6 +49,9 @@ namespace Pigeon.NetMQ.Publishers
         /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQPublisher has been disposed");
+
             socket.Bind(address.ToString());
         }
 
@@ -56,7 +62,42 @@ namespace Pigeon.NetMQ.Publishers
         /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQPublisher has been disposed");
+
             socket.Unbind(address.ToString());
         }
+
+
+        #region IDisposable Support
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    TerminateConnection();
+                    socket?.Dispose();
+                    socket = null;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        public override void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
     }
 }

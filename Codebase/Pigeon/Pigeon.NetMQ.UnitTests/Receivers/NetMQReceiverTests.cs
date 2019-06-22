@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Moq;
 
@@ -46,13 +47,16 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void NetMQReceiver_WithNullSerializer_ThrowsArgumentNullException()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
+            var socket = new RouterSocket();
 
             // Act
-            TestDelegate test = () => new NetMQReceiver(routerSocket, null, Handler);
+            TestDelegate test = () => new NetMQReceiver(socket, null, Handler);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
+
+            // Cleanup
+            socket.Dispose();
         }
 
 
@@ -60,13 +64,16 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void NetMQReceiver_WithNullHandler_ThrowsArgumentNullException()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
+            var socket = new RouterSocket();
 
             // Act
-            TestDelegate construct = () => new NetMQReceiver(routerSocket, messageFactory, null);
+            TestDelegate construct = () => new NetMQReceiver(socket, messageFactory, null);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
+
+            // Cleanup
+            socket.Dispose();
         }
                 
         #endregion
@@ -78,14 +85,17 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void IsConnected_BeforeBindIsCalled_IsFalse()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             var isConnected = receiver.IsConnected;
 
             // Assert
             Assert.That(isConnected, Is.False);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -93,8 +103,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void IsConnected_OnceBindIsCalled_IsTrue()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             receiver.InitializeConnection();
 
             // Act
@@ -102,6 +112,9 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             Assert.That(isConnected, Is.True);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -109,8 +122,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void IsConnected_OnceUnbindAllIsCalled_IsFalse()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             receiver.InitializeConnection();
             receiver.TerminateConnection();
 
@@ -119,6 +132,9 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             Assert.That(isConnected, Is.False);
+
+            // Cleanup
+            receiver.Dispose();
         }
         
         #endregion
@@ -130,16 +146,39 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void Addresses_WhenNoAddressesAdded_IsEmpty()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             var any = receiver.Addresses.Any();
 
             // Assert
             Assert.That(any, Is.False);
+
+            // Cleanup
+            receiver.Dispose();
         }
-        
+
+
+        [Test]
+        public void Addresses_WhenDisposed_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var address = TcpAddress.Wildcard(5555);
+            receiver.Dispose();
+
+            // Act
+            void AddAddress() => receiver.AddAddress(address);
+
+            // Assert
+            Assert.That(AddAddress, Throws.TypeOf<InvalidOperationException>());
+
+            // Cleanup
+            socket.Dispose();
+        }
+
         #endregion
 
 
@@ -149,14 +188,17 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void AddAddress_WithNullAddress_ThrowsArgumentNullException()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             TestDelegate addAddress = () => receiver.AddAddress(null);
 
             // Assert
             Assert.That(addAddress, Throws.ArgumentNullException);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -164,8 +206,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void AddAddress_WithNewAddress_AddsToAddresses()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             var address = TcpAddress.Wildcard(5555);
 
             // Act
@@ -173,6 +215,9 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             CollectionAssert.Contains(receiver.Addresses, address);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -180,8 +225,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void AddAddress_WithAlreadyAddedAddress_DoesNotAddTwice()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -190,6 +235,9 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             Assert.That(receiver.Addresses, Has.Count.EqualTo(1));
+
+            // Cleanup
+            receiver.Dispose();
         }
         
         #endregion
@@ -201,8 +249,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void RemoveAllAddresses_WithAddedAddresses_ClearsAddresses()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -210,6 +258,27 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             CollectionAssert.IsEmpty(receiver.Addresses);
+
+            // Cleanup
+            receiver.Dispose();
+        }
+
+        [Test]
+        public void RemoveAllAddresses_WithAddedAddresses_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            receiver.AddAddress(TcpAddress.Wildcard(5555));
+
+            // Act
+            receiver.RemoveAllAddresses();
+
+            // Assert
+            Assert.That(receiver.IsConnected, Is.False);
+
+            // Cleanup
+            receiver.Dispose();
         }
         
         #endregion
@@ -221,8 +290,8 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void Remove_WithAddedAddress_RemovesAddress()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -231,6 +300,52 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
 
             // Assert
             CollectionAssert.DoesNotContain(receiver.Addresses, address);
+
+            // Cleanup
+            receiver.Dispose();
+        }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var address = TcpAddress.Wildcard(5555);
+            receiver.AddAddress(address);
+
+            // Act
+            receiver.RemoveAddress(address);
+
+            // Assert
+            Assert.That(receiver.IsConnected, Is.False);
+
+            // Cleanup
+            receiver.Dispose();
+        }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedTrue()
+        {
+            // Arrange
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var address = TcpAddress.Wildcard(5555);
+            var address2 = TcpAddress.Wildcard(5556);
+            receiver.AddAddress(address);
+            receiver.AddAddress(address2);
+            receiver.InitializeConnection();
+
+            // Act
+            receiver.RemoveAddress(address);
+
+            // Assert
+            Assert.That(receiver.IsConnected, Is.True);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -238,14 +353,17 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void Remove_WithUnaddedAddress_DoesNothing()
         { 
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             TestDelegate test = () => receiver.RemoveAddress(TcpAddress.Wildcard(5555));
 
             // Assert
             Assert.That(test, Throws.Nothing);
+
+            // Cleanup
+            receiver.Dispose();
         }
         
         #endregion
@@ -257,14 +375,17 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void Bind_WithNoAddresses_DoesNothing()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             TestDelegate test = () => receiver.InitializeConnection();
 
             // Assert
             Assert.That(test, Throws.Nothing);
+
+            // Cleanup
+            receiver.Dispose();
         }
 
 
@@ -272,14 +393,18 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void Bind_WhenCalled_SetsIsBound()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             receiver.InitializeConnection();
 
             // Assert
             Assert.That(receiver.IsConnected, Is.True);
+
+            // Cleanup
+            receiver.TerminateConnection();
+            receiver.Dispose();
         }
         
         #endregion
@@ -291,14 +416,17 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void UnbindAll_BeforeBindCall_DoesNothing()
         {
             // Arrange
-            var routerSocket = new RouterSocket();
-            var receiver = new NetMQReceiver(routerSocket, messageFactory, Handler);
+            var socket = new RouterSocket();
+            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
 
             // Act
             TestDelegate test = () => receiver.TerminateConnection();
 
             // Assert
             Assert.That(test, Throws.Nothing);
+
+            // Cleanup
+            receiver.Dispose();
         }
         
         #endregion

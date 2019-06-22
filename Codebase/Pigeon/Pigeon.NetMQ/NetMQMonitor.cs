@@ -120,6 +120,7 @@ namespace Pigeon.NetMQ
                     return;
 
                 poller.StopAsync();
+                poller.Dispose();
 
                 foreach (var sender in senders)
                     sender.TerminateConnection();
@@ -132,6 +133,8 @@ namespace Pigeon.NetMQ
 
                 foreach (var subscriber in subscribers)
                     subscriber.TerminateConnection();
+
+                NetMQConfig.Cleanup(false);
 
                 running = false;
             }

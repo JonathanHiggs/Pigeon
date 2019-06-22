@@ -15,7 +15,7 @@ namespace Pigeon.NetMQ.Subscribers
     /// NetMQ implementation of <see cref="ISubscriber"/> that wraps a <see cref="SubscriberSocket"/> that connects to 
     /// remote <see cref="INetMQSubscriber"/>s to receive published <see cref="Package"/>es
     /// </summary>
-    public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber, IDisposable
+    public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber
     {
         private SubscriberSocket socket;
 
@@ -48,6 +48,12 @@ namespace Pigeon.NetMQ.Subscribers
         /// <typeparam name="TTopic">The type of the published topic message</typeparam>
         public void Subscribe<TTopic>()
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSubscriber has been disposed");
+
+            if (!IsConnected)
+                throw new InvalidCastException("NetMQSuscriber is not connected");
+
             var topicName = typeof(TTopic).FullName;
             socket.Subscribe(topicName);
         }
@@ -58,6 +64,9 @@ namespace Pigeon.NetMQ.Subscribers
         /// </summary>
         public void Unsubscribe<TTopic>()
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSubscriber has been disposed");
+
             var topicName = typeof(TTopic).FullName;
             socket.Unsubscribe(topicName);
         }
@@ -87,6 +96,9 @@ namespace Pigeon.NetMQ.Subscribers
         /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSubscriber has been disposed");
+
             socket.Connect(address.ToString());
         }
 
@@ -97,14 +109,18 @@ namespace Pigeon.NetMQ.Subscribers
         /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSubscriber has been disposed");
+
             socket.Disconnect(address.ToString());
         }
 
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
 
-
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -112,24 +128,28 @@ namespace Pigeon.NetMQ.Subscribers
                 if (disposing)
                 {
                     TerminateConnection();
-                    socket.ReceiveReady -= OnMessageReceived;
-                    socket.Dispose();
-                    socket = null;
+                    if (!(socket is null))
+                    {
+                        socket.ReceiveReady -= OnMessageReceived;
+                        socket.Dispose();
+                        socket = null;
+                    }
                     Handler = null;
                 }
-                
+
                 disposedValue = true;
             }
         }
 
 
         /// <summary>
-        /// Performs cleanup to free any held resources
+        /// Cleans up resources
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(true);
         }
+
         #endregion
     }
 }

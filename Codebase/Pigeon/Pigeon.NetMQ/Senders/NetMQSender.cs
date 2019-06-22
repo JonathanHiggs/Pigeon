@@ -19,7 +19,7 @@ namespace Pigeon.NetMQ.Senders
     /// </summary>
     public sealed class NetMQSender : NetMQConnection, INetMQSender
     {
-        private readonly DealerSocket socket;
+        private DealerSocket socket;
         private readonly RemoteTaskManager<object, int> taskManager = new RemoteTaskManager<object, int>(1, id => ++id);
 
 
@@ -43,9 +43,9 @@ namespace Pigeon.NetMQ.Senders
         /// </summary>
         /// <param name="request">Request to send to the remote</param>
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
-        public async Task<object> SendAndReceive(object request)
+        public Task<object> SendAndReceive(object request)
         {
-            return await SendAndReceive(request, TimeSpan.FromHours(1));
+            return SendAndReceive(request, TimeSpan.FromHours(1));
         }
 
 
@@ -59,6 +59,12 @@ namespace Pigeon.NetMQ.Senders
         /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
         public Task<object> SendAndReceive(object request, TimeSpan timeout)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSender has been disposed");
+
+            if (!IsConnected)
+                throw new InvalidOperationException("NetMQSender is not connected");
+
             return taskManager.StartRemoteTask(requestId =>
             {
                 var message = messageFactory.CreateRequestMessage(request, requestId);
@@ -73,6 +79,9 @@ namespace Pigeon.NetMQ.Senders
         /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSender has been disposed");
+
             socket.Connect(address.ToString());
         }
 
@@ -83,6 +92,9 @@ namespace Pigeon.NetMQ.Senders
         /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQSender has been disposed");
+
             socket.Disconnect(address.ToString());
         }
 
@@ -102,5 +114,41 @@ namespace Pigeon.NetMQ.Senders
                 taskManager.CompleteTask(requestId, response);
             });
         }
+
+
+        #region IDisposable Support
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    TerminateConnection();
+                    if (!(socket is null))
+                    {
+                        socket.ReceiveReady -= PendingMessage;
+                        socket.Dispose();
+                    }
+                    socket = null;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        public override void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
     }
 }

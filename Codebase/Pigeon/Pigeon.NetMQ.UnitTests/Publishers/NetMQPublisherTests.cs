@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Moq;
 
@@ -35,6 +36,7 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
 
         #region Constructor
+
         [Test]
         public void NetMQPublisher_WithNullPublisherSocket_ThrowsArgumentNullException()
         {
@@ -57,11 +59,16 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
+
+            // Cleanup
+            socket.Dispose();
         }
+        
         #endregion
 
 
         #region Addresses
+
         [Test]
         public void Addresses_WhenNoAddressesAdded_IsEmpty()
         {
@@ -74,11 +81,36 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(any, Is.False);
+
+            // Cleanup
+            publisher.Dispose();
         }
+
+
+        [Test]
+        public void Addresses_WhenDisposed_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, messageFactory);
+            var address = TcpAddress.Wildcard(5555);
+            publisher.Dispose();
+
+            // Act
+            void AddAddress() => publisher.AddAddress(address);
+
+            // Assert
+            Assert.That(AddAddress, Throws.TypeOf<InvalidOperationException>());
+
+            // Cleanup
+            socket.Dispose();
+        }
+        
         #endregion
 
 
         #region AddAddress
+
         [Test]
         public void AddAddress_WithNullAddress_ThrowsArgumentNullException()
         {
@@ -91,6 +123,9 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(addAddress, Throws.ArgumentNullException);
+
+            // Cleanup
+            publisher.Dispose();
         }
 
 
@@ -106,6 +141,9 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             CollectionAssert.Contains(publisher.Addresses, address);
+
+            // Cleanup
+            publisher.Dispose();
         }
 
 
@@ -122,11 +160,16 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(publisher.Addresses, Has.Count.EqualTo(1));
+
+            // Cleanup
+            publisher.Dispose();
         }
+        
         #endregion
 
 
         #region RemoveAddress
+
         [Test]
         public void RemoveAddress_WithNullAddress_DoesNothing()
         {
@@ -139,6 +182,9 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(removeAddress, Throws.Nothing);
+
+            // Cleanup
+            publisher.Dispose();
         }
 
 
@@ -154,6 +200,9 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(removeAddress, Throws.Nothing);
+
+            // Cleanup
+            publisher.Dispose();
         }
 
 
@@ -170,11 +219,102 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             CollectionAssert.DoesNotContain(publisher.Addresses, address);
+
+            // Cleanup
+            publisher.Dispose();
         }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, messageFactory);
+            var address = TcpAddress.Wildcard(5555);
+            publisher.AddAddress(address);
+
+            // Act
+            publisher.RemoveAddress(address);
+
+            // Assert
+            Assert.That(publisher.IsConnected, Is.False);
+
+            // Cleanup
+            publisher.Dispose();
+        }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedTrue()
+        {
+            // Arrange
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, messageFactory);
+            var address = TcpAddress.Wildcard(5555);
+            var address2 = TcpAddress.Wildcard(5556);
+            publisher.AddAddress(address);
+            publisher.AddAddress(address2);
+            publisher.InitializeConnection();
+
+            // Act
+            publisher.RemoveAddress(address);
+
+            // Assert
+            Assert.That(publisher.IsConnected, Is.True);
+
+            // Cleanup
+            publisher.TerminateConnection();
+            publisher.Dispose();
+        }
+
+        #endregion
+
+
+        #region RemoveAllAddresses
+
+        [Test]
+        public void RemoveAllAddresses_WithAddedAddresses_ClearsAddresses()
+        {
+            // Arrange
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, messageFactory);
+            publisher.AddAddress(TcpAddress.Wildcard(5555));
+
+            // Act
+            publisher.RemoveAllAddresses();
+
+            // Assert
+            CollectionAssert.IsEmpty(publisher.Addresses);
+
+            // Cleanup
+            publisher.Dispose();
+        }
+
+
+        [Test]
+        public void RemoveAllAddresses_WithAddedAddresses_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new PublisherSocket();
+            var publisher = new NetMQPublisher(socket, messageFactory);
+            publisher.AddAddress(TcpAddress.Wildcard(5555));
+
+            // Act
+            publisher.RemoveAllAddresses();
+
+            // Assert
+            Assert.That(publisher.IsConnected, Is.False);
+
+            // Cleanup
+            publisher.Dispose();
+        }
+
         #endregion
 
 
         #region BindAll
+
         [Test]
         public void BindAll_WithNoAddresses_DoesNothing()
         {
@@ -187,6 +327,9 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(bindAll, Throws.Nothing);
+
+            // Cleanup
+            publisher.Dispose();
         }
 
 
@@ -203,7 +346,12 @@ namespace Pigeon.NetMQ.UnitTests.Publishers
 
             // Assert
             Assert.That(bindAll, Throws.Nothing);
+
+            // Cleanup
+            publisher.TerminateConnection();
+            publisher.Dispose();
         }
+        
         #endregion
     }
 }

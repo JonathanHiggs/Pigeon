@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Moq;
 
@@ -38,6 +39,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
 
         #region Constructor
+
         [Test]
         public void NetMQSubscriber_WithNullSubscriberSocket_ThrowsArgumentNullException()
         {
@@ -60,6 +62,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
+
+            // Cleanup
+            socket.Dispose();
         }
 
 
@@ -74,6 +79,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
+
+            // Cleanup
+            socket.Dispose();
         }
 
 
@@ -88,11 +96,16 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(subscriber.Handler, Is.SameAs(handler));
+
+            // Cleanup
+            socket.Dispose();
         }
+
         #endregion
 
 
         #region Addresses
+
         [Test]
         public void Addresses_WithNoAddressesAdded_IsEmpty()
         {
@@ -105,11 +118,36 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(any, Is.False);
+
+            // Cleanup
+            subscriber.Dispose();
         }
+
+
+        [Test]
+        public void Addresses_WhenDisposed_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var address = TcpAddress.Wildcard(5555);
+            subscriber.Dispose();
+
+            // Act
+            void AddAddress() => subscriber.AddAddress(address);
+
+            // Assert
+            Assert.That(AddAddress, Throws.TypeOf<InvalidOperationException>());
+
+            // Cleanup
+            subscriber.Dispose();
+        }
+
         #endregion
 
 
         #region AddAddress
+
         [Test]
         public void AddAddress_WithNullAddress_ThrowsArgumentNullException()
         {
@@ -122,6 +160,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(addAddress, Throws.ArgumentNullException);
+
+            // Cleanup
+            subscriber.Dispose();
         }
 
 
@@ -137,6 +178,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             CollectionAssert.Contains(subscriber.Addresses, address);
+
+            // Cleanup
+            subscriber.Dispose();
         }
 
 
@@ -153,11 +197,16 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(subscriber.Addresses, Has.Count.EqualTo(1));
+
+            // Cleanup
+            subscriber.Dispose();
         }
+        
         #endregion
 
 
         #region RemoveAddress
+
         [Test]
         public void RemoveAddress_WithNullAddress_DoesNothing()
         {
@@ -170,6 +219,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(removeAddress, Throws.Nothing);
+
+            // Cleanup
+            subscriber.Dispose();
         }
 
 
@@ -185,6 +237,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(removeAddress, Throws.Nothing);
+
+            // Cleanup
+            subscriber.Dispose();
         }
 
 
@@ -201,11 +256,102 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             CollectionAssert.DoesNotContain(subscriber.Addresses, address);
+
+            // Cleanup
+            subscriber.Dispose();
         }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var address = TcpAddress.Wildcard(5555);
+            subscriber.AddAddress(address);
+
+            // Act
+            subscriber.RemoveAddress(address);
+
+            // Assert
+            Assert.That(subscriber.IsConnected, Is.False);
+
+            // Cleanup
+            subscriber.Dispose();
+        }
+
+
+        [Test]
+        public void Remove_WithAddedAddress_IsConnectedTrue()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var address = TcpAddress.Wildcard(5555);
+            var address2 = TcpAddress.Wildcard(5556);
+            subscriber.AddAddress(address);
+            subscriber.AddAddress(address2);
+            subscriber.InitializeConnection();
+
+            // Act
+            subscriber.RemoveAddress(address);
+
+            // Assert
+            Assert.That(subscriber.IsConnected, Is.True);
+
+            // Cleanup
+            subscriber.TerminateConnection();
+            subscriber.Dispose();
+        }
+
+        #endregion
+
+
+        #region RemoveAllAddresses
+
+        [Test]
+        public void RemoveAllAddresses_WithAddedAddresses_ClearsAddresses()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            subscriber.AddAddress(TcpAddress.Wildcard(5555));
+
+            // Act
+            subscriber.RemoveAllAddresses();
+
+            // Assert
+            CollectionAssert.IsEmpty(subscriber.Addresses);
+
+            // Cleanup
+            subscriber.Dispose();
+        }
+
+
+        [Test]
+        public void RemoveAllAddresses_WithAddedAddresses_IsConnectedFalse()
+        {
+            // Arrange
+            var socket = new SubscriberSocket();
+            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            subscriber.AddAddress(TcpAddress.Wildcard(5555));
+
+            // Act
+            subscriber.RemoveAllAddresses();
+
+            // Assert
+            Assert.That(subscriber.IsConnected, Is.False);
+
+            // Cleanup
+            subscriber.Dispose();
+        }
+
         #endregion
 
 
         #region ConnectAll
+
         [Test]
         public void ConnectAll_WithNoAddresses_DoesNothing()
         {
@@ -218,6 +364,9 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(connectAll, Throws.Nothing);
+
+            // Cleanup
+            subscriber.Dispose();
         }
 
 
@@ -234,7 +383,12 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(connectAll, Throws.Nothing);
+
+            // Cleanup
+            subscriber.TerminateConnection();
+            subscriber.Dispose();
         }
+        
         #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace Pigeon.NetMQ.Receivers
     /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/>es from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
-    public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver, IDisposable
+    public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver
     {
         private RouterSocket socket;
 
@@ -50,6 +50,9 @@ namespace Pigeon.NetMQ.Receivers
         /// <param name="address"><see cref="IAddress"/> to be added</param>
         public override void SocketAdd(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQReceiver has been disposed");
+
             socket.Bind(address.ToString());
         }
 
@@ -60,6 +63,9 @@ namespace Pigeon.NetMQ.Receivers
         /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public override void SocketRemove(IAddress address)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQReceiver has been disposed");
+
             socket.Unbind(address.ToString());
         }
 
@@ -93,12 +99,13 @@ namespace Pigeon.NetMQ.Receivers
                 Handler(ref requestTask);
             });
         }
-        
-        
+
+
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
 
-
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -106,9 +113,12 @@ namespace Pigeon.NetMQ.Receivers
                 if (disposing)
                 {
                     TerminateConnection();
-                    socket.ReceiveReady -= OnRequestReceived;
-                    socket.Dispose();
-                    socket = null;
+                    if (!(socket is null))
+                    {
+                        socket.ReceiveReady -= OnRequestReceived;
+                        socket.Dispose();
+                        socket = null;
+                    }
                     Handler = null;
                 }
                 
@@ -116,11 +126,15 @@ namespace Pigeon.NetMQ.Receivers
             }
         }
 
-        
-        public void Dispose()
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        public override void Dispose()
         {
             Dispose(true);
         }
+
         #endregion
     }
 }

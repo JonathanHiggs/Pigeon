@@ -10,12 +10,12 @@ namespace Pigeon.NetMQ.Common
     /// <summary>
     /// Common implementation for all NetMQ <see cref="INetMQConnection"/>s
     /// </summary>
-    public abstract class NetMQConnection : INetMQConnection
+    public abstract class NetMQConnection : INetMQConnection, IDisposable
     {
-        private readonly ISocketPollable pollableSocket;
         protected readonly INetMQMessageFactory messageFactory;
+
+        protected bool disposedValue = false;
         private readonly HashSet<IAddress> addresses = new HashSet<IAddress>();
-        private bool isConnected = false;
 
 
         /// <summary>
@@ -27,13 +27,13 @@ namespace Pigeon.NetMQ.Common
         /// <summary>
         /// Gets a bool that returns true when the <see cref="NetMQConnection"/> is connected; otherwise false
         /// </summary>
-        public bool IsConnected => isConnected;
+        public bool IsConnected { get; private set; } = false;
 
 
         /// <summary>
         /// The NetMQ socket that a <see cref="NetMQPoller"/> will actively monitor for incoming requests
         /// </summary>
-        public ISocketPollable PollableSocket => pollableSocket;
+        public ISocketPollable PollableSocket { get; private set; }
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Pigeon.NetMQ.Common
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
         public NetMQConnection(ISocketPollable pollableSocket, INetMQMessageFactory messageFactory)
         {
-            this.pollableSocket = pollableSocket ?? throw new ArgumentNullException(nameof(pollableSocket));
+            this.PollableSocket = pollableSocket ?? throw new ArgumentNullException(nameof(pollableSocket));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
         }
 
@@ -58,12 +58,15 @@ namespace Pigeon.NetMQ.Common
             if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
+            if (disposedValue)
+                throw new InvalidOperationException("NetMQConnection is disposed");
+
             if (addresses.Contains(address))
                 return;
 
             addresses.Add(address);
 
-            if (isConnected)
+            if (IsConnected)
                 SocketAdd(address);
         }
 
@@ -78,10 +81,13 @@ namespace Pigeon.NetMQ.Common
             if (address is null || !addresses.Contains(address))
                 return;
 
-            if (isConnected)
+            if (IsConnected)
                 SocketRemove(address);
 
             addresses.Remove(address);
+
+            if (addresses.Count == 0)
+                IsConnected = false;
         }
 
 
@@ -91,11 +97,13 @@ namespace Pigeon.NetMQ.Common
         /// </summary>
         public void RemoveAllAddresses()
         {
-            if (isConnected)
+            if (IsConnected)
                 foreach (var address in addresses)
                     SocketRemove(address);
 
             addresses.Clear();
+
+            IsConnected = false;
         }
 
 
@@ -104,13 +112,13 @@ namespace Pigeon.NetMQ.Common
         /// </summary>
         public void InitializeConnection()
         {
-            if (isConnected)
+            if (IsConnected)
                 return;
 
             foreach (var address in addresses)
                 SocketAdd(address);
 
-            isConnected = true;
+            IsConnected = true;
         }
 
 
@@ -119,13 +127,13 @@ namespace Pigeon.NetMQ.Common
         /// </summary>
         public void TerminateConnection()
         {
-            if (!isConnected)
+            if (!IsConnected)
                 return;
 
             foreach (var address in addresses)
                 SocketRemove(address);
-
-            isConnected = false;
+            
+            IsConnected = false;
         }
 
 
@@ -141,5 +149,11 @@ namespace Pigeon.NetMQ.Common
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> to be removed</param>
         public abstract void SocketRemove(IAddress address);
+
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        public abstract void Dispose();
     }
 }
