@@ -29,7 +29,8 @@ namespace Pigeon.Packages
         /// <typeparam name="TMessage">Type of the wrapped message object</typeparam>
         /// <param name="message">Message object</param>
         /// <returns>Serializable <see cref="Package"/> wrapping the object</returns>
-        public Package Pack<TMessage>(TMessage message) where TMessage : class
+        public Package Pack<TMessage>(TMessage message) 
+            where TMessage : class
         {
             return Create(message);
         }

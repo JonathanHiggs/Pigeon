@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using System.Linq;
+
+using Moq;
 
 using NUnit.Framework;
 
@@ -30,7 +32,27 @@ namespace Pigeon.UnitTests.Serialization
             mockSerializer.Reset();
         }
 
-        
+
+        #region DefaultSerializer
+
+        [Test]
+        public void DefaultSerializer_WithNoneAdded_IsNull()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+
+            // Act
+            var defaultSerializer = cache.DefaultSerializer;
+
+            // Assert
+            Assert.That(defaultSerializer, Is.Null);
+        }
+
+        #endregion
+
+
+        #region AddSerializer
+
         [Test]
         public void AddSerializer_WithNullSerializer_ThrowsArgumentNullException()
         {
@@ -58,6 +80,57 @@ namespace Pigeon.UnitTests.Serialization
             Assert.That(addSerializer, Throws.Nothing);
         }
 
+
+        [Test]
+        public void AddSerializer_WithNoOtherSerializers_SetsToDefault()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+
+            // Act
+            cache.AddSerializer(serializer);
+            var defaultSerializer = cache.DefaultSerializer;
+
+            // Assert
+            Assert.That(serializer, Is.EqualTo(defaultSerializer));
+        }
+
+
+        [Test]
+        public void AddSerializer_WithSameSerializerAlreadyInCache_DoesNotAddDuplicate()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+            cache.AddSerializer(serializer);
+
+            // Act
+            cache.AddSerializer(serializer);
+
+            // Assert
+            Assert.That(cache.AllSerializers.Count(), Is.EqualTo(1));
+        }
+
+
+        [Test]
+        public void AddSerializer_WithDifferentInstancePOfSerializerAlreadyInCache_DoesNotAddDuplicate()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+            var otherMockSerializer = new Mock<ISerializer>();
+            otherMockSerializer.Setup(m => m.Descriptor).Returns(descriptor);
+            cache.AddSerializer(serializer);
+
+            // Act
+            cache.AddSerializer(otherMockSerializer.Object);
+
+            // Assert
+            Assert.That(cache.AllSerializers.Count(), Is.EqualTo(1));
+        }
+
+        #endregion
+
+
+        #region SerializerFor
 
         [Test]
         public void SerializerFor_WithNoSerializerAdded_ReturnsFalse()
@@ -102,5 +175,42 @@ namespace Pigeon.UnitTests.Serialization
             // Assert
             Assert.That(returnedSerializer, Is.SameAs(serializer));
         }
+
+
+        [Test]
+        public void SerializerFor_WithoutSerializerAdded_ReturnsFalse()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+
+            // Act
+            var hasSerializer = cache.SerializerFor("test", out var returnedSerializer);
+
+            // Assert
+            Assert.That(hasSerializer, Is.False);
+            Assert.That(returnedSerializer, Is.Null);
+        }
+
+        #endregion
+
+
+        #region SetDefaultSerializer
+
+        [Test]
+        public void SetDefaultSerializer_WithSerializer_AddsToCache()
+        {
+            // Arrange
+            var cache = new SerializerCache();
+
+            // Act
+            cache.SetDefaultSerializer(serializer);
+            var hasSerializer = cache.SerializerFor(descriptor, out var returnedSerializer);
+
+            // Assert
+            Assert.That(hasSerializer, Is.True);
+            Assert.That(returnedSerializer, Is.EqualTo(serializer));
+        }
+
+        #endregion
     }
 }

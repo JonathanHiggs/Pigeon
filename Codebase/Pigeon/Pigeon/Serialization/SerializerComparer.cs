@@ -8,6 +8,12 @@ namespace Pigeon.Serialization
     public class SerializerComparer : IEqualityComparer<ISerializer>
     {
         /// <summary>
+        /// Get a shared instance of <see cref="SerializerComparer"/>
+        /// </summary>
+        public static SerializerComparer Default { get; } = new SerializerComparer();
+
+
+        /// <summary>
         /// Determines whether the specified <see cref="ISerializer"/>s are equal
         /// </summary>
         /// <param name="x">The first <see cref="ISerializer"/> to compare</param>
