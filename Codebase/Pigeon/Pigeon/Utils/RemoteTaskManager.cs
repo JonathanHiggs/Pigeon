@@ -9,7 +9,7 @@ namespace Pigeon.Utils
     /// </summary>
     /// <typeparam name="TResult">Type of the task result</typeparam>
     /// <typeparam name="TId">Type of the task identifier to match tasks to results</typeparam>
-    public class RemoteTaskManager<TResult, TId>
+    public class RemoteTaskManager<TResult, TId> : IDisposable
     {
         private readonly Dictionary<TId, RemoteTask<TResult>> tasks = new Dictionary<TId, RemoteTask<TResult>>();
         private TId nextId;
@@ -40,6 +40,9 @@ namespace Pigeon.Utils
         /// throw a <see cref="TimeoutException"/></returns>
         public async Task<TResult> StartRemoteTask(Action<TId> run, TimeSpan timeout)
         {
+            if (disposedValue)
+                throw new InvalidOperationException("RemoteTaskManager has been disposed");
+
             var taskCompletionSource = new TaskCompletionSource<TResult>();
             TId id;
 
@@ -96,5 +99,41 @@ namespace Pigeon.Utils
                 asyncTask.CompleteWithException(exception);
             }
         }
+
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                disposedValue = true;
+
+                if (disposing)
+                {
+                    foreach (var task in tasks.Values)
+                        task.CompleteWithException(new Exception("RemoteTaskManager is being disposed"));
+
+                    tasks.Clear();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Cleans up resources
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
     }
 }
