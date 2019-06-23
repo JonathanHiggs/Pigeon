@@ -48,7 +48,7 @@ namespace Pigeon.Serialization
         /// <returns>true if the cache contains a matching <see cref="ISerializer"/>; false otherwise</returns>
         public bool SerializerFor(string name, out ISerializer serializer)
         {
-            serializer = serializers.SingleOrDefault(s => s.Descriptor.Name == name);
+            serializer = serializers.SingleOrDefault(s => s.Descriptor.InvariantName == name);
             return !(serializer is null);
         }
 
@@ -88,7 +88,7 @@ namespace Pigeon.Serialization
             var serializer = serializers.SingleOrDefault(s => s.Descriptor == serializationDescriptor);
 
             if (serializer is null)
-                throw new InvalidOperationException($"No matching serializer for {serializationDescriptor.Name} found in the cache");
+                throw new InvalidOperationException($"No matching serializer for {serializationDescriptor.InvariantName} found in the cache");
 
             DefaultSerializer = serializer;
         }

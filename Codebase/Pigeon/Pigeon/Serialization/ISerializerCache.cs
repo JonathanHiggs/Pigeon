@@ -36,6 +36,15 @@ namespace Pigeon.Serialization
 
 
         /// <summary>
+        /// Trys to retrieve a <see cref="ISerializer"/> from the cache where the <see cref="ISerializer.Descriptor"/>'s name matches the supplied name
+        /// </summary>
+        /// <param name="serializationDescriptor">The name of the <see cref="ISerializer"/> to retrieve from the cache</param>
+        /// <param name="serializer"></param>
+        /// <returns>true if the cache contains a matching <see cref="ISerializer"/>; false otherwise</returns>
+        bool SerializerFor(SerializationDescriptor serializationDescriptor, out ISerializer serializer);
+
+
+        /// <summary>
         /// Sets the default serialization
         /// </summary>
         /// <param name="serializer"><see cref="ISerializer"/> to use by default</param>

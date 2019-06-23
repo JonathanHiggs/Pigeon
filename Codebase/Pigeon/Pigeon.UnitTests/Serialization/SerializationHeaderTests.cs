@@ -11,18 +11,17 @@ namespace Pigeon.UnitTests.Serialization
         public void FromToBytes()
         {
             // Arrange
-            var version = new ProtocolVersion { Major = 1, Minor = 0 };
+            var version = new ProtocolVersion(1, 0);
             var name = "Something";
 
             // Act
             var header = new SerializationHeader(version, name);
             var bytes = header.ToBytes();
-            var (header2, count) = SerializationHeader.FromBytes(bytes);
+            var header2 = SerializationHeader.FromBytes(bytes);
 
             // Assert
             Assert.That(header2.Protocol, Is.EqualTo(version));
-            Assert.That(header2.SerializationName, Is.EqualTo(name));
-            Assert.That(count, Is.EqualTo(bytes.Length));
+            Assert.That(header2.InvariantName, Is.EqualTo(name));
         }
     }
 }

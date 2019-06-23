@@ -9,13 +9,14 @@ using Pigeon.Receivers;
 using Pigeon.Requests;
 using Pigeon.Routing;
 using Pigeon.Senders;
+using Pigeon.Serialization;
 using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.Transport;
 
 namespace Pigeon.Fluent
 {
-    public class ContainerBuilder : ITransportBuilder, IHandlerBuilder, IRouterBuilder
+    public class ContainerBuilder : ITransportBuilder, IHandlerBuilder, IRouterBuilder, ISerializerBuilder
     {
         private string name;
         private IContainer container;
@@ -42,12 +43,13 @@ namespace Pigeon.Fluent
                 .Register<IDIRequestDispatcher>(requestDispatcher);
 
             container
-                .Register<ISubscriptionsCache, SubscriptionsCache>(true)
                 .Register<ISenderCache, SenderCache>(true)
                 .Register<IMonitorCache, MonitorCache>(true)
                 .Register<IReceiverCache, ReceiverCache>(true)
                 .Register<IPublisherCache, PublisherCache>(true)
-                .Register<ISubscriberCache, SubscriberCache>(true);
+                .Register<ISubscriberCache, SubscriberCache>(true)
+                .Register<ISerializerCache, SerializerCache>(true)
+                .Register<ISubscriptionsCache, SubscriptionsCache>(true);
             
             var router = new Router(
                 name,
@@ -81,6 +83,25 @@ namespace Pigeon.Fluent
         public IHandlerBuilder WithHandlers(Action<IHandlerSetup> config)
         {
             config(container.Resolve<HandlerSetup>());
+            return this;
+        }
+
+
+        public ContainerBuilder WithSerializer<TSerializer>(bool defaultSerializer = false, Action<TSerializer> setup = null)
+            where TSerializer : ISerializer
+        {
+            container.Register<TSerializer>(true);
+
+            var cache = container.Resolve<ISerializerCache>();
+            var serializer = container.Resolve<TSerializer>();
+
+            cache.AddSerializer(serializer);
+            if (defaultSerializer)
+                cache.SetDefaultSerializer(serializer);
+
+            if (!(setup is null))
+                setup(serializer);
+
             return this;
         }
 

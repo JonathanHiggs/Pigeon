@@ -3,82 +3,114 @@ using System.Text;
 
 namespace Pigeon.Serialization
 {
-    public class SerializationHeader
+    /// <summary>
+    /// Data structure of the first few bytes in a pigeon message, used to denote protocol version and serialization used in the rest of the message
+    /// </summary>
+    /// <remarks>
+    /// Bytewise representation:
+    /// 0-3     Pigeon magic bytes
+    /// 4       Protocol version major byte
+    /// 5       Protocol version minor byte
+    /// 6       Length of the invariant name string
+    /// 7+      Invariant string
+    /// </remarks>
+    public readonly struct SerializationHeader
     {
+        // magic bytes are used prepended to the message to identify the data as a Pigeon message
         private const string magic = "Pige";
         private static readonly byte[] magicBytes = Encoding.UTF8.GetBytes(magic);
 
-        private readonly ProtocolVersion protocol;
-        private readonly string serializationName;
 
-
-        public SerializationHeader(ProtocolVersion protocol, string serializationName)
+        /// <summary>
+        /// Initializes a new instance of <see cref="SerializationHeader"/>
+        /// </summary>
+        /// <param name="protocol">Protocol version number</param>
+        /// <param name="serializationInvariantName">Invariant name of the <see cref="ISerializer"/> used in the rest of the message</param>
+        public SerializationHeader(ProtocolVersion protocol, string serializationInvariantName)
         {
-            this.protocol = protocol;
-            this.serializationName = serializationName;
+            Protocol = protocol;
+            InvariantName = serializationInvariantName;
+            InvariantLength = Encoding.UTF8.GetByteCount(InvariantName);
+            EncodedLength = 7 + InvariantLength;
         }
 
 
-        public ProtocolVersion Protocol => protocol;
+        /// <summary>
+        /// Gets the length of the header once encoded
+        /// </summary>
+        public int EncodedLength { get; }
 
 
-        public String SerializationName => serializationName;
+        /// <summary>
+        /// Gets the pigeon protocol version number
+        /// </summary>
+        public ProtocolVersion Protocol { get; }
 
 
-        public static (SerializationHeader header, int byteCount) FromBytes(byte[] array)
+        /// <summary>
+        /// Gets the length of <see cref="InvariantName"/> in UTF8 encoding
+        /// </summary>
+        public int InvariantLength { get; }
+
+
+        /// <summary>
+        /// Gets the <see cref="ISerializer"/> invariant name
+        /// </summary>
+        public string InvariantName { get; }
+
+
+        /// <summary>
+        /// Decodes a <see cref="SerializationHeader"/> from the supplied byte array
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns>Decoded <see cref="SerializationHeader"/></returns>
+        public static SerializationHeader FromBytes(byte[] array)
         {
             // Check the message has a Pigeon header
             for (int i = 0; i < 4; i++)
                 if (array[i] != magicBytes[i])
-                    return (null, 0);
-
-            var version = new ProtocolVersion
-            {
-                Major = array[4],
-                Minor = array[5]
-            };
+                    return new SerializationHeader(new ProtocolVersion(0, 0), string.Empty);
 
             var stringSize = (ushort)array[6];
+
+#if DEBUG
+            if (7 + stringSize > array.Length)
+                throw new IndexOutOfRangeException("Serialization header invariant name longer than the supplied array");
+#endif
+
+            var version = new ProtocolVersion(array[4], array[5]);
             var serializationName = Encoding.UTF8.GetString(array, 7, stringSize);
 
-            return (new SerializationHeader(version, serializationName), 7 + stringSize);
+            return new SerializationHeader(version, serializationName);
         }
 
 
+        /// <summary>
+        /// Encodes the <see cref="SerializationHeader"/> into a byte array
+        /// </summary>
+        /// <returns>Byte array containing encoded <see cref="SerializationHeader"/></returns>
         public byte[] ToBytes()
         {
-            var length = Encoding.UTF8.GetByteCount(serializationName);
-            var array = new byte[length + 7];
-
-            ToBytes(array, length);
-
+            var array = new byte[EncodedLength];
+            ToBytes(array);
             return array;
         }
 
 
+        /// <summary>
+        /// Encodes the <see cref="SerializationHeader"/> into the supplied byte array
+        /// </summary>
+        /// <param name="array">Byte array containing encoded <see cref="SerializationHeader"/></param>
         public void ToBytes(byte[] array)
         {
-            var length = Encoding.UTF8.GetByteCount(serializationName);
-            ToBytes(array, length);
-        }
-
-
-        private void ToBytes(byte[] array, int length)
-        {
-            if (array.Length < length + 7)
+            if (array.Length < InvariantLength)
                 throw new ArgumentException("Target array is too small");
 
             Array.Copy(magicBytes, 0, array, 0, 4);
-            array[4] = protocol.Major;
-            array[5] = protocol.Minor;
-            array[6] = (byte)(ushort)length;
-            Encoding.UTF8.GetBytes(serializationName, 0, length, array, 7);
-        }
-
-
-        public int ToBytesCount()
-        {
-            return 7 + Encoding.UTF8.GetByteCount(serializationName);
+            array[4] = Protocol.Major;
+            array[5] = Protocol.Minor;
+            array[6] = (byte)(ushort)InvariantLength;
+            Encoding.UTF8.GetBytes(InvariantName, 0, InvariantLength, array, 7);
         }
     }
 }
