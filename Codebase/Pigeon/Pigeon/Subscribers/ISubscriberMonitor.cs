@@ -5,15 +5,10 @@ namespace Pigeon.Subscribers
     /// <summary>
     /// Manages the state of <see cref="TSubscriber"/>s
     /// </summary>
-    /// <typeparam name="TSubscriber"></typeparam>
-    public interface ISubscriberMonitor<TSubscriber> : IMonitor where TSubscriber : ISubscriber
+    /// <typeparam name="TSubscriber">Type of <see cref="ISubscriber"/></typeparam>
+    public interface ISubscriberMonitor<TSubscriber> : IMonitor 
+        where TSubscriber : ISubscriber
     {
-        /// <summary>
-        /// Gets a handler delegate for incoming published topic events
-        /// </summary>
-        TopicEventHandler TopicHandler { get; }
-
-
         /// <summary>
         /// Adds a <see cref="TSubscriber"/> to the internal cache of monitored <see cref="ISubscriber"/>s
         /// </summary>

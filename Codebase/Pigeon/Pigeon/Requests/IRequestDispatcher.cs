@@ -11,7 +11,6 @@ namespace Pigeon.Requests
         /// <summary>
         /// Dispatches a request and returns the result to the client through the receiver
         /// </summary>
-        /// <param name="receiver"><see cref="IReceiver"/> that the request was sent to</param>
         /// <param name="requestTask">Combines all details needed to handle the incoming request</param>
         void Handle(ref RequestTask requestTask);
 

@@ -10,6 +10,7 @@ using Pigeon.NetMQ.Senders;
 using Pigeon.NetMQ.Subscribers;
 using Pigeon.Requests;
 using Pigeon.Subscribers;
+using Pigeon.Topics;
 using Pigeon.Transport;
 
 namespace Pigeon.NetMQ
@@ -20,6 +21,7 @@ namespace Pigeon.NetMQ
     public class NetMQFactory : TransportFactory<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>, INetMQFactory
     {
         private IRequestDispatcher requestDispatcher;
+        private ITopicDispatcher topicDispatcher;
         private readonly INetMQMessageFactory messageFactory;
         private readonly INetMQMonitor monitor;
 
@@ -27,15 +29,18 @@ namespace Pigeon.NetMQ
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQFactory"/>
         /// </summary>
+        /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> that will route incoming messages</param>
+        /// <param name="topicDispatcher"><see cref="ITopicDispatcher"/> that will route incoming topic messages</param>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQFactory(IRequestDispatcher requestDispatcher, INetMQMonitor monitor, INetMQMessageFactory messageFactory)
+        public NetMQFactory(IRequestDispatcher requestDispatcher, ITopicDispatcher topicDispatcher, INetMQMonitor monitor, INetMQMessageFactory messageFactory)
             : base(monitor, monitor, monitor, monitor)
         {
             if (monitor is null)
                 throw new ArgumentNullException(nameof(monitor));
 
             this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
+            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
             this.messageFactory = messageFactory ?? throw new ArgumentNullException(nameof(messageFactory));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
@@ -49,7 +54,7 @@ namespace Pigeon.NetMQ
         protected override INetMQReceiver CreateNewReceiver(IAddress address)
         {
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher.Handle);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             receiver.AddAddress(address);
 
@@ -99,7 +104,7 @@ namespace Pigeon.NetMQ
         protected override INetMQSubscriber CreateNewSubscriber(IAddress address)
         {
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, monitor.TopicHandler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             subscriber.AddAddress(address);
 

@@ -8,6 +8,7 @@ using Pigeon.Addresses;
 using Pigeon.NetMQ.Common;
 using Pigeon.Packages;
 using Pigeon.Subscribers;
+using Pigeon.Topics;
 
 namespace Pigeon.NetMQ.Subscribers
 {
@@ -17,13 +18,8 @@ namespace Pigeon.NetMQ.Subscribers
     /// </summary>
     public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber
     {
+        private readonly ITopicDispatcher topicDispatcher;
         private SubscriberSocket socket;
-
-
-        /// <summary>
-        /// Raised when an incoming message is received
-        /// </summary>
-        public TopicEventHandler Handler { get; private set; }
 
 
         /// <summary>
@@ -31,12 +27,12 @@ namespace Pigeon.NetMQ.Subscribers
         /// </summary>
         /// <param name="socket">Inner <see cref="SubscriberSocket"/> that receives data from remotes</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        /// <param name="handler"><see cref="TopicEventHandler"/> delegate that is called when an incoming topic message is received</param>
-        public NetMQSubscriber(SubscriberSocket socket, INetMQMessageFactory messageFactory, TopicEventHandler handler)
+        /// <param name="topicDispatcher"><see cref="ITopicDispatcher"/> that will route incoming topic messages</param>
+        public NetMQSubscriber(SubscriberSocket socket, INetMQMessageFactory messageFactory, ITopicDispatcher topicDispatcher)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
-            this.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
 
             socket.ReceiveReady += OnMessageReceived;
         }
@@ -85,7 +81,7 @@ namespace Pigeon.NetMQ.Subscribers
                     return;
                 
                 var package = messageFactory.ExtractTopic(message);
-                Handler(this, package);
+                topicDispatcher.Handle(this, package);
             });
         }
 
@@ -134,7 +130,6 @@ namespace Pigeon.NetMQ.Subscribers
                         socket.Dispose();
                         socket = null;
                     }
-                    Handler = null;
                 }
 
                 disposedValue = true;

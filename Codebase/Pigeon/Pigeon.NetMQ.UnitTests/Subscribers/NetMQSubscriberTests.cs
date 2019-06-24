@@ -10,12 +10,16 @@ using NUnit.Framework;
 using Pigeon.Addresses;
 using Pigeon.NetMQ.Subscribers;
 using Pigeon.Subscribers;
+using Pigeon.Topics;
 
 namespace Pigeon.NetMQ.UnitTests.Subscribers
 {
     [TestFixture]
     public class NetMQSubscriberTests
     {
+        private readonly Mock<ITopicDispatcher> mockTopicDispatcher = new Mock<ITopicDispatcher>();
+        private ITopicDispatcher topicDispatcher;
+
         private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
         private INetMQMessageFactory messageFactory;
 
@@ -27,6 +31,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         [SetUp]
         public void Setup()
         {
+            topicDispatcher = mockTopicDispatcher.Object;
             messageFactory = mockMessageFactory.Object;
         }
 
@@ -34,6 +39,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         [TearDown]
         public void Teardown()
         {
+            mockTopicDispatcher.Reset();
             mockMessageFactory.Reset();
         }
 
@@ -44,7 +50,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         public void NetMQSubscriber_WithNullSubscriberSocket_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate construct = () => new NetMQSubscriber(null, messageFactory, handler);
+            TestDelegate construct = () => new NetMQSubscriber(null, messageFactory, topicDispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -58,7 +64,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
             var socket = new SubscriberSocket();
 
             // Act
-            TestDelegate construct = () => new NetMQSubscriber(socket, null, handler);
+            TestDelegate construct = () => new NetMQSubscriber(socket, null, topicDispatcher);
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
@@ -69,7 +75,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
 
         [Test]
-        public void NetMQSubscriber_WithNullHandler_ThrowsArgumentNullException()
+        public void NetMQSubscriber_WithNullTopicDispatcher_ThrowsArgumentNullException()
         {
             // Arrange
             var socket = new SubscriberSocket();
@@ -79,23 +85,6 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
 
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
-
-            // Cleanup
-            socket.Dispose();
-        }
-
-
-        [Test]
-        public void NetMQSubscriber_WithHandler_SubscriberHandlerPropertyReturnsSameHandler()
-        {
-            // Arrange
-            var socket = new SubscriberSocket();
-
-            // Act
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
-
-            // Assert
-            Assert.That(subscriber.Handler, Is.SameAs(handler));
 
             // Cleanup
             socket.Dispose();
@@ -111,7 +100,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             var any = subscriber.Addresses.Any();
@@ -129,7 +118,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             var address = TcpAddress.Wildcard(5555);
             subscriber.Dispose();
 
@@ -153,7 +142,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             TestDelegate addAddress = () => subscriber.AddAddress(null);
@@ -171,7 +160,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             subscriber.AddAddress(address);
@@ -189,7 +178,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             subscriber.AddAddress(address);
@@ -212,7 +201,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             TestDelegate removeAddress = () => subscriber.RemoveAddress(null);
@@ -230,7 +219,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             TestDelegate removeAddress = () => subscriber.RemoveAddress(address);
@@ -248,7 +237,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             subscriber.AddAddress(address);
 
             // Act
@@ -267,7 +256,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             var address = TcpAddress.Wildcard(5555);
             subscriber.AddAddress(address);
 
@@ -287,7 +276,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             var address = TcpAddress.Wildcard(5555);
             var address2 = TcpAddress.Wildcard(5556);
             subscriber.AddAddress(address);
@@ -315,7 +304,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             subscriber.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -334,7 +323,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             subscriber.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -357,7 +346,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
 
             // Act
             TestDelegate connectAll = () => subscriber.InitializeConnection();
@@ -375,7 +364,7 @@ namespace Pigeon.NetMQ.UnitTests.Subscribers
         {
             // Arrange
             var socket = new SubscriberSocket();
-            var subscriber = new NetMQSubscriber(socket, messageFactory, handler);
+            var subscriber = new NetMQSubscriber(socket, messageFactory, topicDispatcher);
             subscriber.InitializeConnection();
 
             // Act

@@ -11,13 +11,6 @@ namespace Pigeon.Subscribers
     public interface ISubscriber : IConnection
     {
         /// <summary>
-        /// Gets the <see cref="TopicEventHandler"/> delegate the <see cref="ISubscriber"/> calls when an
-        /// incoming topic message is received
-        /// </summary>
-        TopicEventHandler Handler { get; }
-
-
-        /// <summary>
         /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
         /// </summary>
         /// <typeparam name="TTopic">The type of the published topic message</typeparam>

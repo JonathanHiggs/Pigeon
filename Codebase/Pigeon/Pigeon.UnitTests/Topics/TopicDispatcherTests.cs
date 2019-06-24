@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 
 using Pigeon.Diagnostics;
+using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.UnitTests.TestFixtures;
 
@@ -14,16 +15,20 @@ namespace Pigeon.UnitTests.Subscripions
     [TestFixture]
     public class TopicDispatcherTests
     {
-        private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
-        private readonly Mock<IAsyncTopicHandler<Topic>> mockAsyncHandler = new Mock<IAsyncTopicHandler<Topic>>();
+        private readonly Mock<ISubscriber> mockSubscriber = new Mock<ISubscriber>();
+        private ISubscriber subscriber;
 
+        private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
         private ITopicHandler<Topic> handler;
+
+        private readonly Mock<IAsyncTopicHandler<Topic>> mockAsyncHandler = new Mock<IAsyncTopicHandler<Topic>>();
         private IAsyncTopicHandler<Topic> asyncHandler;
-        
+                
 
         [SetUp]
         public void Setup()
         {
+            subscriber = mockSubscriber.Object;
             handler = mockHandler.Object;
             asyncHandler = mockAsyncHandler.Object;
         }
@@ -32,6 +37,7 @@ namespace Pigeon.UnitTests.Subscripions
         [TearDown]
         public void Teardown()
         {
+            mockSubscriber.Reset();
             mockHandler.Reset();
             mockAsyncHandler.Reset();
         }
@@ -110,7 +116,7 @@ namespace Pigeon.UnitTests.Subscripions
             var dispatcher = new TopicDispatcher();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(null);
+            TestDelegate handle = () => dispatcher.Handle(subscriber, null);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -125,7 +131,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(message);
+            TestDelegate handle = () => dispatcher.Handle(subscriber, message);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -141,7 +147,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            dispatcher.Handle(message);
+            dispatcher.Handle(subscriber, message);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(message)), Times.Once);
@@ -157,7 +163,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new Topic();
 
             // Act
-            dispatcher.Handle(message);
+            dispatcher.Handle(subscriber, message);
 
             // Assert
             mockAsyncHandler.Verify(m => m.Handle(It.IsIn(message)), Times.Once);
@@ -175,7 +181,7 @@ namespace Pigeon.UnitTests.Subscripions
             dispatcher.Register<Topic>(e => { handled = true; });
 
             // Act
-            dispatcher.Handle(message);
+            dispatcher.Handle(subscriber, message);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -194,7 +200,7 @@ namespace Pigeon.UnitTests.Subscripions
             dispatcher.Register<Topic>(e => Task.Run(() => { handled = true; wait.Set(); }));
 
             // Act
-            dispatcher.Handle(message);
+            dispatcher.Handle(subscriber, message);
 
             wait.WaitOne();
 
@@ -212,7 +218,7 @@ namespace Pigeon.UnitTests.Subscripions
             var message = new SubTopic();
 
             // Act
-            dispatcher.Handle(message);
+            dispatcher.Handle(subscriber, message);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsAny<Topic>()), Times.Never);

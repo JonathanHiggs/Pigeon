@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Pigeon.Annotations;
 using Pigeon.Diagnostics;
+using Pigeon.Subscribers;
 
 namespace Pigeon.Topics
 {
@@ -19,8 +20,9 @@ namespace Pigeon.Topics
         /// <summary>
         /// Finds and invokes a registered handler for the topic message
         /// </summary>
+        /// <param name="subscriber"><see cref="ISubscriber"/> that received the topic message</param>
         /// <param name="message">Topic message</param>
-        public void Handle(object message)
+        public void Handle(ISubscriber subscriber, object message)
         {
             if (message is null)
                 return;
