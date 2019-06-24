@@ -5,7 +5,9 @@ using ExampleContracts.Requests;
 using ExampleContracts.Topics;
 
 using Pigeon.Addresses;
+using Pigeon.Json;
 using Pigeon.NetMQ;
+using Pigeon.Serialization;
 using Pigeon.Unity;
 
 using Unity;
@@ -23,11 +25,13 @@ namespace ExampleClient
                 .RegisterSingleton<UnityContainer>()
                 .RegisterSingleton<App>()
                 .RegisterSingleton<MessagingService>();
-
+            
             var router =
                 UnityBuilder
                     .FromContainer(container)
                     .WithName("ExampleClient")
+                    .WithSerializer<DotNetSerializer>()
+                    .WithSerializer<JsonSerializer>(true)
                     .WithTransport<NetMQTransport>(t => {
                         t.WithSender(TcpAddress.Localhost(5555))
                             .For<UserConnecting>()

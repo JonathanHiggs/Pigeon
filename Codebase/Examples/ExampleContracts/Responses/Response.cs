@@ -1,12 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
 
+using Newtonsoft.Json;
+
 namespace ExampleContracts.Responses
 {
     [Serializable]
     [ImmutableObject(true)]
     public class Response<T>
     {
+        [JsonConstructor]
         public Response(T body, bool success, string reason)
         {
             Body = body;

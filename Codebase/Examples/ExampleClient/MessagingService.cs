@@ -23,6 +23,11 @@ namespace ExampleClient
         IDisposable
     {
         private readonly IRouter<IRouterInfo> router;
+#if DEBUG
+        private readonly TimeSpan timeout = TimeSpan.FromMinutes(20);
+#else
+        private readonly TimeSpan timeout = TimeSpan.FromSeconds(10);
+#endif
 
         private IDisposable messageSubscription;
         private IDisposable userConnectedSubscription;
@@ -46,7 +51,7 @@ namespace ExampleClient
         public async Task<User> Connect(string userName)
         {
             var request = new UserConnecting(new DTO.User(-1, userName, DateTime.UtcNow));
-            var response = await router.Send<UserConnecting, Response<DTO.User>>(request, TimeSpan.FromSeconds(5));
+            var response = await router.Send<UserConnecting, Response<DTO.User>>(request, timeout);
             ConnectedUser = User.FromDTO(response.Body);
             return ConnectedUser;
         }
@@ -55,7 +60,7 @@ namespace ExampleClient
         public async Task<User> Disconnect()
         {
             var request = new UserDisconecting(ConnectedUser.ToDTO());
-            var response = await router.Send<UserDisconecting, Response<DTO.User>>(request, TimeSpan.FromSeconds(5));
+            var response = await router.Send<UserDisconecting, Response<DTO.User>>(request, timeout);
             return User.FromDTO(response.Body);
         }
 
@@ -63,7 +68,7 @@ namespace ExampleClient
         public async Task<List<User>> GetAllUsers()
         {
             var request = new ConnectedUsers();
-            var response = await router.Send<ConnectedUsers, ConnectedUsersList>(request, TimeSpan.FromSeconds(5));
+            var response = await router.Send<ConnectedUsers, ConnectedUsersList>(request, timeout);
             return response.Users.Select(u => User.FromDTO(u)).ToList();
         }
 
@@ -71,7 +76,7 @@ namespace ExampleClient
         public async Task PostMessage(Message message)
         {
             var request = new PostMessage(message.ToDTO());
-            var response = await router.Send<PostMessage, Response<DTO.Message>>(request, TimeSpan.FromSeconds(5));
+            var response = await router.Send<PostMessage, Response<DTO.Message>>(request, timeout);
         }
 
 
@@ -107,7 +112,7 @@ namespace ExampleClient
             OnUserDisconnected?.Invoke(User.FromDTO(message.User));
 
 
-        #region IDisposable Support
+#region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -133,6 +138,6 @@ namespace ExampleClient
             Dispose(true);
         }
 
-        #endregion
+#endregion
     }
 }

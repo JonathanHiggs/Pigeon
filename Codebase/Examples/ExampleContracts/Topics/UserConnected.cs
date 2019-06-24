@@ -3,6 +3,8 @@ using System.ComponentModel;
 
 using ExampleContracts.Models;
 
+using Newtonsoft.Json;
+
 using Pigeon.Annotations;
 
 namespace ExampleContracts.Topics
@@ -12,6 +14,7 @@ namespace ExampleContracts.Topics
     [Topic]
     public class UserConnected
     {
+        [JsonConstructor]
         public UserConnected(User user) =>
             User = user;
 

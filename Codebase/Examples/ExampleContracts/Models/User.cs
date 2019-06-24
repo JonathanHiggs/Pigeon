@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 
+using Newtonsoft.Json;
+
 namespace ExampleContracts.Models
 {
     [Serializable]
@@ -15,6 +17,7 @@ namespace ExampleContracts.Models
         }
 
 
+        [JsonConstructor]
         public User(int id, string name, DateTime? connectedTimestamp, DateTime? disconnectedTimestamp)
         {
             Id = id;

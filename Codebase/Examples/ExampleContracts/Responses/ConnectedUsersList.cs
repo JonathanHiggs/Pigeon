@@ -4,12 +4,15 @@ using System.ComponentModel;
 
 using ExampleContracts.Models;
 
+using Newtonsoft.Json;
+
 namespace ExampleContracts.Responses
 {
     [Serializable]
     [ImmutableObject(true)]
     public class ConnectedUsersList
     {
+        [JsonConstructor]
         public ConnectedUsersList(List<User> users)
         {
             Users = users;
