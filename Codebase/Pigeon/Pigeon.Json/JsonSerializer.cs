@@ -20,6 +20,15 @@ namespace Pigeon.Json
 
 
         /// <summary>
+        /// Gets the serialization settings
+        /// </summary>
+        public JsonSerializerSettings Settings { get; } = 
+            new JsonSerializerSettings {
+                TypeNameHandling = TypeNameHandling.All,
+            };
+
+
+        /// <summary>
         /// Transforms serialized data back to the requested object type
         /// </summary>
         /// <typeparam name="TObj">Type of object to reconstruct</typeparam>
@@ -31,7 +40,7 @@ namespace Pigeon.Json
             using (var reader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(reader))
             {
-                return CreateSerializer().Deserialize<TObj>(jsonReader);
+                return NewtonsoftJsonSerializer.Create(Settings).Deserialize<TObj>(jsonReader);
             }
         }
 
@@ -49,7 +58,7 @@ namespace Pigeon.Json
             using (var reader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(reader))
             {
-                return CreateSerializer().Deserialize<TObj>(jsonReader);
+                return NewtonsoftJsonSerializer.Create(Settings).Deserialize<TObj>(jsonReader);
             }
         }
 
@@ -66,7 +75,7 @@ namespace Pigeon.Json
             using (var writer = new StreamWriter(stream))
             using (var jsonWriter = new JsonTextWriter(writer))
             {
-                CreateSerializer().Serialize(writer, obj);
+                NewtonsoftJsonSerializer.Create(Settings).Serialize(writer, obj);
                 jsonWriter.Flush();
                 return stream.ToArray();
             }
@@ -87,16 +96,10 @@ namespace Pigeon.Json
             using (var jsonWriter = new JsonTextWriter(writer))
             {
                 stream.Seek(offset, SeekOrigin.Begin);
-                CreateSerializer().Serialize(writer, obj);
+                NewtonsoftJsonSerializer.Create(Settings).Serialize(writer, obj);
                 jsonWriter.Flush();
                 return stream.ToArray();
             }
-        }
-
-
-        private NewtonsoftJsonSerializer CreateSerializer()
-        {
-            return NewtonsoftJsonSerializer.Create();
         }
     }
 }

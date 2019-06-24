@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using NUnit.Framework;
+
+using Pigeon.Packages;
 
 namespace Pigeon.Json.UnitTests
 {
@@ -80,6 +83,20 @@ namespace Pigeon.Json.UnitTests
 
             // Assert
             Assert.AreEqual(testObject, deserializedStr);
+        }
+
+
+        [Test]
+        public void Serialize_WithDataPackage()
+        {
+            // Arrange
+            var package = new DataPackage<TestObject>(new GuidPackageId(), new TestObject { Field = "Some value" });
+
+            // Act
+            var data = serializer.Serialize(package);
+            var str = Encoding.UTF8.GetString(data);
+            var deserializedPackage = serializer.Deserialize<Package>(data);
+
         }
 
 
