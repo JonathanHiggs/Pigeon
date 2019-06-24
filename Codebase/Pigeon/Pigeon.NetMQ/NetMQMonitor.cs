@@ -12,7 +12,6 @@ using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Senders;
 using Pigeon.Subscribers;
-using Pigeon.Topics;
 
 namespace Pigeon.NetMQ
 {
@@ -23,7 +22,6 @@ namespace Pigeon.NetMQ
     public class NetMQMonitor : INetMQMonitor
     {
         private readonly INetMQPoller poller;
-        private readonly ITopicDispatcher topicDispatcher;
         private readonly HashSet<INetMQSender> senders = new HashSet<INetMQSender>();
         private readonly HashSet<INetMQReceiver> receivers = new HashSet<INetMQReceiver>();
         private readonly HashSet<INetMQPublisher> publishers = new HashSet<INetMQPublisher>();
@@ -32,23 +30,14 @@ namespace Pigeon.NetMQ
 
         private bool running = false;
 
-        
-        /// <summary>
-        /// Gets a handler delegate for incoming published topic events
-        /// </summary>
-        public TopicEventHandler TopicHandler => HandleTopic;
-
 
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQMonitor"/>
         /// </summary>
         /// <param name="poller">The <see cref="INetMQPoller"/> polls the sender and receiver connections for incoming messages</param>
-        /// <param name="requestDispatcher">Delegates handling of incoming requests to registered handlers</param>
-        /// <param name="topicDispatcher">Delegates handling of incoming topic events to registered handlers</param>
-        public NetMQMonitor(INetMQPoller poller, ITopicDispatcher topicDispatcher)
+        public NetMQMonitor(INetMQPoller poller)
         {
             this.poller = poller ?? throw new ArgumentNullException(nameof(poller));
-            this.topicDispatcher = topicDispatcher ?? throw new ArgumentNullException(nameof(topicDispatcher));
         }
 
 
@@ -155,12 +144,6 @@ namespace Pigeon.NetMQ
                 if (running)
                     runningAction(connection);
             }
-        }
-
-
-        private void HandleTopic(ISubscriber subscriber, object topicEvent)
-        {
-            topicDispatcher.Handle(topicEvent);
         }
     }
 }

@@ -8,6 +8,7 @@ using Pigeon.Addresses;
 using Pigeon.NetMQ.Common;
 using Pigeon.Packages;
 using Pigeon.Receivers;
+using Pigeon.Requests;
 
 namespace Pigeon.NetMQ.Receivers
 {
@@ -18,14 +19,8 @@ namespace Pigeon.NetMQ.Receivers
     /// </summary>
     public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver
     {
+        private readonly IRequestDispatcher requestDispatcher;
         private RouterSocket socket;
-
-
-        /// <summary>
-        /// Gets the <see cref="RequestTaskHandler"/> delegate the <see cref="IReceiver"/> calls when
-        /// an incoming message is received
-        /// </summary>
-        public RequestTaskHandler Handler { get; private set; }
 
 
         /// <summary>
@@ -33,12 +28,12 @@ namespace Pigeon.NetMQ.Receivers
         /// </summary>
         /// <param name="socket">Inner NetMQ <see cref="RouterSocket"/></param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        /// <param name="handler"><see cref="RequestTaskHandler"/> is called when an incoming message is received</param>
-        public NetMQReceiver(RouterSocket socket, INetMQMessageFactory messageFactory, RequestTaskHandler handler)
+        /// <param name="requestDispatcher"><see cref="IRequestDispatcher"/> that will route incoming messages</param>
+        public NetMQReceiver(RouterSocket socket, INetMQMessageFactory messageFactory, IRequestDispatcher requestDispatcher)
             : base(socket, messageFactory)
         {
             this.socket = socket ?? throw new ArgumentNullException(nameof(socket));
-            this.Handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.requestDispatcher = requestDispatcher ?? throw new ArgumentNullException(nameof(requestDispatcher));
 
             socket.ReceiveReady += OnRequestReceived;
         }
@@ -96,7 +91,7 @@ namespace Pigeon.NetMQ.Receivers
 
                 var requestTask = new RequestTask(this, request, SendResponse, SendResponse);
 
-                Handler(ref requestTask);
+                requestDispatcher.Handle(ref requestTask);
             });
         }
 
@@ -119,7 +114,6 @@ namespace Pigeon.NetMQ.Receivers
                         socket.Dispose();
                         socket = null;
                     }
-                    Handler = null;
                 }
                 
                 disposedValue = true;

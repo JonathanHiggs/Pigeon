@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using Pigeon.Subscribers;
 
 namespace Pigeon.Topics
 {
@@ -10,8 +10,9 @@ namespace Pigeon.Topics
         /// <summary>
         /// Dispatches the handling of a published message
         /// </summary>
+        /// <param name="subscriber"><see cref="ISubscriber"/> that received the topic message</param>
         /// <param name="message">The message published by a remote source to be handled</param>
-        void Handle(object message);
+        void Handle(ISubscriber subscriber, object message);
 
 
         /// <summary>

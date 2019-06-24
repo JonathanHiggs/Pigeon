@@ -10,23 +10,33 @@ using NUnit.Framework;
 using Pigeon.Addresses;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.Receivers;
+using Pigeon.Requests;
 
 namespace Pigeon.NetMQ.UnitTests.Receivers
 {
     [TestFixture]
     public class NetMQReceiverTests
     {
+        private readonly Mock<IRequestDispatcher> mockRequestDispatcher = new Mock<IRequestDispatcher>();
+        private IRequestDispatcher requestDispatcher;
+
         private readonly Mock<INetMQMessageFactory> mockMessageFactory = new Mock<INetMQMessageFactory>();
         private INetMQMessageFactory messageFactory;
-
-        private void Handler(ref RequestTask task)
-        { }
-
+        
 
         [SetUp]
         public void Setup()
         {
+            requestDispatcher = mockRequestDispatcher.Object;
             messageFactory = mockMessageFactory.Object;
+        }
+
+
+        [TearDown]
+        public void Teardown()
+        {
+            mockRequestDispatcher.Reset();
+            mockMessageFactory.Reset();
         }
 
 
@@ -36,7 +46,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         public void NetMQReceiver_WithNullRouterSocket_ThrowsArgumentNullException()
         {
             // Act
-            TestDelegate test = () => new NetMQReceiver(null, messageFactory, Handler);
+            TestDelegate test = () => new NetMQReceiver(null, messageFactory, requestDispatcher);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -50,7 +60,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
             var socket = new RouterSocket();
 
             // Act
-            TestDelegate test = () => new NetMQReceiver(socket, null, Handler);
+            TestDelegate test = () => new NetMQReceiver(socket, null, requestDispatcher);
 
             // Assert
             Assert.That(test, Throws.ArgumentNullException);
@@ -86,7 +96,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             var isConnected = receiver.IsConnected;
@@ -104,7 +114,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             receiver.InitializeConnection();
 
             // Act
@@ -123,7 +133,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             receiver.InitializeConnection();
             receiver.TerminateConnection();
 
@@ -147,7 +157,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             var any = receiver.Addresses.Any();
@@ -165,7 +175,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
             receiver.Dispose();
 
@@ -189,7 +199,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             TestDelegate addAddress = () => receiver.AddAddress(null);
@@ -207,7 +217,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
 
             // Act
@@ -226,7 +236,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -250,7 +260,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -268,7 +278,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             receiver.AddAddress(TcpAddress.Wildcard(5555));
 
             // Act
@@ -291,7 +301,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -311,7 +321,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
             receiver.AddAddress(address);
 
@@ -331,7 +341,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
             var address = TcpAddress.Wildcard(5555);
             var address2 = TcpAddress.Wildcard(5556);
             receiver.AddAddress(address);
@@ -354,7 +364,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         { 
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             TestDelegate test = () => receiver.RemoveAddress(TcpAddress.Wildcard(5555));
@@ -376,7 +386,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             TestDelegate test = () => receiver.InitializeConnection();
@@ -394,7 +404,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             receiver.InitializeConnection();
@@ -417,7 +427,7 @@ namespace Pigeon.NetMQ.UnitTests.Receivers
         {
             // Arrange
             var socket = new RouterSocket();
-            var receiver = new NetMQReceiver(socket, messageFactory, Handler);
+            var receiver = new NetMQReceiver(socket, messageFactory, requestDispatcher);
 
             // Act
             TestDelegate test = () => receiver.TerminateConnection();

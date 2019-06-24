@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 
 using Pigeon.Diagnostics;
+using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.UnitTests.TestFixtures;
 
@@ -13,10 +14,13 @@ namespace Pigeon.UnitTests.Topics
     [TestFixture]
     public class DITopicDispatcherTests
     {
+        private readonly Mock<ISubscriber> mockSubscriber = new Mock<ISubscriber>();
+        private ISubscriber subscriber;
+
         private readonly Mock<ITopicHandler<Topic>> mockHandler = new Mock<ITopicHandler<Topic>>();
-        private readonly Mock<IAsyncTopicHandler<Topic>> mockAsyncHandler = new Mock<IAsyncTopicHandler<Topic>>();
-        
         private ITopicHandler<Topic> handler;
+
+        private readonly Mock<IAsyncTopicHandler<Topic>> mockAsyncHandler = new Mock<IAsyncTopicHandler<Topic>>();
         private IAsyncTopicHandler<Topic> asyncHandler;
 
         private readonly Mock<IContainer> mockContainer = new Mock<IContainer>();
@@ -28,6 +32,7 @@ namespace Pigeon.UnitTests.Topics
         [SetUp]
         public void Setup()
         {
+            subscriber = mockSubscriber.Object;
             handler = mockHandler.Object;
             asyncHandler = mockAsyncHandler.Object;
             container = mockContainer.Object;
@@ -37,6 +42,7 @@ namespace Pigeon.UnitTests.Topics
         [TearDown]
         public void Teardown()
         {
+            mockSubscriber.Reset();
             mockHandler.Reset();
             mockAsyncHandler.Reset();
             mockContainer.Reset();
@@ -206,7 +212,7 @@ namespace Pigeon.UnitTests.Topics
             var dispatcher = new DITopicDispatcher(container);
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(null);
+            TestDelegate handle = () => dispatcher.Handle(subscriber, null);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -220,7 +226,7 @@ namespace Pigeon.UnitTests.Topics
             var dispatcher = new DITopicDispatcher(container);
 
             // Act
-            TestDelegate handle = () => dispatcher.Handle(topic);
+            TestDelegate handle = () => dispatcher.Handle(subscriber, topic);
 
             // Assert
             Assert.That(handle, Throws.Nothing);
@@ -235,7 +241,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register(handler);
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -250,7 +256,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register(asyncHandler);
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockAsyncHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -266,7 +272,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register<Topic>(e => { handled = true; });
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             Assert.That(handled, Is.True);
@@ -282,7 +288,7 @@ namespace Pigeon.UnitTests.Topics
             var topic = new SubTopic();
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsAny<Topic>()), Times.Never);
@@ -299,7 +305,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register<Topic, ITopicHandler<Topic>>();
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -316,7 +322,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.RegisterAsync<Topic, IAsyncTopicHandler<Topic>>();
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockAsyncHandler.Verify(m => m.Handle(It.IsIn(topic)), Times.Once);
@@ -333,7 +339,7 @@ namespace Pigeon.UnitTests.Topics
             dispatcher.Register<Topic, ITopicHandler<Topic>>();
 
             // Act
-            dispatcher.Handle(topic);
+            dispatcher.Handle(subscriber, topic);
 
             // Assert
             mockContainer.Verify(m => m.Resolve<ITopicHandler<Topic>>(), Times.Once);
