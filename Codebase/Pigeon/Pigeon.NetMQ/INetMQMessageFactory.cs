@@ -1,4 +1,5 @@
 ﻿using NetMQ;
+using Pigeon.Serialization;
 
 namespace Pigeon.NetMQ
 {
@@ -45,7 +46,7 @@ namespace Pigeon.NetMQ
         /// </summary>
         /// <param name="message"><see cref="NetMQMessage"/> wrapping a request object</param>
         /// <returns>Request object contained withing the <see cref="NetMQMessage"/>, address of remote sender, and request identifier</returns>
-        (object request, byte[] address, int requestId) ExtractRequest(NetMQMessage message);
+        (object request, byte[] address, int requestId, string serializationName) ExtractRequest(NetMQMessage message);
 
 
         /// <summary>
@@ -62,8 +63,9 @@ namespace Pigeon.NetMQ
         /// <param name="response">Response object to be wrapped in a <see cref="NetMQMessage"/></param>
         /// <param name="address">Address of the remote</param>
         /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
+        /// <param name="serializerName">Descriptor name of the <see cref="ISerializer"/> to use</param>
         /// <returns><see cref="NetMQMessage"/> wrapping the response object</returns>
-        NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId);
+        NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId, string serializerName);
 
 
         /// <summary>

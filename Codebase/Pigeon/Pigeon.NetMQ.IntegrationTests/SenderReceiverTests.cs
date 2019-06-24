@@ -35,15 +35,19 @@ namespace Pigeon.NetMQ.IntegrationTests
                 task.ResponseSender(responseStr);
             }
 
-            var serializer = new DotNetSerializer();
             var packageFactory = new PackageFactory();
-            var messageFactory = new NetMQMessageFactory(serializer, packageFactory);
+            var serializer = new DotNetSerializer();
+            var serializerCache = new SerializerCache();
+            var messageFactory = new NetMQMessageFactory(serializerCache, packageFactory);
             var sender = new NetMQSender(new DealerSocket(), messageFactory);
             var receiver = new NetMQReceiver(new RouterSocket(), messageFactory, Handler);
             var poller = new NetMQPoller();
 
+            serializerCache.AddSerializer(serializer);
+
             sender.AddAddress(TcpAddress.Localhost(port));
             sender.InitializeConnection();
+
             receiver.AddAddress(TcpAddress.Wildcard(port));
             receiver.InitializeConnection();
                        

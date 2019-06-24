@@ -11,7 +11,6 @@ using Pigeon.Publishers;
 using Pigeon.Receivers;
 using Pigeon.Routing;
 using Pigeon.Senders;
-using Pigeon.Serialization;
 using Pigeon.Subscribers;
 using Pigeon.Transport;
 
@@ -29,13 +28,12 @@ namespace Pigeon.NetMQ
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQTransport"/>
         /// </summary>
-        /// <param name="container">DI Container to wire up dependencies</param>
+        /// <param name="container"><see cref="IContainer"/> to resolve and wire up dependencies</param>
         public NetMQTransport(IContainer container)
         {
             if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
-            container.Register<ISerializer, DotNetSerializer>(true);
             container.Register<INetMQMessageFactory, NetMQMessageFactory>(true);
             container.Register<INetMQPoller, NetMQPoller>(true);
             container.Register<INetMQMonitor, NetMQMonitor>(true);
@@ -46,6 +44,14 @@ namespace Pigeon.NetMQ
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQTransport"/>
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="requestRouter"></param>
+        /// <param name="receiverCache"></param>
+        /// <param name="topicRouter"></param>
+        /// <param name="publisherCache"></param>
         private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));

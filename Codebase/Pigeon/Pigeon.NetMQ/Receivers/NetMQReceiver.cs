@@ -87,10 +87,10 @@ namespace Pigeon.NetMQ.Receivers
                 if (!messageFactory.IsValidRequestMessage(requestMessage))
                     return;
 
-                var (request, address, requestId) = messageFactory.ExtractRequest(requestMessage);
+                var (request, address, requestId, serializerName) = messageFactory.ExtractRequest(requestMessage);
 
                 void SendResponse(object response) {
-                    var message = messageFactory.CreateResponseMessage(response, address, requestId);
+                    var message = messageFactory.CreateResponseMessage(response, address, requestId, serializerName);
                     socket.SendMultipartMessage(message);
                 }
 

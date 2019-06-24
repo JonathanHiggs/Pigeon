@@ -12,18 +12,18 @@ namespace Pigeon.NetMQ
     /// </summary>
     public class NetMQMessageFactory : INetMQMessageFactory
     {
-        private readonly ISerializer serializer;
+        private readonly ISerializerCache serializerCache;
         private readonly IPackageFactory packageFactory;
 
 
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQMessageFactory"/>
         /// </summary>
-        /// <param name="serializer">A serializer that will convert data into a binary format for transmission</param>
+        /// <param name="serializerCache">A serializer that will convert data into a binary format for transmission</param>
         /// <param name="packageFactory">Wraps objects in a packages</param>
-        public NetMQMessageFactory(ISerializer serializer, IPackageFactory packageFactory)
+        public NetMQMessageFactory(ISerializerCache serializerCache, IPackageFactory packageFactory)
         {
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            this.serializerCache = serializerCache ?? throw new ArgumentNullException(nameof(serializerCache));
             this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
 
@@ -38,7 +38,7 @@ namespace Pigeon.NetMQ
             var package = packageFactory.Pack(topicEvent);
             var message = new NetMQMessage(2);
             message.Append(topicEvent.GetType().FullName);
-            message.Append(serializer.Serialize(package));
+            message.Append(serializerCache.DefaultSerializer.Serialize(package));
             return message;
         }
 
@@ -50,7 +50,7 @@ namespace Pigeon.NetMQ
         /// <returns>Topic event contained within the <see cref="NetMQMessage"/></returns>
         public object ExtractTopic(NetMQMessage message)
         {
-            var package = serializer.Deserialize<Package>(message[1].ToByteArray());
+            var package = serializerCache.DefaultSerializer.Deserialize<Package>(message[1].ToByteArray());
             return packageFactory.Unpack(package);
         }
 
@@ -77,10 +77,11 @@ namespace Pigeon.NetMQ
         /// <returns><see cref="NetMQMessage"/> wrapping the request object</returns>
         public NetMQMessage CreateRequestMessage(object request, int requestId)
         {
+            var serializer = serializerCache.DefaultSerializer;
             var package = packageFactory.Pack(request);
-            var header = new SerializationHeader(new ProtocolVersion { Major = 1, Minor = 0 }, SerializationDescriptor.DotNet.Name);
+            var header = new SerializationHeader(new ProtocolVersion(1, 0), serializer.Descriptor.InvariantName);
 
-            var data = serializer.Serialize(package, header.ToBytesCount());
+            var data = serializer.Serialize(package, header.EncodedLength);
             header.ToBytes(data);
 
             var message = new NetMQMessage(4);
@@ -97,16 +98,20 @@ namespace Pigeon.NetMQ
         /// </summary>
         /// <param name="message"><see cref="NetMQMessage"/> wrapping a request object</param>
         /// <returns>Request object contained withing the <see cref="NetMQMessage"/>, address of remote sender, and request identifier</returns>
-        public (object request, byte[] address, int requestId) ExtractRequest(NetMQMessage message)
+        public (object request, byte[] address, int requestId, string serializationName) ExtractRequest(NetMQMessage message)
         {
             var address = message[0].ToByteArray();
             var requestId = message[2].ConvertToInt32();
 
             var data = message[4].ToByteArray();
-            var (header, byteCount) = SerializationHeader.FromBytes(data);
-            var package = serializer.Deserialize<Package>(data, byteCount);            
+            var header = SerializationHeader.FromBytes(data);
+            
+            if (!serializerCache.SerializerFor(header.InvariantName, out var serializer))
+                throw new MissingSerializerException(header.InvariantName);
+
+            var package = serializer.Deserialize<Package>(data, header.EncodedLength);
             var request = packageFactory.Unpack(package);
-            return (request, address, requestId);
+            return (request, address, requestId, header.InvariantName);
         }
 
 
@@ -131,13 +136,17 @@ namespace Pigeon.NetMQ
         /// <param name="response">Response object to be wrapped in a <see cref="NetMQMessage"/></param>
         /// <param name="address">Address of the remote</param>
         /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
+        /// <param name="serializerName"><see cref="SerializationDescriptor"/> of the <see cref="ISerializer"/> to use</param>
         /// <returns><see cref="NetMQMessage"/> wrapping the response object</returns>
-        public NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId)
+        public NetMQMessage CreateResponseMessage(object response, byte[] address, int requestId, string serializerName)
         {
-            var package = packageFactory.Pack(response);
-            var header = new SerializationHeader(new ProtocolVersion { Major = 1, Minor = 0 }, SerializationDescriptor.DotNet.Name);
+            if (!serializerCache.SerializerFor(serializerName, out var serializer))
+                throw new MissingSerializerException(serializerName);
 
-            var data = serializer.Serialize(package, header.ToBytesCount());
+            var package = packageFactory.Pack(response);
+            var header = new SerializationHeader(new ProtocolVersion(1, 0), serializerName);
+
+            var data = serializer.Serialize(package, header.EncodedLength);
             header.ToBytes(data);
 
             var message = new NetMQMessage(5);
@@ -159,8 +168,12 @@ namespace Pigeon.NetMQ
         {
             var requestId = message[1].ConvertToInt32();
             var data = message[3].ToByteArray();
-            var (header, byteCount) = SerializationHeader.FromBytes(data);
-            var package = serializer.Deserialize<Package>(data, byteCount);
+            var header = SerializationHeader.FromBytes(data);
+
+            if (!serializerCache.SerializerFor(header.InvariantName, out var serializer))
+                throw new MissingSerializerException(header.InvariantName);
+
+            var package = serializer.Deserialize<Package>(data, header.EncodedLength);
             var response = packageFactory.Unpack(package);
             return (requestId, response);
         }
