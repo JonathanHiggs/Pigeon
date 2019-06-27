@@ -29,6 +29,7 @@ namespace Pigeon.Transport
 
 
         #region Properties
+
         /// <summary>
         /// Gets the <see cref="IMonitor"/> for <see cref="TSender"/>s
         /// </summary>
@@ -75,6 +76,7 @@ namespace Pigeon.Transport
         /// Gets the type of <see cref="ISubscriber"/>s this factory creates
         /// </summary>
         public Type SubscriberType => typeof(TSubscriber);
+        
         #endregion
 
 
@@ -97,6 +99,7 @@ namespace Pigeon.Transport
 
 
         #region Senders
+
         /// <summary>
         /// Constructs a new instance of an <see cref="ISender"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>
@@ -122,10 +125,12 @@ namespace Pigeon.Transport
             senderMonitor.AddSender(sender);
             return sender;
         }
+        
         #endregion
 
 
         #region Receivers
+
         /// <summary>
         /// Creates a new instance of a <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
@@ -153,10 +158,12 @@ namespace Pigeon.Transport
             receiverMonitor.AddReceiver(receiver);
             return receiver;
         }
+        
         #endregion
 
 
         #region Publishers
+
         /// <summary>
         /// Creates a new instance of a <see cref="IPublisher"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
@@ -182,10 +189,12 @@ namespace Pigeon.Transport
             publisherMonitor.AddPublisher(publisher);
             return publisher;
         }
+        
         #endregion
 
 
         #region Subscribers
+
         /// <summary>
         /// Creates a new instance of a <see cref="ISubscriber"/> connected to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
@@ -213,6 +222,7 @@ namespace Pigeon.Transport
             subscriberMonitor.AddSubscriber(subscriber);
             return subscriber;
         }
+        
         #endregion
     }
 }

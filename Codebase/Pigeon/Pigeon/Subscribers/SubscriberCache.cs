@@ -83,6 +83,7 @@ namespace Pigeon.Subscribers
 
 
         #region Verbs.Subscribe
+
         /// <summary>
         /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
         /// </summary>
@@ -93,7 +94,22 @@ namespace Pigeon.Subscribers
             var subscriber = SubscriberFor<TTopic>();
             subscriber.Subscribe<TTopic>();
 
-            return subscriptions.Add<TTopic>(subscriber);
+            return subscriptions.Add<TTopic>(subscriber, string.Empty);
+        }
+
+
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <param name="topic">Topic subject name</param>
+        /// <returns>A representation of the subscription, the dispose method can be used to terminate the subscription</returns>
+        public IDisposable Subscribe<TTopic>(string subject)
+        {
+            var subscriber = SubscriberFor<TTopic>();
+            subscriber.Subscribe<TTopic>(subject);
+
+            return subscriptions.Add<TTopic>(subscriber, subject);
         }
 
 
@@ -104,8 +120,21 @@ namespace Pigeon.Subscribers
         public void Unsubscribe<TTopic>()
         {
             var subscriber = SubscriberFor<TTopic>();
-            subscriptions.Remove<TTopic>(subscriber);
+            subscriptions.Remove<TTopic>(subscriber, string.Empty);
         }
+
+
+        /// <summary>
+        /// Terminates a subscription to the topic message stream
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <param name="subject">Topic subject name</param>
+        public void Unsubscribe<TTopic>(string subject)
+        {
+            var subscriber = SubscriberFor<TTopic>();
+            subscriptions.Remove<TTopic>(subscriber, subject);
+        }
+        
         #endregion
     }
 }

@@ -17,10 +17,12 @@ namespace Pigeon.Subscribers
         /// Initializes and stores a subscription to the topic message stream from a remote <see cref="IPublisher"/>
         /// </summary>
         /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <param name="subscriber"></param>
+        /// <param name="subject">Topic subject identifier</param>
         /// <returns>A representation of the subscription, the dispose method can be used to terminate the subscription</returns>
-        public Subscription Add<TTopic>(ISubscriber subscriber)
+        public Subscription Add<TTopic>(ISubscriber subscriber, string subject)
         {
-            var key = new Key(subscriber, typeof(TTopic));
+            var key = new Key(subscriber, typeof(TTopic), subject);
 
             if (subscriptions.TryGetValue(key, out var subscription))
                 return subscription;
@@ -42,9 +44,10 @@ namespace Pigeon.Subscribers
         /// </summary>
         /// <typeparam name="TTopic">The type of the published topic message</typeparam>
         /// <param name="subscriber"><see cref="ISubscriber"/> for which to terminate the topic subscription</param>
-        public void Remove<TTopic>(ISubscriber subscriber)
+        /// <param name="subject">Topic subject identifier</param>
+        public void Remove<TTopic>(ISubscriber subscriber, string subject)
         {
-            var key = new Key(subscriber, typeof(TTopic));
+            var key = new Key(subscriber, typeof(TTopic), subject);
 
             if (!subscriptions.TryGetValue(key, out var subscription))
                 return;
@@ -60,11 +63,13 @@ namespace Pigeon.Subscribers
         {
             public readonly ISubscriber Subscriber;
             public readonly Type TopicType;
+            public readonly string Subject;
 
-            public Key(ISubscriber subscriber, Type topicType)
+            public Key(ISubscriber subscriber, Type topicType, string subject)
             {
                 Subscriber = subscriber ?? throw new ArgumentNullException(nameof(subscriber));
                 TopicType = topicType ?? throw new ArgumentNullException(nameof(topicType));
+                Subject = subject;
             }
         }
     }

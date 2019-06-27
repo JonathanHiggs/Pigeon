@@ -55,7 +55,7 @@ namespace Pigeon
             IPublisherCache publisherCache,
             ISubscriberCache subscriberCache)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
             this.senderCache = senderCache ?? throw new ArgumentNullException(nameof(senderCache));
@@ -146,6 +146,11 @@ namespace Pigeon
         }
 
 
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <returns>A representation of the subscription, the dispose method can be used to terminate the subscription</returns>
         public IDisposable Subscribe<TTopic>()
         {
 #if DEBUG
@@ -157,10 +162,43 @@ namespace Pigeon
             return subscriberCache.Subscribe<TTopic>();
         }
 
-        
+
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="IPublisher"/>
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <param name="subject">Topic subject name</param>
+        /// <returns>A representation of the subscription, the dispose method can be used to terminate the subscription</returns>
+        public IDisposable Subscribe<TTopic>(string subject)
+        {
+#if DEBUG
+            // Try to catch missing attributes in debug only for performance reasons
+            if (typeof(TTopic).GetCustomAttribute<TopicAttribute>() is null)
+                throw new MissingAttributeException(typeof(TTopic), typeof(TopicAttribute));
+#endif
+
+            return subscriberCache.Subscribe<TTopic>(subject);
+        }
+
+
+        /// <summary>
+        /// Terminates a subscription to the topic message stream
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
         public void Unsubscribe<TTopic>()
         {
             subscriberCache.Unsubscribe<TTopic>();
+        }
+
+
+        /// <summary>
+        /// Terminates a subscription to the topic message stream
+        /// </summary>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        /// <param name="subject">Topic subject name</param>
+        public void Unsubscribe<TTopic>(string subject)
+        {
+            subscriberCache.Unsubscribe<TTopic>(subject);
         }
 
 
