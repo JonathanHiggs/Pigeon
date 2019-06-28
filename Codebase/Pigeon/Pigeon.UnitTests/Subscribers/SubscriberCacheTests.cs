@@ -82,6 +82,7 @@ namespace Pigeon.UnitTests.Subscribers
 
 
         #region Constructor
+
         [Test]
         public void SubscriberCache_WithNullTopicRouter_ThrowsArgumentNullException()
         {
@@ -112,10 +113,12 @@ namespace Pigeon.UnitTests.Subscribers
             // Assert
             Assert.That(construct, Throws.ArgumentNullException);
         }
+        
         #endregion
 
 
         #region AddFactory
+
         [Test]
         public void AddFactory_WithNullFactory_ThrowsArgumentNullException()
         {
@@ -174,10 +177,12 @@ namespace Pigeon.UnitTests.Subscribers
             Assert.That(cache.SubscriberFactories.Count, Is.EqualTo(1));
             mockMonitorCache.Verify(m => m.AddMonitor(It.IsIn(monitor)), Times.Once);
         }
+        
         #endregion
 
 
         #region SubscriberFor
+
         [Test]
         public void SubscriberFor_WithNoRouting_ThrowsKeyNotFoundException()
         {
@@ -235,10 +240,12 @@ namespace Pigeon.UnitTests.Subscribers
             // Assert
             mockSubscriberFactory.Verify(m => m.CreateSubscriber(It.IsIn(address)), Times.Once);
         }
+        
         #endregion
 
 
         #region Subscribe
+
         [Test]
         public void Subscribe_WithSubscriber_CallsSubscribe()
         {
@@ -265,7 +272,22 @@ namespace Pigeon.UnitTests.Subscribers
             cache.Subscribe<Topic>();
 
             // Assert
-            mockSubscriptionsCache.Verify(m => m.Add<Topic>(It.IsIn(subscriber)), Times.Once);
+            mockSubscriptionsCache.Verify(m => m.Add<Topic>(It.IsIn(subscriber), string.Empty), Times.Once);
+        }
+
+
+        [Test]
+        public void Subscribe_WithSubscriberAndSubject_AddsSubscriptionToSubscriptionsCache()
+        {
+            // Arrange
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
+            cache.AddFactory(subscriberFactory);
+
+            // Act
+            cache.Subscribe<Topic>("1");
+
+            // Assert
+            mockSubscriptionsCache.Verify(m => m.Add<Topic>(It.IsIn(subscriber), It.IsIn("1")), Times.Once);
         }
 
 
@@ -295,10 +317,12 @@ namespace Pigeon.UnitTests.Subscribers
             // Assert
             Assert.That(subscribe, Throws.TypeOf<KeyNotFoundException>());
         }
+        
         #endregion
 
 
         #region Unsubscribe
+
         [Test]
         public void Unsubscribe_WithFactory_ForwardsToSubscriptionsCache()
         {
@@ -310,8 +334,24 @@ namespace Pigeon.UnitTests.Subscribers
             cache.Unsubscribe<Topic>();
 
             // Assert
-            mockSubscriptionsCache.Verify(m => m.Remove<Topic>(It.IsIn(subscriber)), Times.Once);
+            mockSubscriptionsCache.Verify(m => m.Remove<Topic>(It.IsIn(subscriber), string.Empty), Times.Once);
         }
+
+
+        [Test]
+        public void Unsubscribe_WithFactoryAndSubject_ForwardsToSubscriptionsCache()
+        {
+            // Arrange
+            var cache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
+            cache.AddFactory(subscriberFactory);
+
+            // Act
+            cache.Unsubscribe<Topic>("1");
+
+            // Assert
+            mockSubscriptionsCache.Verify(m => m.Remove<Topic>(It.IsIn(subscriber), It.IsIn("1")), Times.Once);
+        }
+        
         #endregion
     }
 }

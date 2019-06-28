@@ -34,6 +34,7 @@ namespace Pigeon.UnitTests.Subscribers
 
 
         #region Add
+
         [Test]
         public void Add_WithNullSubscriber_ThrowsArgumentNullException()
         {
@@ -41,7 +42,7 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            TestDelegate add = () => cache.Add<Topic>(null);
+            TestDelegate add = () => cache.Add<Topic>(null, string.Empty);
 
             // Assert
             Assert.That(add, Throws.ArgumentNullException);
@@ -55,7 +56,7 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            var subscription = cache.Add<Topic>(subscriber);
+            var subscription = cache.Add<Topic>(subscriber, string.Empty);
 
             // Assert
             Assert.That(subscription, Is.Not.Null);
@@ -69,7 +70,7 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            var subscription = cache.Add<Topic>(subscriber);
+            var subscription = cache.Add<Topic>(subscriber, string.Empty);
 
             // Assert
             Assert.That(subscription.TopicType, Is.EqualTo(typeof(Topic)));
@@ -83,11 +84,26 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            var sub1 = cache.Add<Topic>(subscriber);
-            var sub2 = cache.Add<Topic>(subscriber);
+            var sub1 = cache.Add<Topic>(subscriber, string.Empty);
+            var sub2 = cache.Add<Topic>(subscriber, string.Empty);
 
             // Assert
             Assert.That(sub1, Is.SameAs(sub2));
+        }
+
+
+        [Test]
+        public void Add_CalledTwiceWithSameSubscriberDifferentSubjects_ReturnsDifferentSubscriptionInstance()
+        {
+            // Arrange
+            var cache = new SubscriptionsCache();
+
+            // Act
+            var sub1 = cache.Add<Topic>(subscriber, "1");
+            var sub2 = cache.Add<Topic>(subscriber, "2");
+
+            // Assert
+            Assert.That(sub1, Is.Not.SameAs(sub2));
         }
 
 
@@ -98,8 +114,8 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            var sub1 = cache.Add<Topic>(subscriber);
-            var sub2 = cache.Add<Topic>(subscriber2);
+            var sub1 = cache.Add<Topic>(subscriber, string.Empty);
+            var sub2 = cache.Add<Topic>(subscriber2, string.Empty);
 
             // Assert
             Assert.That(sub1, Is.Not.SameAs(sub2));
@@ -113,15 +129,17 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            cache.Add<Topic>(subscriber).Dispose();
+            cache.Add<Topic>(subscriber, string.Empty).Dispose();
 
             // Assert
             mockSubscriber.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
         }
+        
         #endregion
 
 
         #region Remove
+
         [Test]
         public void Remove_WithNoSubscriptionAdded_DoesNothing()
         {
@@ -129,7 +147,7 @@ namespace Pigeon.UnitTests.Subscribers
             var cache = new SubscriptionsCache();
 
             // Act
-            TestDelegate remove = () => cache.Remove<Topic>(subscriber);
+            TestDelegate remove = () => cache.Remove<Topic>(subscriber, string.Empty);
 
             // Assert
             Assert.That(remove, Throws.Nothing);
@@ -141,10 +159,10 @@ namespace Pigeon.UnitTests.Subscribers
         {
             // Arrange
             var cache = new SubscriptionsCache();
-            cache.Add<Topic>(subscriber);
+            cache.Add<Topic>(subscriber, string.Empty);
 
             // Act
-            cache.Remove<Topic>(subscriber);
+            cache.Remove<Topic>(subscriber, string.Empty);
 
             // Assert
             mockSubscriber.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
@@ -156,11 +174,27 @@ namespace Pigeon.UnitTests.Subscribers
         {
             // Arrange
             var cache = new SubscriptionsCache();
-            cache.Add<Topic>(subscriber);
-            cache.Add<Topic>(subscriber2);
+            cache.Add<Topic>(subscriber, string.Empty);
+            cache.Add<Topic>(subscriber2, string.Empty);
 
             // Act
-            cache.Remove<Topic>(subscriber);
+            cache.Remove<Topic>(subscriber, string.Empty);
+
+            // Assert
+            mockSubscriber.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
+        }
+
+
+        [Test]
+        public void Remove_WithTwoSubscriptionsDifferentTopicsAdded_CallsCorrectUnsubscribe()
+        {
+            // Arrange
+            var cache = new SubscriptionsCache();
+            cache.Add<Topic>(subscriber, "1");
+            cache.Add<Topic>(subscriber, "2");
+
+            // Act
+            cache.Remove<Topic>(subscriber, "1");
 
             // Assert
             mockSubscriber.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
@@ -172,11 +206,11 @@ namespace Pigeon.UnitTests.Subscribers
         {
             // Arrange
             var cache = new SubscriptionsCache();
-            cache.Add<Topic>(subscriber);
-            cache.Add<Topic>(subscriber2);
+            cache.Add<Topic>(subscriber, string.Empty);
+            cache.Add<Topic>(subscriber2, string.Empty);
 
             // Act
-            cache.Remove<Topic>(subscriber2);
+            cache.Remove<Topic>(subscriber2, string.Empty);
 
             // Assert
             mockSubscriber2.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
@@ -188,15 +222,16 @@ namespace Pigeon.UnitTests.Subscribers
         {
             // Arrange
             var cache = new SubscriptionsCache();
-            cache.Add<Topic>(subscriber);
+            cache.Add<Topic>(subscriber, string.Empty);
 
             // Act
-            cache.Remove<Topic>(subscriber);
-            cache.Remove<Topic>(subscriber);
+            cache.Remove<Topic>(subscriber, string.Empty);
+            cache.Remove<Topic>(subscriber, string.Empty);
 
             // Assert
             mockSubscriber.Verify(m => m.Unsubscribe<Topic>(), Times.Once);
         }
+        
         #endregion
     }
 }

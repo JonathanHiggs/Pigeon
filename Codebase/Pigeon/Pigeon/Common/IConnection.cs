@@ -4,6 +4,7 @@ using Pigeon.Addresses;
 
 namespace Pigeon.Common
 {
+    // ToDo: Remove Add/Remove address
     public interface IConnection
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace Pigeon.Common
         /// </summary>
         bool IsConnected { get; }
 
-
+        
         /// <summary>
         /// Adds the <see cref="IAddress"/> to the set of adresses the <see cref="IConnection"/> will listen to
         /// for incoming <see cref="Package"/>s

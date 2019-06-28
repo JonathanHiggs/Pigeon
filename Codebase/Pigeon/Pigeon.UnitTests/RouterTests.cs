@@ -488,6 +488,24 @@ namespace Pigeon.UnitTests
 
 
         [Test]
+        public void Subscribe_WithSubject_CallsSubscriberCache()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var subject = "1";
+
+            // Act
+            var subscription = router.Subscribe<Topic>(subject);
+
+            // Assert
+            mockSubscriberCache
+                .Verify(
+                    m => m.Subscribe<Topic>(subject),
+                    Times.Once);
+        }
+
+
+        [Test]
         public void Subscribe_WithUnannotatedTopic_ThrowsMissingAttributeException()
         {
             // Arrange
@@ -518,6 +536,24 @@ namespace Pigeon.UnitTests
             mockSubscriberCache
                 .Verify(
                     m => m.Unsubscribe<Topic>(),
+                    Times.Once);
+        }
+
+
+        [Test]
+        public void Unsubscribe_WithSubject_CallsSubscriberCache()
+        {
+            // Arrange
+            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var subject = "1";
+
+            // Act
+            router.Unsubscribe<Topic>(subject);
+
+            // Assert
+            mockSubscriberCache
+                .Verify(
+                    m => m.Unsubscribe<Topic>(subject),
                     Times.Once);
         }
 

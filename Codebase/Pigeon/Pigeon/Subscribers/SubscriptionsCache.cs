@@ -10,6 +10,7 @@ namespace Pigeon.Subscribers
     /// </summary>
     public class SubscriptionsCache : ISubscriptionsCache
     {
+        // ToDo: change this to a HashSet
         private readonly Dictionary<Key, Subscription> subscriptions = new Dictionary<Key, Subscription>();
 
 
@@ -27,7 +28,7 @@ namespace Pigeon.Subscribers
             if (subscriptions.TryGetValue(key, out var subscription))
                 return subscription;
 
-            subscription = new Subscription(subscriber, typeof(TTopic), () =>
+            subscription = new Subscription(subscriber, typeof(TTopic), subject, () =>
             {
                 subscriber.Unsubscribe<TTopic>();
                 subscriptions.Remove(key);
@@ -59,7 +60,7 @@ namespace Pigeon.Subscribers
         /// <summary>
         /// Key for the subscription cache
         /// </summary>
-        private struct Key
+        private readonly struct Key
         {
             public readonly ISubscriber Subscriber;
             public readonly Type TopicType;
