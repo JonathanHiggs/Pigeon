@@ -9,7 +9,6 @@ using NUnit.Framework;
 
 using Pigeon.Addresses;
 using Pigeon.NetMQ.Receivers;
-using Pigeon.Receivers;
 using Pigeon.Requests;
 
 namespace Pigeon.NetMQ.UnitTests.Receivers

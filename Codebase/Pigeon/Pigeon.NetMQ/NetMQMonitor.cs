@@ -45,28 +45,32 @@ namespace Pigeon.NetMQ
         /// Adds a <see cref="INetMQSender"/> to the internal cache of monitored <see cref="ISender"/>s
         /// </summary>
         /// <param name="sender"><see cref="INetMQSender"/> to add to the monitored cache of <see cref="ISender"/>s</param>
-        public void AddSender(INetMQSender sender) => Add(sender, senders, s => s.InitializeConnection());
+        public void AddSender(INetMQSender sender) => 
+            Add(sender, senders);
 
 
         /// <summary>
         /// Adds a <see cref="INetMQReceiver"/> to the internal cache of monitored <see cref="IReceiver"/>s
         /// </summary>
         /// <param name="receiver"><see cref="INetMQReceiver"/> to add to the cache of monitored <see cref="IReceiver"/>s</param>
-        public void AddReceiver(INetMQReceiver receiver) => Add(receiver, receivers, r => r.InitializeConnection());
+        public void AddReceiver(INetMQReceiver receiver) => 
+            Add(receiver, receivers);
 
 
         /// <summary>
         /// Adds a <see cref="INetMQPublisher"/> to the internal cache of monitored <see cref="IPublisher"/>s
         /// </summary>
         /// <param name="publisher"><see cref="INetMQPublisher"/> to add to the cache of monitored <see cref="IPublisher"/>s</param>
-        public void AddPublisher(INetMQPublisher publisher) => Add(publisher, publishers, p => p.InitializeConnection());
+        public void AddPublisher(INetMQPublisher publisher) => 
+            Add(publisher, publishers);
 
 
         /// <summary>
         /// Adds a <see cref="INetMQSubscriber"/> to the internal cache of monitored <see cref="ISubscriber"/>s
         /// </summary>
         /// <param name="subscriber"><see cref="INetMQSubscriber"/> to add to the cache of monitored <see cref="ISubscriber"/>s</param>
-        public void AddSubscriber(INetMQSubscriber subscriber) => Add(subscriber, subscribers, s => s.InitializeConnection());
+        public void AddSubscriber(INetMQSubscriber subscriber) => 
+            Add(subscriber, subscribers);
 
 
         /// <summary>
@@ -130,7 +134,7 @@ namespace Pigeon.NetMQ
         }
 
 
-        private void Add<TConnection>(TConnection connection, HashSet<TConnection> connectionSet, Action<TConnection> runningAction)
+        private void Add<TConnection>(TConnection connection, HashSet<TConnection> connectionSet)
             where TConnection : class, INetMQConnection
         {
             if (connection is null)
@@ -142,7 +146,7 @@ namespace Pigeon.NetMQ
             lock(lockObj)
             {
                 if (running)
-                    runningAction(connection);
+                    connection.InitializeConnection();
             }
         }
     }

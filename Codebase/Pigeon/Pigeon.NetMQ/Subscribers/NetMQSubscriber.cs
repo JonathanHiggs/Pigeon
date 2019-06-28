@@ -36,13 +36,22 @@ namespace Pigeon.NetMQ.Subscribers
 
             socket.ReceiveReady += OnMessageReceived;
         }
-        
-        
+
+
         /// <summary>
         /// Initializes a subscription to the topic message stream from a remote <see cref="Publishers.INetMQPublisher"/>
         /// </summary>
         /// <typeparam name="TTopic">The type of the published topic message</typeparam>
-        public void Subscribe<TTopic>()
+        public void Subscribe<TTopic>() => 
+            Subscribe<TTopic>(typeof(TTopic).FullName);
+        
+
+        /// <summary>
+        /// Initializes a subscription to the topic message stream from a remote <see cref="Publishers.INetMQPublisher"/>
+        /// </summary>
+        /// <param name="subject">Topic subject name</param>
+        /// <typeparam name="TTopic">The type of the published topic message</typeparam>
+        public void Subscribe<TTopic>(string subject)
         {
             if (disposedValue)
                 throw new InvalidOperationException("NetMQSubscriber has been disposed");
@@ -50,8 +59,7 @@ namespace Pigeon.NetMQ.Subscribers
             if (!IsConnected)
                 throw new InvalidCastException("NetMQSuscriber is not connected");
 
-            var topicName = typeof(TTopic).FullName;
-            socket.Subscribe(topicName);
+            socket.Subscribe(subject);
         }
 
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{863EDB3D-B126-4163-BF3A-30EBBE40F8F4}"
 EndProject
@@ -43,7 +43,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleContracts", "..\Exam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleServer", "..\Examples\ExampleServer\ExampleServer.csproj", "{2D30C29C-F993-4D41-978A-0220632FDC2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.Annotations", "Pigeon.Annotations\Pigeon.Annotations.csproj", "{E79A60C3-0687-49CE-97D7-95BD0033E498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pigeon.Annotations", "Pigeon.Annotations\Pigeon.Annotations.csproj", "{E79A60C3-0687-49CE-97D7-95BD0033E498}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.ActiveMQ", "Pigeon.ActiveMQ\Pigeon.ActiveMQ.csproj", "{998814D2-0117-4F48-9D45-C1239601EA30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,10 @@ Global
 		{E79A60C3-0687-49CE-97D7-95BD0033E498}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E79A60C3-0687-49CE-97D7-95BD0033E498}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E79A60C3-0687-49CE-97D7-95BD0033E498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{998814D2-0117-4F48-9D45-C1239601EA30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{998814D2-0117-4F48-9D45-C1239601EA30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{998814D2-0117-4F48-9D45-C1239601EA30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{998814D2-0117-4F48-9D45-C1239601EA30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
