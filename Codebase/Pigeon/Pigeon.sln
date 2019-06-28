@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleServer", "..\Example
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pigeon.Annotations", "Pigeon.Annotations\Pigeon.Annotations.csproj", "{E79A60C3-0687-49CE-97D7-95BD0033E498}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pigeon.ActiveMQ", "Pigeon.ActiveMQ\Pigeon.ActiveMQ.csproj", "{998814D2-0117-4F48-9D45-C1239601EA30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pigeon.ActiveMQ", "Pigeon.ActiveMQ\Pigeon.ActiveMQ.csproj", "{998814D2-0117-4F48-9D45-C1239601EA30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
