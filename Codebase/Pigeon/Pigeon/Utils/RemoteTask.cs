@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -96,7 +97,11 @@ namespace Pigeon.Utils
                     return;
 
                 timeoutTimer.Stop();
+
+                MethodInfo preserveStackTrace = typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic);
+                preserveStackTrace?.Invoke(ex, null);
                 taskCompletionSource.TrySetException(ex);
+
                 taskCompletionSource = null;
                 timeoutTimer.Dispose();
                 timeoutTimer = null;

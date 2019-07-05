@@ -74,7 +74,12 @@ namespace Pigeon.Packages
                 return (package as DataPackage<TMessage>).Data;
 
             else if (package is ExceptionPackage)
-                throw (package as ExceptionPackage).Exception;
+            {
+                var ex = (package as ExceptionPackage).Exception;
+                MethodInfo preserveStackTrace = typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic);
+                preserveStackTrace?.Invoke(ex, null);
+                throw ex;
+            }
 
             else
                 throw new InvalidCastException($"Unable to extract type {typeof(TMessage).Name} from message");
