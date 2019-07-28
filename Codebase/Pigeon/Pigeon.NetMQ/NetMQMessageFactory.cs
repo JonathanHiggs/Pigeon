@@ -19,7 +19,7 @@ namespace Pigeon.NetMQ
         /// <summary>
         /// Initializes a new instance of <see cref="NetMQMessageFactory"/>
         /// </summary>
-        /// <param name="serializerCache">A serializer that will convert data into a binary format for transmission</param>
+        /// <param name="serializerCache"><see cref="ISerializerCache"/> for accessing <see cref="ISerializer"/>s to encode and decode binary messages</param>
         /// <param name="packageFactory">Wraps objects in a packages</param>
         public NetMQMessageFactory(ISerializerCache serializerCache, IPackageFactory packageFactory)
         {
