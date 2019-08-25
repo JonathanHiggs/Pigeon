@@ -6,7 +6,7 @@ using Pigeon.Senders;
 namespace Pigeon.NetMQ.Receivers
 {
     /// <summary>
-    /// Interface that encapsulates a NetMQ <see cref="IReceiver"/> that is able to bind to <see cref="IAddress"/>es 
+    /// Interface that encapsulates a NetMQ <see cref="IReceiver"/> that is able to bind to <see cref="IAddress"/> 
     /// to receive and reply to incoming messages from remote <see cref="ISender"/>
     /// </summary>
     public interface INetMQReceiver : IReceiver, INetMQConnection

@@ -13,13 +13,13 @@ namespace Pigeon.Common
 
 
         /// <summary>
-        /// Gets a bool that returns true when the <see cref="IConnection"/> is connected; otherwise false
+        /// Gets a <see cref="bool"/> that returns true when the <see cref="IConnection"/> is connected; otherwise false
         /// </summary>
         bool IsConnected { get; }
 
 
         /// <summary>
-        /// Adds the <see cref="IAddress"/> to the set of adresses the <see cref="IConnection"/> will listen to
+        /// Adds the <see cref="IAddress"/> to the set of addresses the <see cref="IConnection"/> will listen to
         /// for incoming <see cref="Package"/>s
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> to add</param>
@@ -42,13 +42,13 @@ namespace Pigeon.Common
 
 
         /// <summary>
-        /// Initializes the connections to all added <see cref="IAddress"/>es
+        /// Initializes the connections to all added <see cref="IAddress"/>
         /// </summary>
         void InitializeConnection();
 
 
         /// <summary>
-        /// Terminates the connection to all added <see cref="IAddress"/>es
+        /// Terminates the connection to all added <see cref="IAddress"/>
         /// </summary>
         void TerminateConnection();
     }

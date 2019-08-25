@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Pigeon.Utils
 {
     /// <summary>
-    /// Manages out-of-process asynchronous tasks to not block threads while waiting for results with automatic timeouts
+    /// Manages out-of-process asynchronous tasks to not block threads while waiting for results with automatic time-outs
     /// </summary>
     /// <typeparam name="TResult">Type of the task result</typeparam>
     /// <typeparam name="TId">Type of the task identifier to match tasks to results</typeparam>
@@ -35,8 +35,8 @@ namespace Pigeon.Utils
         /// <param name="run">Action to perform to initiate the task; passes in a generated identifier for the task if it is
         /// required and which can also be captured </param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the task will throw a <see cref="TimeoutException"/> in 
-        /// the absense of a result being set</param>
-        /// <returns>A <see cref="Task{TResult}"/> that respresents the remote task which will either return the result or
+        /// the absence of a result being set</param>
+        /// <returns>A <see cref="Task{TResult}"/> that represents the remote task which will either return the result or
         /// throw a <see cref="TimeoutException"/></returns>
         public async Task<TResult> StartRemoteTask(Action<TId> run, TimeSpan timeout)
         {

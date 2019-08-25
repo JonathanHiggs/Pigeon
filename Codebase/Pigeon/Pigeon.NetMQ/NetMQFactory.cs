@@ -47,7 +47,7 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
-        /// Creates a new instance of a <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
+        /// Creates a new instance of <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="Pigeon.Common.IConnection"/></param>
         /// <returns>Receiver bound to the address</returns>
@@ -79,7 +79,7 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
-        /// Creates a new instance of a <see cref="INetMQPublisher"/> bound to the supplied <see cref="IAddress"/>
+        /// Creates a new instance of <see cref="INetMQPublisher"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> publisher binds to</param>
         /// <returns><see cref="INetMQPublisher"/> bound to the <see cref="IAddress"/></returns>
@@ -95,7 +95,7 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
-        /// Creates a new instance of a <see cref="INetMQSubscriber"/> connected to the supplied <see cref="IAddress"/>
+        /// Creates a new instance of <see cref="INetMQSubscriber"/> connected to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="Pigeon.Common.IConnection"/></param>
         /// <param name="topicEventHandler"><see cref="TopicEventHandler"/> delegate that the <see cref="INetMQSubscriber"/> will call

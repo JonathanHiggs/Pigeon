@@ -14,7 +14,7 @@ namespace Pigeon.NetMQ.Receivers
 {
     /// <summary>
     /// Implementation of <see cref="IReceiver"/> that wraps a NetMQ <see cref="RouterSocket"/>. Encapsulates a connection
-    /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/>es from
+    /// that is able to bind to an <see cref="IAddress"/> to receive and respond to incoming <see cref="Package"/> from
     /// connected remote <see cref="INetMQReceiver"/>s
     /// </summary>
     public sealed class NetMQReceiver : NetMQConnection, INetMQReceiver

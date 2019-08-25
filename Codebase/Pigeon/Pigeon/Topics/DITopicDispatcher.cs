@@ -35,7 +35,7 @@ namespace Pigeon.Topics
             if (!container.IsRegistered<THandler>())
                 throw new NotRegisteredException(typeof(THandler));
 
-            // Note: don't need to GetAwaiter().GetResult() since there is no return
+            // Note: Fire and forget, don't need to GetAwaiter().GetResult() since there is no return
             handlers.Add(
                 typeof(TTopic),
                 eventMessage => container.Resolve<THandler>().Handle((TTopic)eventMessage));

@@ -12,7 +12,7 @@ namespace Pigeon.Routing
 {
     /// <summary>
     /// Maps request message types to a <see cref="SenderRouting"/> for runtime construction and resolution of
-    /// <see cref="ISender"/>s from config-time setup
+    /// <see cref="ISender"/>s from configuration time set-up
     /// </summary>
     public class RequestRouter : IRequestRouter
     {

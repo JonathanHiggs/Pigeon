@@ -45,9 +45,9 @@ namespace Pigeon.Serialization
         /// Transforms serialized data back to the requested object type
         /// </summary>
         /// <typeparam name="TObj">Type of object to reconstruct</typeparam>
-        /// <param name="data">Data to be deserialized</param>
+        /// <param name="data">Data to be de-serialized</param>
         /// <param name="offset">Offset to start reading from</param>
-        /// <returns>Deserialized object</returns>
+        /// <returns>De-serialized object</returns>
         public TObj Deserialize<TObj>(byte[] data, int offset)
         {
             using (var stream = new MemoryStream(data, offset, data.Length - offset))
@@ -62,8 +62,8 @@ namespace Pigeon.Serialization
         /// Transforms serialized data back to the requested object type
         /// </summary>
         /// <typeparam name="TObj">Type of object to reconstruct</typeparam>
-        /// <param name="data">Data to be deserialized</param>
-        /// <returns>Deserialized object</returns>
+        /// <param name="data">Data to be de-serialized</param>
+        /// <returns>De-serialized object</returns>
         public byte[] Serialize<TObj>(TObj obj)
         {
             using (var stream = new MemoryStream())
@@ -77,7 +77,7 @@ namespace Pigeon.Serialization
 
 
         /// <summary>
-        /// Transforms the supplied object ot the serializer output data type with an offset
+        /// Transforms the supplied object to the serializer output data type with an offset
         /// </summary>
         /// <typeparam name="TObj">Type of object to be serialized</typeparam>
         /// <param name="obj">Object instance to be serialized</param>

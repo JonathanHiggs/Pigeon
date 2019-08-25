@@ -48,6 +48,11 @@ namespace Pigeon.Serialization
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="MissingSerializerException"/> from serializes data. #meta
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
         protected MissingSerializerException(SerializationInfo info, StreamingContext context) 
             : base(info, context)
         { }

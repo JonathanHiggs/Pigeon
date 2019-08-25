@@ -3,7 +3,7 @@
 namespace Pigeon.Subscribers
 {
     /// <summary>
-    /// Represents an active subscription to facilatate tracking and cleanup of resources
+    /// Represents an active subscription to facilitate tracking and clean-up of resources
     /// </summary>
     public class Subscription : IDisposable
     {
@@ -53,7 +53,7 @@ namespace Pigeon.Subscribers
 
 
         /// <summary>
-        /// Performs the subscription cleanup action supplied during initialization and free other resources
+        /// Performs the subscription clean-up action supplied during initialization and free other resources
         /// </summary>
         public void Dispose() => Dispose(true);
         #endregion

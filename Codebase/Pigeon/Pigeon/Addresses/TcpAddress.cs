@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Pigeon.Addresses
 {
     /// <summary>
-    /// Represents tcp addresses
+    /// Represents TCP addresses
     /// </summary>
     public class TcpAddress : IAddress
     {
@@ -13,13 +13,13 @@ namespace Pigeon.Addresses
 
 
         /// <summary>
-        /// Name regex matching pattern
+        /// Name reg-ex matching pattern
         /// </summary>
         public static readonly string NamePattern = @"^((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])|[\*])$";
 
 
         /// <summary>
-        /// IP regex matching pattern
+        /// IP reg-ex matching pattern
         /// </summary>
         public static readonly string IPPattern = @"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
         
@@ -71,7 +71,7 @@ namespace Pigeon.Addresses
 
 
         /// <summary>
-        /// Determines whether this instance and the other supplied object, which must be a <see cref="TcpAddress"/> are the the same
+        /// Determines whether this instance and the other supplied object, which must be a <see cref="TcpAddress"/> are the same
         /// </summary>
         /// <param name="other">The address to compare to this instance</param>
         /// <returns></returns>

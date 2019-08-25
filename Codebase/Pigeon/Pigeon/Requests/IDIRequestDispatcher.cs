@@ -17,7 +17,7 @@
 
 
         /// <summary>
-        /// Registers an async handler that will be resolved when needed
+        /// Registers an asynchronous handler that will be resolved when needed
         /// </summary>
         /// <typeparam name="TRequest">Type of request message</typeparam>
         /// <typeparam name="TResponse">Type of response message</typeparam>

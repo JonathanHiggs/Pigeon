@@ -45,6 +45,11 @@ namespace Pigeon.Diagnostics
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="MissingAttributeException"/> with serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
         protected MissingAttributeException(SerializationInfo info, StreamingContext context) 
             : base(info, context)
         { }

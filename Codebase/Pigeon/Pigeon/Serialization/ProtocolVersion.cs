@@ -1,7 +1,7 @@
 ﻿namespace Pigeon.Serialization
 {
     /// <summary>
-    /// Structure representing a version
+    /// Data structure representing a version
     /// </summary>
     public readonly struct ProtocolVersion
     {

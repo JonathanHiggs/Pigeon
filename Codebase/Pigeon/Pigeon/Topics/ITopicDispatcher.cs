@@ -16,7 +16,7 @@ namespace Pigeon.Topics
 
 
         /// <summary>
-        /// Registeres a <see cref="ITopicHandler{TEvent}"/>
+        /// Registers a <see cref="ITopicHandler{TEvent}"/>
         /// </summary>
         /// <typeparam name="TTopic">Type of topic message</typeparam>
         /// <param name="handler">Topic message handler</param>

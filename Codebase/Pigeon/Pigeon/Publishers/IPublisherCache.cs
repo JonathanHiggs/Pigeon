@@ -7,20 +7,20 @@ using Pigeon.Verbs;
 namespace Pigeon.Publishers
 {
     /// <summary>
-    /// Manages the lifecycle of <see cref="IPublisher"/>s
+    /// Manages the life-cycle of <see cref="IPublisher"/>s
     /// </summary>
     public interface IPublisherCache : IPublish, ICache<IPublisher>
     {
         /// <summary>
-        /// Gets a readonly collection of <see cref="IPublisherFactory"/>s for creating <see cref="IPublisher"/>s at config-time
+        /// Gets a read-only collection of <see cref="IPublisherFactory"/>s for creating <see cref="IPublisher"/>s at configuration time
         /// </summary>
         IReadOnlyCollection<IPublisherFactory> PublisherFactories { get; }
 
 
         /// <summary>
-        /// Adds a <see cref="IPublisherFactory{TPublisher}"/> to the cache for config-time creation of <see cref="IPublisher"/>s
+        /// Adds a <see cref="IPublisherFactory{TPublisher}"/> to the cache for configuration time creation of <see cref="IPublisher"/>s
         /// </summary>
-        /// <param name="factory">Factory used to create <see cref="IPublisher"/>s at config-time</param>
+        /// <param name="factory">Factory used to create <see cref="IPublisher"/>s at configuration time</param>
         void AddFactory(IPublisherFactory factory);
 
 

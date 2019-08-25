@@ -8,7 +8,7 @@ namespace Pigeon.Routing
 {
     /// <summary>
     /// Maps request types to a <see cref="SenderRouting"/> for runtime construction and resolution of <see cref="ISender"/>s
-    /// from config-time setups
+    /// from configuration time set-up
     /// </summary>
     public interface IRequestRouter
     {

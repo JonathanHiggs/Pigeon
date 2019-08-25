@@ -12,7 +12,7 @@ namespace Pigeon.Routing
     public struct SenderRouting
     {
         /// <summary>
-        /// Transport specifc type of the local <see cref="ISender"/>
+        /// Transport specific type of the local <see cref="ISender"/>
         /// </summary>
         public readonly Type SenderType;
 
@@ -24,7 +24,7 @@ namespace Pigeon.Routing
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="SenderRouting"/>
+        /// Initializes a new instance of <see cref="SenderRouting"/>
         /// </summary>
         /// <param name="senderType">Transport specific type of the local <see cref="ISender"/></param>
         /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/></param>
@@ -36,25 +36,21 @@ namespace Pigeon.Routing
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="SenderRouting"/>
+        /// Initializes a new instance of <see cref="SenderRouting"/>
         /// </summary>
         /// <typeparam name="TSender">Transport specific type of the local <see cref="ISender"/></typeparam>
         /// <param name="address"><see cref="IAddress"/> of the remote <see cref="IReceiver"/></param>
         /// <returns></returns>
         public static SenderRouting For<TSender>(IAddress address)
-            where TSender : ISender
-        {
-            return new SenderRouting(typeof(TSender), address);
-        }
+            where TSender : ISender =>
+            new SenderRouting(typeof(TSender), address);
 
 
         /// <summary>
         /// Converts the <see cref="SenderRouting"/> to a string representation
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{SenderType.Name} -> {Address.ToString()}";
-        }
+        public override string ToString() =>
+            $"{SenderType.Name} -> {Address.ToString()}";
     }
 }

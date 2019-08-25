@@ -18,7 +18,7 @@ namespace Pigeon.Diagnostics
         /// <param name="requestType">Type of the request class</param>
         /// <param name="responseType">Type of the response class</param>
         public MismatchingResponseTypeException(Type requestType, Type responseType)
-            : this(requestType, responseType, $"Request {requestType.FullName} and response {responseType.FullName} doenot match with the annotated response type")
+            : this(requestType, responseType, $"Request {requestType.FullName} and response {responseType.FullName} do not match with the annotated response type")
         { }
 
 
@@ -48,6 +48,11 @@ namespace Pigeon.Diagnostics
         }
 
 
+        /// <summary>
+        /// Initialized a new instance of <see cref="MismatchingResponseTypeException"/> with serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
         protected MismatchingResponseTypeException(SerializationInfo info, StreamingContext context) 
             : base(info, context)
         { }

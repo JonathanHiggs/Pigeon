@@ -6,7 +6,7 @@ using Pigeon.Monitors;
 namespace Pigeon.Receivers
 {
     /// <summary>
-    /// Factory for creating <see cref="IReceiver"/>s at config-time
+    /// Factory for creating <see cref="IReceiver"/>s at configuration time
     /// </summary>
     public interface IReceiverFactory
     {
@@ -23,7 +23,7 @@ namespace Pigeon.Receivers
 
 
         /// <summary>
-        /// Creates a new instance of a <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/> and
+        /// Creates a new instance of <see cref="IReceiver"/> bound to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of local bound <see cref="IConnection"/></param>
@@ -35,7 +35,7 @@ namespace Pigeon.Receivers
 
 
     /// <summary>
-    /// Type specified factory for createing <see cref="TReceiver"/>s at config-time
+    /// Type specified factory for creating  <see cref="TReceiver"/>s at configuration time
     /// </summary>
     /// <typeparam name="TReceiver">Transport specific implementation of <see cref="IReceiver"/>s the factory creates</typeparam>
     public interface IReceiverFactory<TReceiver> : IReceiverFactory where TReceiver : IReceiver

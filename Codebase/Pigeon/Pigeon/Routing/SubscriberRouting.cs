@@ -42,19 +42,15 @@ namespace Pigeon.Routing
         /// <param name="address"><see cref="IAddress"/> for the remote <see cref="IPublisher"/></param>
         /// <returns></returns>
         public static SubscriberRouting For<TSubscriber>(IAddress address)
-            where TSubscriber : ISubscriber
-        {
-            return new SubscriberRouting(typeof(TSubscriber), address);
-        }
+            where TSubscriber : ISubscriber =>
+            new SubscriberRouting(typeof(TSubscriber), address);
 
 
         /// <summary>
         /// Converts the <see cref="SubscriberRouting"/> to a string representation
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{SubscriberType.Name} <- {Address.ToString()}";
-        }
+        public override string ToString() =>
+            $"{SubscriberType.Name} <- {Address.ToString()}";
     }
 }

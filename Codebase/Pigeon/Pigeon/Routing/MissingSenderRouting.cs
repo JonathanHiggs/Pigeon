@@ -37,7 +37,7 @@ namespace Pigeon.Routing
         /// <summary>
         /// Initializes a new instance of <see cref="MissingSenderRouting"/>
         /// </summary>
-        /// <param name="requestType">Tyoe of request made</param>
+        /// <param name="requestType">Type of request made</param>
         /// <param name="message">Message that describes the exception</param>
         /// <param name="inner">Inner exception</param>
         public MissingSenderRouting(Type requestType, string message, Exception inner) 
@@ -47,11 +47,19 @@ namespace Pigeon.Routing
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="MissingSenderRouting"/> from serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
         protected MissingSenderRouting(SerializationInfo info, StreamingContext context) 
             : base(info, context)
         { }
 
 
+        /// <summary>
+        /// Gets and sets the request type
+        /// </summary>
         public Type RequestType { get; set; }
     }
 }

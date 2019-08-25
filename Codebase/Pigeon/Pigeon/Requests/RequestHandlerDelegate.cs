@@ -1,7 +1,7 @@
 ﻿namespace Pigeon.Requests
 {
     /// <summary>
-    /// Type safe delegaste for handling responses to requests
+    /// Type safe delegate for handling responses to requests
     /// </summary>
     /// <typeparam name="TRequest">Type of request object</typeparam>
     /// <typeparam name="TResponse">Type of response object</typeparam>

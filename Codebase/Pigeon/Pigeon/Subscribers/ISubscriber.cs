@@ -5,7 +5,7 @@ using Pigeon.Publishers;
 namespace Pigeon.Subscribers
 {
     /// <summary>
-    /// Interface encapsulates a connection that is able to connect to <see cref="IAddress"/>es to receive messages
+    /// Interface encapsulates a connection that is able to connect to <see cref="IAddress"/> to receive messages
     /// from <see cref="IPublisher"/>s
     /// </summary>
     public interface ISubscriber : IConnection

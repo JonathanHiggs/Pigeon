@@ -10,7 +10,7 @@ using Pigeon.Packages;
 namespace Pigeon.NetMQ.Publishers
 {
     /// <summary>
-    /// NetMQ imlementation of <see cref="Pigeon.Publishers.IPublisher"/> that wraps a <see cref="PublisherSocket"/>
+    /// NetMQ implementation of <see cref="Pigeon.Publishers.IPublisher"/> that wraps a <see cref="PublisherSocket"/>
     /// that connects to remote <see cref="Subscribers.INetMQSubscriber"/>s to publish <see cref="Package"/>s
     /// </summary>
     public sealed class NetMQPublisher : NetMQConnection, INetMQPublisher

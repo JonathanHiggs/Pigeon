@@ -9,7 +9,7 @@ using Pigeon.Routing;
 namespace Pigeon.Subscribers
 {
     /// <summary>
-    /// Manages the state and lifecycle of <see cref="ISubscriber"/>s
+    /// Manages the state and life-cycle of <see cref="ISubscriber"/>s
     /// </summary>
     public class SubscriberCache : ISubscriberCache
     {
@@ -21,7 +21,7 @@ namespace Pigeon.Subscribers
 
 
         /// <summary>
-        /// Gets a readonly collection of all registered <see cref="ISubscriberFactory"/>s for creating <see cref="ISubscriber"/>s at runtime
+        /// Gets a read-only collection of all registered <see cref="ISubscriberFactory"/>s for creating <see cref="ISubscriber"/>s at runtime
         /// </summary>
         public IReadOnlyCollection<ISubscriberFactory> SubscriberFactories => factories.Values;
 

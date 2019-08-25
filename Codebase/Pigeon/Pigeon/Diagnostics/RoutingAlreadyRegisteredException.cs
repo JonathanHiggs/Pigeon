@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Pigeon.Diagnostics
 {
@@ -51,13 +52,18 @@ namespace Pigeon.Diagnostics
         public RoutingAlreadyRegisteredException(T overridingRouting, T existingRouting, string message, Exception inner) 
             : base(message, inner)
         {
-            this.OverridingRouting = overridingRouting;
-            this.ExistingRouting = existingRouting;
+            OverridingRouting = overridingRouting;
+            ExistingRouting = existingRouting;
         }
 
 
-        protected RoutingAlreadyRegisteredException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="RoutingAlreadyRegisteredException{T}"/> with serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected RoutingAlreadyRegisteredException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

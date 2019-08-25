@@ -6,12 +6,12 @@ using Pigeon.Verbs;
 namespace Pigeon.Senders
 {
     /// <summary>
-    /// Manages the resolution and lifecycle of <see cref="ISender"/>s
+    /// Manages the resolution and life-cycle of <see cref="ISender"/>s
     /// </summary>
     public interface ISenderCache : ISend, ICache<ISender>
     {
         /// <summary>
-        /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
+        /// Gets a read-only collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
         /// </summary>
         IReadOnlyCollection<ISenderFactory> Factories { get; }
 

@@ -12,7 +12,7 @@ namespace Pigeon.Routing
 {
     /// <summary>
     /// Maps topic message types to a <see cref="SubscriberRouting"/> for runtime construction and resolution of
-    /// <see cref="ISubscriber"/>s from config-time setup
+    /// <see cref="ISubscriber"/>s from configuration time set-up
     /// </summary>
     public class TopicRouter : ITopicRouter
     {
@@ -65,9 +65,7 @@ namespace Pigeon.Routing
         /// <see cref="TopicRouter"/> has one added</param>
         /// <returns>True if the <see cref="TopicRouter"/> has a <see cref="SubscriberRouting"/> for the topic message
         /// type; otherwise false</returns>
-        public bool RoutingFor<TTopic>(out SubscriberRouting routing)
-        {
-            return routingTable.TryGetValue(typeof(TTopic), out routing);
-        }
+        public bool RoutingFor<TTopic>(out SubscriberRouting routing) =>
+            routingTable.TryGetValue(typeof(TTopic), out routing);
     }
 }

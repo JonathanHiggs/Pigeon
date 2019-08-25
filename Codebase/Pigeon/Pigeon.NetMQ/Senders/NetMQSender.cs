@@ -15,7 +15,7 @@ namespace Pigeon.NetMQ.Senders
 {
     /// <summary>
     /// NetMQ implementation of <see cref="ISender"/> that wraps a <see cref="DealerSocket"/> that connects to 
-    /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Package"/>es
+    /// remote <see cref="INetMQReceiver"/>s and send and receive <see cref="Package"/>
     /// </summary>
     public sealed class NetMQSender : NetMQConnection, INetMQSender
     {
@@ -24,7 +24,7 @@ namespace Pigeon.NetMQ.Senders
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="NetMQSender"/>
+        /// Initializes a new instance of <see cref="NetMQSender"/>
         /// </summary>
         /// <param name="socket">Inner <see cref="DealerSocket"/> that sends data to remotes</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
@@ -42,7 +42,7 @@ namespace Pigeon.NetMQ.Senders
         /// remote or when the one hour default timeout elapses
         /// </summary>
         /// <param name="request">Request to send to the remote</param>
-        /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
+        /// <returns>A task that will complete successfully when a response is received or that will fail once the timeout elapses</returns>
         public Task<object> SendAndReceive(object request)
         {
             return SendAndReceive(request, TimeSpan.FromHours(1));
@@ -56,7 +56,7 @@ namespace Pigeon.NetMQ.Senders
         /// </summary>
         /// <param name="request">Request to send to the remote</param>
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
-        /// <returns>A task that will complete successfully when a responce is received or that will fail once the timeout elapses</returns>
+        /// <returns>A task that will complete successfully when a response is received or that will fail once the timeout elapses</returns>
         public Task<object> SendAndReceive(object request, TimeSpan timeout)
         {
             if (disposedValue)

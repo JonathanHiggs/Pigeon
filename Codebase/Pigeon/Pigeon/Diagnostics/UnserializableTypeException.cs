@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Pigeon.Diagnostics
 {
@@ -9,7 +10,7 @@ namespace Pigeon.Diagnostics
     public class UnserializableTypeException : PigeonException
     {
         /// <summary>
-        /// Gets the type that is unserilizable
+        /// Gets the type that is unserializable
         /// </summary>
         public Type Type { get; private set; }
 
@@ -46,8 +47,13 @@ namespace Pigeon.Diagnostics
         }
 
 
-        protected UnserializableTypeException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="UnserializableTypeException"/> from serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected UnserializableTypeException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

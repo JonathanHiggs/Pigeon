@@ -14,7 +14,7 @@ namespace Pigeon.Serialization
 
 
         /// <summary>
-        /// Initialzies a new instance of <see cref="SerializationDescriptor"/>
+        /// Initializes a new instance of <see cref="SerializationDescriptor"/>
         /// </summary>
         /// <param name="invariantName">Invariant name of the associated <see cref="ISerializer"/></param>
         /// <param name="type"></param>

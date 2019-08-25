@@ -13,7 +13,7 @@ namespace Pigeon.Packages
         where T : class
     {
         /// <summary>
-        /// Stores a readonly reference to the package data
+        /// Stores a read-only reference to the package data
         /// </summary>
         public readonly T Data;
 
@@ -21,7 +21,7 @@ namespace Pigeon.Packages
         /// <summary>
         /// Initializes an instance of <see cref="DataPackage{T}"/>
         /// </summary>
-        /// <param name="id">Package indentifer</param>
+        /// <param name="id">Package identifier</param>
         /// <param name="data">Package body and data</param>
         public DataPackage(IPackageId id, T data)
             : base(id)

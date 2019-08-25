@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Pigeon.Diagnostics
 {
@@ -29,8 +30,13 @@ namespace Pigeon.Diagnostics
         public PigeonException(string message, Exception inner) : base(message, inner) { }
 
 
-        protected PigeonException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="PigeonException"/> with serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected PigeonException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

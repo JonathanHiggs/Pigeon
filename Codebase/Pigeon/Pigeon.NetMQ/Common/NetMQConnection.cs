@@ -25,7 +25,7 @@ namespace Pigeon.NetMQ.Common
 
 
         /// <summary>
-        /// Gets a bool that returns true when the <see cref="NetMQConnection"/> is connected; otherwise false
+        /// Gets a <see cref="bool"/> that returns true when the <see cref="NetMQConnection"/> is connected; otherwise false
         /// </summary>
         public bool IsConnected { get; private set; } = false;
 
@@ -49,7 +49,7 @@ namespace Pigeon.NetMQ.Common
 
 
         /// <summary>
-        /// Adds the <see cref="IAddress"/> to the set of adresses the <see cref="NetMQConnection"/> will listen to
+        /// Adds the <see cref="IAddress"/> to the set of addresses the <see cref="NetMQConnection"/> will listen to
         /// for incoming <see cref="Packages.Package"/>s
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> to add</param>
@@ -108,7 +108,7 @@ namespace Pigeon.NetMQ.Common
 
 
         /// <summary>
-        /// Initializes the connections to all added <see cref="IAddress"/>es
+        /// Initializes the connections to all added <see cref="IAddress"/>
         /// </summary>
         public void InitializeConnection()
         {
@@ -123,7 +123,7 @@ namespace Pigeon.NetMQ.Common
 
 
         /// <summary>
-        /// Terminates the connection to all added <see cref="IAddress"/>es
+        /// Terminates the connection to all added <see cref="IAddress"/>
         /// </summary>
         public void TerminateConnection()
         {

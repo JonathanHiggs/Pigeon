@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.Serialization;
 using Pigeon.Common;
 
 namespace Pigeon.Diagnostics
@@ -66,8 +66,13 @@ namespace Pigeon.Diagnostics
         }
 
 
-        protected MissingFactoryException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="MissingFactoryException"/> with serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected MissingFactoryException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

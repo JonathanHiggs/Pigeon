@@ -11,7 +11,7 @@ using Pigeon.Routing;
 namespace Pigeon.Senders
 {
     /// <summary>
-    /// Manages the resolution and lifecycle of <see cref="ISender"/>s
+    /// Manages the resolution and life-cycle of <see cref="ISender"/>s
     /// </summary>
     public class SenderCache : ISenderCache
     {
@@ -22,13 +22,13 @@ namespace Pigeon.Senders
 
 
         /// <summary>
-        /// Gets a readonly collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
+        /// Gets a read-only collection of <see cref="ISenderFactory"/>s for creating <see cref="ISender"/>s at runtime
         /// </summary>
         public IReadOnlyCollection<ISenderFactory> Factories => factories.Values;
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="SenderCache"/>
+        /// Initializes a new instance of <see cref="SenderCache"/>
         /// </summary>
         /// <param name="requestRouter">Router to manage resolving request types to <see cref="SenderRouting"/>s</param>
         /// <param name="monitorCache">Stores <see cref="IMonitor"/>s that actively manage <see cref="ISender"/></param>

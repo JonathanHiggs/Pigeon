@@ -6,18 +6,18 @@ using Pigeon.Common;
 namespace Pigeon.Receivers
 {
     /// <summary>
-    /// Manages the lifecycle of <see cref="IReceiver"/>s
+    /// Manages the life-cycle of <see cref="IReceiver"/>s
     /// </summary>
     public interface IReceiverCache : ICache<IReceiver>
     {
         /// <summary>
-        /// Gets a readonly collection of all registered <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at config-time
+        /// Gets a read-only collection of all registered <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at configuration time
         /// </summary>
         IReadOnlyCollection<IReceiverFactory> ReceiverFactories { get; }
 
 
         /// <summary>
-        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories config-time creation of <see cref="IReceiver"/>s
+        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories configuration time creation of <see cref="IReceiver"/>s
         /// </summary>
         /// <param name="factory">Factory that will be used to create <see cref="IReceiver"/>s when 
         /// <see cref="AddReceiver{TReceiver}(IAddress)"/> is called</param>

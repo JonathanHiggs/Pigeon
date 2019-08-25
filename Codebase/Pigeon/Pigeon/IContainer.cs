@@ -6,7 +6,7 @@
     public interface IContainer
     {
         /// <summary>
-        /// Checks whether the speficied type is already registered
+        /// Checks whether the specified type is already registered
         /// </summary>
         /// <typeparam name="T">Type to check</typeparam>
         /// <returns>true if the specified type is registered; false otherwise</returns>
@@ -23,7 +23,7 @@
 
 
         /// <summary>
-        /// Registers the speficied isntance to be resolved when the specified type is requested
+        /// Registers the specified instance to be resolved when the specified type is requested
         /// </summary>
         /// <typeparam name="T">Type to register the instance as</typeparam>
         /// <param name="instance">Instance to return when resolved</param>

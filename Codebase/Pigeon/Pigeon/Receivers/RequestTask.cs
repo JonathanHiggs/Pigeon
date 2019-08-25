@@ -3,30 +3,30 @@
 namespace Pigeon.Receivers
 {
     /// <summary>
-    /// Struct to combine an incoming request with a handler to return the response
+    /// Data structure to combine an incoming request with a handler to return the response
     /// </summary>
     public readonly struct RequestTask
     {
         /// <summary>
-        /// Stores a readonly reference to the <see cref="IReceiver"/>
+        /// Stores a read-only reference to the <see cref="IReceiver"/>
         /// </summary>
         public readonly IReceiver Receiver;
 
 
         /// <summary>
-        /// Stores a readonly reference to an incoming request message
+        /// Stores a read-only reference to an incoming request message
         /// </summary>
         public readonly object Request;
 
 
         /// <summary>
-        /// Stores a readonly reference to a delegate to send a response
+        /// Stores a read-only reference to a delegate to send a response
         /// </summary>
         public readonly ResponseSenderDelegate ResponseSender;
 
 
         /// <summary>
-        /// Stores a readonly reference to a delegate to send an error response
+        /// Stores a read-only reference to a delegate to send an error response
         /// </summary>
         public readonly ErrorSenderDelegate ErrorSender;
         

@@ -41,7 +41,7 @@ namespace Pigeon.Serialization
 
 
         /// <summary>
-        /// Trys to retrieve a <see cref="ISerializer"/> from the cache where the <see cref="ISerializer.Descriptor"/>'s name matches the supplied name
+        /// Tries to retrieve a <see cref="ISerializer"/> from the cache where the <see cref="ISerializer.Descriptor"/>'s name matches the supplied name
         /// </summary>
         /// <param name="name">The name of the <see cref="ISerializer"/> to retrieve from the cache</param>
         /// <param name="serializer">Out <see cref="ISerializer"/></param>
@@ -54,7 +54,7 @@ namespace Pigeon.Serialization
 
 
         /// <summary>
-        /// Trys to retrieve a <see cref="ISerializer"/> from the cache where the <see cref="ISerializer.Descriptor"/>'s name matches the supplied name
+        /// Tries to retrieve a <see cref="ISerializer"/> from the cache where the <see cref="ISerializer.Descriptor"/>'s name matches the supplied name
         /// </summary>
         /// <param name="descriptor"><see cref="SerializationDescriptor"/> of the <see cref="ISerializer"/> to retrieve from the cache</param>
         /// <param name="serializer">Out <see cref="ISerializer"/></param>

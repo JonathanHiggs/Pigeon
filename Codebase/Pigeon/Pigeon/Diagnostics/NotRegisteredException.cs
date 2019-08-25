@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Pigeon.Diagnostics
 {
@@ -18,7 +19,7 @@ namespace Pigeon.Diagnostics
         /// <summary>
         /// Initializes a new instance of <see cref="NotRegisteredException"/>
         /// </summary>
-        /// <param name="type">Type that would fail to resolce</param>
+        /// <param name="type">Type that would fail to resolve</param>
         public NotRegisteredException(Type type)
             : this(type, $"{type.Name} is not registered in IContainer")
         { }
@@ -27,7 +28,7 @@ namespace Pigeon.Diagnostics
         /// <summary>
         /// Initializes a new instance of <see cref="NotRegisteredException"/>
         /// </summary>
-        /// <param name="type">Type that would fail to resolce</param>
+        /// <param name="type">Type that would fail to resolve</param>
         /// <param name="message">Message that describes the exception</param>
         public NotRegisteredException(Type type, string message) 
             : this(type, message, null)
@@ -37,18 +38,23 @@ namespace Pigeon.Diagnostics
         /// <summary>
         /// Initializes a new instance of <see cref="NotRegisteredException"/>
         /// </summary>
-        /// <param name="type">Type that would fail to resolce</param>
+        /// <param name="type">Type that would fail to resolve</param>
         /// <param name="message">Message that describes the exception</param>
         /// <param name="inner">Inner exception</param>
         public NotRegisteredException(Type type, string message, Exception inner) 
             : base(message, inner)
         {
-            this.Type = type;
+            Type = type;
         }
 
 
-        protected NotRegisteredException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="NotRegisteredException"/> from serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected NotRegisteredException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

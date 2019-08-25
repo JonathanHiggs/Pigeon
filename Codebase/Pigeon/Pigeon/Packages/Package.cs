@@ -4,14 +4,14 @@ using System.ComponentModel;
 namespace Pigeon.Packages
 {
     /// <summary>
-    /// Base class for the messaging pacakge protocol
+    /// Base class for the messaging package protocol
     /// </summary>
     [Serializable]
     [ImmutableObject(true)]
     public abstract class Package
     {
         /// <summary>
-        /// Stores a readonly reference to a <see cref="IPackageId"/> for the <see cref="Package"/>
+        /// Stores a read-only reference to a <see cref="IPackageId"/> for the <see cref="Package"/>
         /// </summary>
         public readonly IPackageId Id;
 
@@ -23,9 +23,9 @@ namespace Pigeon.Packages
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="Package"/>
+        /// Initializes a new instance of <see cref="Package"/>
         /// </summary>
-        /// <param name="id">Package indentifier</param>
+        /// <param name="id">Package identifier</param>
         public Package(IPackageId id)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));

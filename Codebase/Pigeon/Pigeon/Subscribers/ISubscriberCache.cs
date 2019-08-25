@@ -6,12 +6,12 @@ using Pigeon.Verbs;
 namespace Pigeon.Subscribers
 {
     /// <summary>
-    /// Manages the state and lifecycle of <see cref="ISubscriber"/>s
+    /// Manages the state and life-cycle of <see cref="ISubscriber"/>s
     /// </summary>
     public interface ISubscriberCache : ISubscribe, ICache<ISubscriber>
     {
         /// <summary>
-        /// Gets a readonly collection of all registered <see cref="ISubscriberFactory"/>s for creating <see cref="ISubscriber"/>s at runtime
+        /// Gets a read-only collection of all registered <see cref="ISubscriberFactory"/>s for creating <see cref="ISubscriber"/>s at runtime
         /// </summary>
         IReadOnlyCollection<ISubscriberFactory> SubscriberFactories { get; }
 

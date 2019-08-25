@@ -8,7 +8,7 @@ using Pigeon.Monitors;
 namespace Pigeon.Receivers
 {
     /// <summary>
-    /// Manages the lifecycle of <see cref="IReceiver"/>s
+    /// Manages the life-cycle of <see cref="IReceiver"/>s
     /// </summary>
     public class ReceiverCache : IReceiverCache
     {
@@ -18,7 +18,7 @@ namespace Pigeon.Receivers
 
 
         /// <summary>
-        /// Gets a readonly collection of <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at runtime
+        /// Gets a read-only collection of <see cref="IReceiverFactory"/>s for creating <see cref="IReceiver"/>s at runtime
         /// </summary>
         public IReadOnlyCollection<IReceiverFactory> ReceiverFactories => factories.Values;
 
@@ -34,7 +34,7 @@ namespace Pigeon.Receivers
 
 
         /// <summary>
-        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories config-time creation of <see cref="IReceiver"/>s
+        /// Adds a <see cref="IReceiverFactory{TReceiver}"/> to the set of factories configuration time creation of <see cref="IReceiver"/>s
         /// </summary>
         /// <param name="factory">Factory that will be used to create <see cref="IReceiver"/>s when 
         /// <see cref="AddReceiver{TReceiver}(IAddress)"/> is called</param>

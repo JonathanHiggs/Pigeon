@@ -46,7 +46,7 @@ namespace Pigeon.NetMQ
         /// <summary>
         /// Extracts a topic event from the <see cref="NetMQMessage"/>
         /// </summary>
-        /// <param name="message"><see cref="NetMQMessage"/> wrapping a topic evnet</param>
+        /// <param name="message"><see cref="NetMQMessage"/> wrapping a topic event</param>
         /// <returns>Topic event contained within the <see cref="NetMQMessage"/></returns>
         public object ExtractTopic(NetMQMessage message)
         {
@@ -70,7 +70,7 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
-        /// Creates a <see cref="NetMQMessage"/> wapping a request object
+        /// Creates a <see cref="NetMQMessage"/> wrapping a request object
         /// </summary>
         /// <param name="request">Request object to be wrapped in a <see cref="NetMQMessage"/></param>
         /// <param name="requestId">An <see cref="int"/> identifier for matching asynchronous requests and responses</param>
@@ -97,7 +97,7 @@ namespace Pigeon.NetMQ
         /// Extracts a request from the <see cref="NetMQMessage"/>
         /// </summary>
         /// <param name="message"><see cref="NetMQMessage"/> wrapping a request object</param>
-        /// <returns>Request object contained withing the <see cref="NetMQMessage"/>, address of remote sender, and request identifier</returns>
+        /// <returns>Request object contained within the <see cref="NetMQMessage"/>, address of remote sender, and request identifier</returns>
         public (object request, byte[] address, int requestId, string serializationName) ExtractRequest(NetMQMessage message)
         {
             var address = message[0].ToByteArray();

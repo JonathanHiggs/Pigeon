@@ -3,7 +3,7 @@
 namespace Pigeon.Packages
 {
     /// <summary>
-    /// Interface for indentifying a package
+    /// Interface for identifying a package
     /// </summary>
     public interface IPackageId : IEquatable<IPackageId>
     { }

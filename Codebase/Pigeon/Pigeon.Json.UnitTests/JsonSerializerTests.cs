@@ -64,7 +64,7 @@ namespace Pigeon.Json.UnitTests
             var data = serializer.Serialize(testObject);
 
             // Act
-            var deserializedStr = (TestObject)serializer.Deserialize<TestObject>(data, 0);
+            var deserializedStr = serializer.Deserialize<TestObject>(data, 0);
 
             // Assert
             Assert.AreEqual(testObject, deserializedStr);

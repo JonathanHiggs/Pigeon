@@ -23,7 +23,7 @@ namespace Pigeon.Subscribers
 
 
         /// <summary>
-        /// Creates a new instance of a <see cref="ISubscriber"/> connected to the supplied <see cref="IAddress"/> and
+        /// Creates a new instance of <see cref="ISubscriber"/> connected to the supplied <see cref="IAddress"/> and
         /// monitored by the factories <see cref="IMonitor"/>
         /// </summary>
         /// <param name="address"><see cref="IAddress"/> of the remote publishing <see cref="IConnection"/></param>

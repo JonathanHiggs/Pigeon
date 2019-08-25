@@ -85,10 +85,10 @@ namespace Pigeon.UnitTests.Serialization
             var data = serializer.Serialize(str, offset);
 
             // Act
-            var deserializedStr = serializer.Deserialize<string>(data, offset);
+            var deserialized = serializer.Deserialize<string>(data, offset);
 
             // Assert
-            Assert.AreEqual(str, deserializedStr);
+            Assert.AreEqual(str, deserialized);
         }
     }
 }

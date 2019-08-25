@@ -7,7 +7,7 @@ namespace Pigeon.Serialization
     /// Data structure of the first few bytes in a pigeon message, used to denote protocol version and serialization used in the rest of the message
     /// </summary>
     /// <remarks>
-    /// Bytewise representation:
+    /// Byte-wise representation:
     /// 0-3     Pigeon magic bytes
     /// 4       Protocol version major byte
     /// 5       Protocol version minor byte
@@ -17,7 +17,7 @@ namespace Pigeon.Serialization
     public readonly struct SerializationHeader
     {
         // magic bytes are used prepended to the message to identify the data as a Pigeon message
-        private const string magic = "Pige";
+        private const string magic = "PIGE";
         private static readonly byte[] magicBytes = Encoding.UTF8.GetBytes(magic);
 
 

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.Serialization;
 using Pigeon.Diagnostics;
 
 namespace Pigeon.Requests
@@ -17,7 +17,7 @@ namespace Pigeon.Requests
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="RequestHandlerNotFoundException"/>
+        /// Initializes a new instance of <see cref="RequestHandlerNotFoundException"/>
         /// </summary>
         /// <param name="requestType">Request type</param>
         public RequestHandlerNotFoundException(Type requestType)
@@ -26,7 +26,7 @@ namespace Pigeon.Requests
 
         
         /// <summary>
-        /// Initializes a new instance of a <see cref="RequestHandlerNotFoundException"/>
+        /// Initializes a new instance of <see cref="RequestHandlerNotFoundException"/>
         /// </summary>
         /// <param name="requestType">Request type</param>
         /// <param name="message">Message that describes the exception</param>
@@ -36,7 +36,7 @@ namespace Pigeon.Requests
 
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="RequestHandlerNotFoundException"/>
+        /// Initializes a new instance of <see cref="RequestHandlerNotFoundException"/>
         /// </summary>
         /// <param name="requestType">Request type</param>
         /// <param name="message">Message that describes the exception</param>
@@ -48,8 +48,13 @@ namespace Pigeon.Requests
         }
 
 
-        protected RequestHandlerNotFoundException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <summary>
+        /// Initializes a new instance of <see cref="RequestHandlerNotFoundException"/> from serialized data
+        /// </summary>
+        /// <param name="info">Holds the serialized object data about the exception</param>
+        /// <param name="context">Contains contextual information about the source or destination</param>
+        protected RequestHandlerNotFoundException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+        { }
     }
 }

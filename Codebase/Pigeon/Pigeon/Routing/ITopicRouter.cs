@@ -8,7 +8,7 @@ namespace Pigeon.Routing
 {
     /// <summary>
     /// Maps topic message types to a <see cref="SubscriberRouting"/> for runtime construction and resolution of
-    /// <see cref="ISubscriber"/>s from config-time setup
+    /// <see cref="ISubscriber"/>s from configuration time set-up
     /// </summary>
     public interface ITopicRouter
     {

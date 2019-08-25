@@ -14,7 +14,7 @@ namespace Pigeon.NetMQ.Subscribers
 {
     /// <summary>
     /// NetMQ implementation of <see cref="ISubscriber"/> that wraps a <see cref="SubscriberSocket"/> that connects to 
-    /// remote <see cref="INetMQSubscriber"/>s to receive published <see cref="Package"/>es
+    /// remote <see cref="INetMQSubscriber"/>s to receive published <see cref="Package"/>
     /// </summary>
     public sealed class NetMQSubscriber : NetMQConnection, INetMQSubscriber
     {
