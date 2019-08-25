@@ -10,15 +10,8 @@ namespace Pigeon.Serialization
     public class DotNetSerializer : ISerializer
     {
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="DotNetSerializer"/>
-        /// </summary>
-        public DotNetSerializer()
-        { }
-
         
+
         /// <summary>
         /// Gets the serialization description
         /// </summary>

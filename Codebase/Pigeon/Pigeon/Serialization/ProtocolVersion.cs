@@ -1,4 +1,6 @@
-﻿namespace Pigeon.Serialization
+﻿using System.IO;
+
+namespace Pigeon.Serialization
 {
     /// <summary>
     /// Data structure representing a version
@@ -27,5 +29,29 @@
         /// Gets a byte representing the minor version number
         /// </summary>
         public byte Minor { get; }
+
+
+        public static bool operator ==(ProtocolVersion a, ProtocolVersion b) =>
+            a.Major == b.Major && a.Minor == b.Minor;
+
+
+        public static bool operator !=(ProtocolVersion a, ProtocolVersion b) =>
+            !(a == b);
+    }
+
+
+    public static class ProtocolVersionExtensions
+    {
+        public static void Write(this BinaryWriter writer, ProtocolVersion protocolVersion)
+        {
+            writer.Write(protocolVersion.Major);
+            writer.Write(protocolVersion.Minor);
+        }
+
+
+        public static ProtocolVersion ReadProtocolVersion(this BinaryReader reader) =>
+            new ProtocolVersion(
+                reader.ReadByte(),
+                reader.ReadByte());
     }
 }

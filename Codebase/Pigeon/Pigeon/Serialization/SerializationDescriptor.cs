@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Pigeon.Serialization
 {
@@ -38,7 +39,7 @@ namespace Pigeon.Serialization
         /// <returns>A hash code for this object</returns>
         public override int GetHashCode() => InvariantName.GetHashCode();
 
-        
+
         /// <summary>
         /// Determines whether two <see cref="SerializationDescriptor"/>s have the same value
         /// </summary>
@@ -57,12 +58,18 @@ namespace Pigeon.Serialization
         public static bool operator !=(SerializationDescriptor a, SerializationDescriptor b) => !a.Equals(b);
 
 
-        public static readonly SerializationDescriptor DotNet = new SerializationDescriptor("DotNet");
-        public static readonly SerializationDescriptor Json = new SerializationDescriptor("json");
-        //public static readonly SerializationDescriptor Bson = new SerializationDescriptor("bson");
-        //public static readonly SerializationDescriptor Csv = new SerializationDescriptor("csv");
-        //public static readonly SerializationDescriptor Html = new SerializationDescriptor("html");
-        //public static readonly SerializationDescriptor Protobuf = new SerializationDescriptor("protobuf");
-        //public static readonly SerializationDescriptor Xml = new SerializationDescriptor("xml");
+        public static readonly SerializationDescriptor DotNet = new SerializationDescriptor("DOTNET");
+        public static readonly SerializationDescriptor Json = new SerializationDescriptor("JSON");
+    }
+
+
+    public static class SerializationDescriptorExtensions
+    {
+        public static void Write(this BinaryWriter writer, SerializationDescriptor serializationDescriptor)
+            => writer.Write(serializationDescriptor.InvariantName);
+
+
+        public static SerializationDescriptor ReadSerializationDescriptor(this BinaryReader reader)
+            => new SerializationDescriptor(reader.ReadString());
     }
 }
