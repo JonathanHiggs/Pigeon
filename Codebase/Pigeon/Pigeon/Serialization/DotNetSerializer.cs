@@ -5,7 +5,7 @@ namespace Pigeon.Serialization
 {
     /// <summary>
     /// Default data serializer to transform object to byte arrays
-    /// Uses .Net interal BinaryFormatter and requires all types have the Serializable attribute
+    /// Uses .Net internal BinaryFormatter and requires all types have the Serializable attribute
     /// </summary>
     public class DotNetSerializer : ISerializer
     {
