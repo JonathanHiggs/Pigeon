@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Pigeon.Common;
 using Pigeon.Packages;
+using Pigeon.Protocol;
 using Pigeon.Receivers;
 
 namespace Pigeon.Senders
@@ -31,5 +32,12 @@ namespace Pigeon.Senders
         /// <param name="timeout"><see cref="TimeSpan"/> after which the returned <see cref="Task{Message}"/> will throw an error if no response has been received</param>
         /// <returns>A task that will complete successfully when a response is received or that will fail once the timeout elapses</returns>
         Task<object> SendAndReceive(object request, TimeSpan timeout);
+    }
+
+
+    public interface ISender2 : ISender
+    {
+        Task<ProtocolMessage> SendAndReceive(ProtocolMessage protocolMessage); 
+        Task<ProtocolMessage> SendAndReceive(ProtocolMessage protocolMessage, TimeSpan timeout); 
     }
 }

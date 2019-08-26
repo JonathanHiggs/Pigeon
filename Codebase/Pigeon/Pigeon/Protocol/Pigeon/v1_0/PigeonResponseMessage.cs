@@ -4,13 +4,19 @@ using System.IO;
 using Pigeon.Serialization;
 using Pigeon.Utils;
 
-namespace Pigeon.Protocol.v1_0
+namespace Pigeon.Protocol.Pigeon.v1_0
 {
     /// <summary>
     /// Represents a pigeon protocol response message
     /// </summary>
     public class PigeonResponseMessage : PigeonMessage
     {
+        /// <summary>
+        /// Message type identifier
+        /// </summary>
+        internal const string _MessageType = "REPLY";
+
+
         /// <summary>
         /// Initializes a new instance of <see cref="PigeonResponseMessage"/>
         /// </summary>
@@ -24,12 +30,11 @@ namespace Pigeon.Protocol.v1_0
             ResponseStatus status,
             Type responseType,
             SerializationDescriptor serialization,
-            byte[] data
-        )
+            byte[] data)
         {
             ConversationId = conversationId;
             Status = status;
-            ResponseType = responseType;
+            ResponseBodyType = responseType;
             Serialization = serialization;
             Data = data;
         }
@@ -42,12 +47,6 @@ namespace Pigeon.Protocol.v1_0
 
 
         /// <summary>
-        /// Gets the message type
-        /// </summary>
-        public override MessageType MessageType => MessageType.Response;
-
-
-        /// <summary>
         /// Gets the response status
         /// </summary>
         public ResponseStatus Status { get; }
@@ -56,7 +55,7 @@ namespace Pigeon.Protocol.v1_0
         /// <summary>
         /// Gets the <see cref="Type"/> of the response message
         /// </summary>
-        public Type ResponseType { get; }
+        public Type ResponseBodyType { get; }
 
 
         /// <summary>
@@ -71,18 +70,27 @@ namespace Pigeon.Protocol.v1_0
         public byte[] Data { get; }
 
 
+        /// <summary>
+        /// Creates a binary serialized representation of the object instance
+        /// /// </summary>
+        /// <param name="writer"><see cref="BinaryWriter"/> used to create a serialized instance of the object instance</param>
         public override void WriteTo(BinaryWriter writer)
         {
             base.WriteTo(writer);
             writer.Write(ConversationId);
             writer.Write(Status);
-            writer.Write(ResponseType);
+            writer.Write(ResponseBodyType);
             writer.Write(Serialization);
             writer.Write(Data.Length);
             writer.Write(Data);
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="PigeonResponseMessage"/> from serialized data
+        /// </summary>
+        /// <param name="reader">Data reader to de-serialize</param>
+        /// <returns></returns>
         public static new PigeonResponseMessage ReadFrom(BinaryReader reader) =>
             new PigeonResponseMessage(
                 reader.ReadGuid(),

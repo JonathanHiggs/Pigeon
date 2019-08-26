@@ -4,13 +4,19 @@ using System.IO;
 using Pigeon.Serialization;
 using Pigeon.Utils;
 
-namespace Pigeon.Protocol.v1_0
+namespace Pigeon.Protocol.Pigeon.v1_0
 {
     /// <summary>
     /// Represents a pigeon protocol request message
     /// </summary>
     public class PigeonRequestMessage : PigeonMessage
     {
+        /// <summary>
+        /// Message type identifier
+        /// </summary>
+        public const string MessageType = "CANIHAS";
+
+
         /// <summary>
         /// Initializes a new instance of <see cref="PigeonRequestMessage"/>
         /// </summary>
@@ -28,7 +34,7 @@ namespace Pigeon.Protocol.v1_0
         )
         {
             ConversationId = conversationId;
-            RequestType = requestType;
+            RequestBodyType = requestType;
             ExpectedResponseType = expectedResponseType;
             Serialization = serialization;
             Data = data;
@@ -42,15 +48,9 @@ namespace Pigeon.Protocol.v1_0
 
 
         /// <summary>
-        /// Gets the message type
-        /// </summary>
-        public override MessageType MessageType => MessageType.Request;
-
-
-        /// <summary>
         /// Gets the <see cref="Type"/> of the request
         /// </summary>
-        public Type RequestType { get; }
+        public Type RequestBodyType { get; }
 
 
         /// <summary>
@@ -71,11 +71,15 @@ namespace Pigeon.Protocol.v1_0
         public byte[] Data { get; }
 
 
+        /// <summary>
+        /// Creates a binary serialized representation of the object instance
+        /// /// </summary>
+        /// <param name="writer"><see cref="BinaryWriter"/> used to create a serialized instance of the object instance</param>
         public override void WriteTo(BinaryWriter writer)
         {
             base.WriteTo(writer);
             writer.Write(ConversationId);
-            writer.Write(RequestType);
+            writer.Write(RequestBodyType);
             writer.Write(ExpectedResponseType);
             writer.Write(Serialization);
             writer.Write(Data.Length);
@@ -83,6 +87,11 @@ namespace Pigeon.Protocol.v1_0
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="PigeonRequestMessage"/> from serialized data
+        /// </summary>
+        /// <param name="reader">Data reader to de-serialize</param>
+        /// <returns></returns>
         public static new PigeonRequestMessage ReadFrom(BinaryReader reader) =>
             new PigeonRequestMessage(
                 reader.ReadGuid(),

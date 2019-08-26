@@ -37,6 +37,25 @@ namespace Pigeon.Serialization
 
         public static bool operator !=(ProtocolVersion a, ProtocolVersion b) =>
             !(a == b);
+
+
+        public override bool Equals(object obj)
+        {
+            return !(obj is null) && obj is ProtocolVersion other && this == other;
+        }
+
+
+        public override int GetHashCode()
+        {
+            var hashCode = 317314336;
+            hashCode = hashCode * -1521134295 + Major.GetHashCode();
+            hashCode = hashCode * -1521134295 + Minor.GetHashCode();
+            return hashCode;
+        }
+
+
+        public override string ToString() =>
+            $"v{Major}.{Minor}";
     }
 
 

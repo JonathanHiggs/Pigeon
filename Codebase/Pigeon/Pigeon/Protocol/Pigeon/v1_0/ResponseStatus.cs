@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Pigeon.Protocol.v1_0
+namespace Pigeon.Protocol.Pigeon.v1_0
 {
     public enum ResponseStatus
     {

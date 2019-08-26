@@ -1,10 +1,14 @@
-﻿namespace Pigeon
+﻿using System.Collections.Generic;
+
+namespace Pigeon
 {
     /// <summary>
     /// Adapter around a IoC container for registering and resolving components at runtime
     /// </summary>
     public interface IContainer
     {
+        // ToDo: Split this into IDIRegistrar and IResolver
+
         /// <summary>
         /// Checks whether the specified type is already registered
         /// </summary>
@@ -42,10 +46,18 @@
 
 
         /// <summary>
-        /// Initializes a new instance of the requested type
+        /// Returns an instance of the requested type
         /// </summary>
-        /// <typeparam name="T">Type to initialize</typeparam>
-        /// <returns>Initializes instance of T</returns>
+        /// <typeparam name="T">Type to resolve</typeparam>
+        /// <returns></returns>
         T Resolve<T>();
+
+
+        /// <summary>
+        /// Returns all registered instanced of the requested type
+        /// </summary>
+        /// <typeparam name="T">Type to resolve</typeparam>
+        /// <returns></returns>
+        IEnumerable<T> ResolveAll<T>();
     }
 }
