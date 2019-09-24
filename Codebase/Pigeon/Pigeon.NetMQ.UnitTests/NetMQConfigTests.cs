@@ -22,10 +22,10 @@ namespace Pigeon.NetMQ.UnitTests
 
         private readonly Mock<IPublisherCache> mockPublisherCache = new Mock<IPublisherCache>();
         private IPublisherCache publisherCache;
-        
+
         private readonly Mock<ITopicRouter> mockTopicRouter = new Mock<ITopicRouter>();
         private ITopicRouter topicRouter;
-        
+
 
         [SetUp]
         public void Setup()

@@ -36,12 +36,6 @@ namespace Pigeon.Fluent.Simple
 
         TBuilder WithSubscriber<TSubscriber, TTopic>(IAddress address) where TSubscriber : ISubscriber;
 
-        //TBuilder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler);
-
-        //TBuilder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler);
-
-        //TBuilder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler);
-
         TBuilder WithTransport<TTransport>() where TTransport : ITransportConfig;
     }
 }

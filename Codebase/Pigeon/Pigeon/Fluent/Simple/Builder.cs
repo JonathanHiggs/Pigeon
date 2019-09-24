@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Pigeon.Addresses;
+using Pigeon.Fluent.Transport;
 using Pigeon.Monitors;
 using Pigeon.Packages;
 using Pigeon.Publishers;
@@ -8,6 +9,7 @@ using Pigeon.Receivers;
 using Pigeon.Requests;
 using Pigeon.Routing;
 using Pigeon.Senders;
+using Pigeon.Serialization;
 using Pigeon.Subscribers;
 using Pigeon.Topics;
 using Pigeon.Transport;
@@ -18,36 +20,44 @@ namespace Pigeon.Fluent.Simple
     {
         private string name;
 
-        private readonly TopicRouter topicRouter;
-        private readonly RequestRouter requestRouter;
-        private readonly PackageFactory packageFactory;
-        private readonly TopicDispatcher topicDispatcher;
-        private readonly RequestDispatcher requestDispatcher;
-        private readonly SubscriptionsCache subscriptionsCache;
-
-        private readonly SenderCache senderCache;
-        private readonly MonitorCache monitorCache;
-        private readonly ReceiverCache receiverCache;
-        private readonly PublisherCache publisherCache;
-        private readonly SubscriberCache subscriberCache;
-
 
         public Builder(string name)
         {
             this.name = name;
-            topicRouter = new TopicRouter();
-            monitorCache = new MonitorCache();
-            requestRouter = new RequestRouter();
-            packageFactory = new PackageFactory();
-            topicDispatcher = new TopicDispatcher();
-            requestDispatcher = new RequestDispatcher();
-            subscriptionsCache = new SubscriptionsCache();
+            TopicRouter = new TopicRouter();
+            MonitorCache = new MonitorCache();
+            RequestRouter = new RequestRouter();
+            PackageFactory = new PackageFactory();
+            TopicDispatcher = new TopicDispatcher();
+            RequestDispatcher = new RequestDispatcher();
+            SubscriptionsCache = new SubscriptionsCache();
+            SerializerCache = new SerializerCache();
 
-            senderCache = new SenderCache(requestRouter, monitorCache);
-            receiverCache = new ReceiverCache(monitorCache);
-            publisherCache = new PublisherCache(monitorCache);
-            subscriberCache = new SubscriberCache(topicRouter, monitorCache, subscriptionsCache);
+            SenderCache = new SenderCache(RequestRouter, MonitorCache);
+            ReceiverCache = new ReceiverCache(MonitorCache);
+            PublisherCache = new PublisherCache(MonitorCache);
+            SubscriberCache = new SubscriberCache(TopicRouter, MonitorCache, SubscriptionsCache);
         }
+
+        public TopicRouter TopicRouter { get; }
+        public RequestRouter RequestRouter { get; }
+        public PackageFactory PackageFactory { get; }
+        public TopicDispatcher TopicDispatcher { get; }
+        public RequestDispatcher RequestDispatcher { get; }
+        public SubscriptionsCache SubscriptionsCache { get; }
+
+        public SenderCache SenderCache { get; }
+        public MonitorCache MonitorCache { get; }
+        public ReceiverCache ReceiverCache { get; }
+        public PublisherCache PublisherCache { get; }
+        public SubscriberCache SubscriberCache { get; }
+
+
+        public SerializerCache SerializerCache { get; }
+
+
+        public static Builder WithName(string name)
+            => new Builder(name);
 
 
         public Builder WithTransport<TTransport>()
@@ -56,16 +66,51 @@ namespace Pigeon.Fluent.Simple
             var transport = Activator.CreateInstance<TTransport>();
 
             if (null != transport.SenderFactory)
-                senderCache.AddFactory(transport.SenderFactory);
+                SenderCache.AddFactory(transport.SenderFactory);
 
             if (null != transport.ReceiverFactory)
-                receiverCache.AddFactory(transport.ReceiverFactory);
+                ReceiverCache.AddFactory(transport.ReceiverFactory);
 
             if (null != transport.PublisherFactory)
-                publisherCache.AddFactory(transport.PublisherFactory);
+                PublisherCache.AddFactory(transport.PublisherFactory);
 
             if (null != transport.SubscriberFactory)
-                subscriberCache.AddFactory(transport.SubscriberFactory);
+                SubscriberCache.AddFactory(transport.SubscriberFactory);
+
+            return this;
+        }
+
+
+        public Builder WithTransport<TTransport>(TTransport transport, Action<ITransportSetup> config)
+            where TTransport : ITransportConfig
+        {
+            if (null != transport.SenderFactory)
+                SenderCache.AddFactory(transport.SenderFactory);
+
+            if (null != transport.ReceiverFactory)
+                ReceiverCache.AddFactory(transport.ReceiverFactory);
+
+            if (null != transport.PublisherFactory)
+                PublisherCache.AddFactory(transport.PublisherFactory);
+
+            if (null != transport.SubscriberFactory)
+                SubscriberCache.AddFactory(transport.SubscriberFactory);
+
+            config(transport.Configurer);
+
+            return this;
+        }
+
+
+        public Builder WithSerializer<TSerializer>(TSerializer serializer, bool defaultSerializer = false, Action<TSerializer> setup = null)
+            where TSerializer : ISerializer
+        {
+            SerializerCache.AddSerializer(serializer);
+            if (defaultSerializer)
+                SerializerCache.SetDefaultSerializer(serializer);
+
+            if (!(setup is null))
+                setup(serializer);
 
             return this;
         }
@@ -75,7 +120,7 @@ namespace Pigeon.Fluent.Simple
             where TSender : ISender
             where TRequest : class
         {
-            requestRouter.AddRequestRouting<TRequest, TSender>(address);
+            RequestRouter.AddRequestRouting<TRequest, TSender>(address);
             return this;
         }
 
@@ -83,7 +128,7 @@ namespace Pigeon.Fluent.Simple
         public Builder WithReceiver<TReceiver>(IAddress address)
             where TReceiver : IReceiver
         {
-            receiverCache.AddReceiver<TReceiver>(address);
+            ReceiverCache.AddReceiver<TReceiver>(address);
             return this;
         }
 
@@ -91,7 +136,7 @@ namespace Pigeon.Fluent.Simple
         public Builder WithPublisher<TPublisher>(IAddress address)
             where TPublisher : IPublisher
         {
-            publisherCache.AddPublisher<TPublisher>(address);
+            PublisherCache.AddPublisher<TPublisher>(address);
             return this;
         }
 
@@ -99,7 +144,7 @@ namespace Pigeon.Fluent.Simple
         public Builder WithSubscriber<TSubscriber, TTopic>(IAddress address)
             where TSubscriber : ISubscriber
         {
-            topicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
+            TopicRouter.AddTopicRouting<TTopic, TSubscriber>(address);
             return this;
         }
 
@@ -108,7 +153,7 @@ namespace Pigeon.Fluent.Simple
             where TRequest : class
             where TResponse : class
         {
-            requestDispatcher.Register(handler);
+            RequestDispatcher.Register(handler);
             return this;
         }
 
@@ -117,7 +162,7 @@ namespace Pigeon.Fluent.Simple
             where TRequest : class
             where TResponse : class
         {
-            requestDispatcher.Register(handler);
+            RequestDispatcher.Register(handler);
             return this;
         }
 
@@ -126,35 +171,35 @@ namespace Pigeon.Fluent.Simple
             where TRequest : class
             where TResponse : class
         {
-            requestDispatcher.RegisterAsync(handler);
+            RequestDispatcher.RegisterAsync(handler);
             return this;
         }
 
 
         public Builder WithTopicHandler<TTopic>(ITopicHandler<TTopic> handler)
         {
-            topicDispatcher.Register(handler);
+            TopicDispatcher.Register(handler);
             return this;
         }
 
 
         public Builder WithTopicHandler<TTopic>(TopicHandlerDelegate<TTopic> handler)
         {
-            topicDispatcher.Register(handler);
+            TopicDispatcher.Register(handler);
             return this;
         }
 
 
         public Builder WithAsyncTopicHandler<TTopic>(AsyncTopicHandlerDelegate<TTopic> handler)
         {
-            topicDispatcher.Register(handler);
+            TopicDispatcher.Register(handler);
             return this;
         }
 
 
         public Router Build()
         {
-            var router = new Router(name, senderCache, monitorCache, receiverCache, publisherCache, subscriberCache);
+            var router = new Router(name, SenderCache, MonitorCache, ReceiverCache, PublisherCache, SubscriberCache);
             return router;
         }
 

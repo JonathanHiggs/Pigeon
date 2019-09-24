@@ -2,6 +2,7 @@
 
 using NetMQ;
 
+using Pigeon.Fluent.Simple;
 using Pigeon.Packages;
 using Pigeon.Serialization;
 
@@ -26,6 +27,15 @@ namespace Pigeon.NetMQ
             this.serializerCache = serializerCache ?? throw new ArgumentNullException(nameof(serializerCache));
             this.packageFactory = packageFactory ?? throw new ArgumentNullException(nameof(packageFactory));
         }
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQMessageFactory"/>
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static NetMQMessageFactory FromBuilder(Builder builder)
+            => new NetMQMessageFactory(builder.SerializerCache, builder.PackageFactory);
 
 
         /// <summary>
@@ -62,7 +72,7 @@ namespace Pigeon.NetMQ
         /// <returns></returns>
         public bool IsValidTopicMessage(NetMQMessage topicMessage)
         {
-            return null != topicMessage 
+            return null != topicMessage
                 && topicMessage.FrameCount == 2
                 && !topicMessage[0].IsEmpty
                 && !topicMessage[1].IsEmpty;
@@ -92,7 +102,7 @@ namespace Pigeon.NetMQ
             return message;
         }
 
-        
+
         /// <summary>
         /// Extracts a request from the <see cref="NetMQMessage"/>
         /// </summary>
@@ -105,7 +115,7 @@ namespace Pigeon.NetMQ
 
             var data = message[4].ToByteArray();
             var header = SerializationHeader.FromBytes(data);
-            
+
             if (!serializerCache.SerializerFor(header.InvariantName, out var serializer))
                 throw new MissingSerializerException(header.InvariantName);
 

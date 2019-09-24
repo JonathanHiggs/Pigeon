@@ -2,6 +2,7 @@
 
 using NetMQ;
 
+using Pigeon.Fluent.Simple;
 using Pigeon.Fluent.Transport;
 using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
@@ -38,7 +39,7 @@ namespace Pigeon.NetMQ
             container.Register<INetMQPoller, NetMQPoller>(true);
             container.Register<INetMQMonitor, NetMQMonitor>(true);
             container.Register<INetMQFactory, NetMQFactory>(true);
-            
+
             factory = container.Resolve<INetMQFactory>();
             Configurer = container.Resolve<TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>>();
         }
@@ -52,11 +53,45 @@ namespace Pigeon.NetMQ
         /// <param name="receiverCache"></param>
         /// <param name="topicRouter"></param>
         /// <param name="publisherCache"></param>
-        private NetMQTransport(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
+        private NetMQTransport(
+            INetMQFactory factory,
+            IRequestRouter requestRouter,
+            IReceiverCache receiverCache,
+            ITopicRouter topicRouter,
+            IPublisherCache publisherCache)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
             Configurer = new TransportSetup<INetMQSender, INetMQReceiver, INetMQPublisher, INetMQSubscriber>(requestRouter, receiverCache, topicRouter, publisherCache);
         }
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQTransport"/>
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="requestRouter"></param>
+        /// <param name="receiverCache"></param>
+        /// <param name="topicRouter"></param>
+        /// <param name="publisherCache"></param>
+        /// <returns></returns>
+        public static NetMQTransport Create(
+            INetMQFactory factory,
+            IRequestRouter requestRouter,
+            IReceiverCache receiverCache,
+            ITopicRouter topicRouter,
+            IPublisherCache publisherCache
+        )
+            => new NetMQTransport(factory, requestRouter, receiverCache, topicRouter, publisherCache);
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="NetMQTransport"/>
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        public static NetMQTransport FromBuilder(Builder builder, INetMQFactory factory)
+            => new NetMQTransport(factory, builder.RequestRouter, builder.ReceiverCache, builder.TopicRouter, builder.PublisherCache);
 
 
         /// <summary>
@@ -84,14 +119,5 @@ namespace Pigeon.NetMQ
 
 
         public ITransportSetup Configurer { get; private set; }
-
-
-        public static NetMQTransport Create(INetMQFactory factory, IRequestRouter requestRouter, IReceiverCache receiverCache, ITopicRouter topicRouter, IPublisherCache publisherCache)
-        {
-            if (factory is null)
-                throw new ArgumentNullException(nameof(factory));
-
-            return new NetMQTransport(factory, requestRouter, receiverCache, topicRouter, publisherCache);
-        }
     }
 }

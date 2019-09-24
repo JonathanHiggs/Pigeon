@@ -4,6 +4,7 @@ using NetMQ;
 using NetMQ.Sockets;
 
 using Pigeon.Addresses;
+using Pigeon.Fluent.Simple;
 using Pigeon.NetMQ.Publishers;
 using Pigeon.NetMQ.Receivers;
 using Pigeon.NetMQ.Senders;
@@ -33,7 +34,12 @@ namespace Pigeon.NetMQ
         /// <param name="topicDispatcher"><see cref="ITopicDispatcher"/> that will route incoming topic messages</param>
         /// <param name="monitor">Monitor that all NetMQ transports will be added to</param>
         /// <param name="messageFactory">Factory for creating <see cref="NetMQMessage"/>s</param>
-        public NetMQFactory(IRequestDispatcher requestDispatcher, ITopicDispatcher topicDispatcher, INetMQMonitor monitor, INetMQMessageFactory messageFactory)
+        public NetMQFactory(
+            IRequestDispatcher requestDispatcher,
+            ITopicDispatcher topicDispatcher,
+            INetMQMonitor monitor,
+            INetMQMessageFactory messageFactory
+        )
             : base(monitor, monitor, monitor, monitor)
         {
             if (monitor is null)
@@ -47,7 +53,18 @@ namespace Pigeon.NetMQ
 
 
         /// <summary>
-        /// Creates a new instance of <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
+        /// Initializes a new instance of <see cref="NetMQFactory"/>
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="monitor"></param>
+        /// <param name="messageFactory"></param>
+        /// <returns></returns>
+        public static NetMQFactory FromBuilder(Builder builder, INetMQMonitor monitor, INetMQMessageFactory messageFactory)
+            => new NetMQFactory(builder.RequestDispatcher, builder.TopicDispatcher, monitor, messageFactory);
+
+
+        /// <summary>
+        /// Creates a new instance of a <see cref="INetMQReceiver"/> bound to the supplied <see cref="IAddress"/>
         /// </summary>
         /// <param name="address">Address of local bound <see cref="Pigeon.Common.IConnection"/></param>
         /// <returns>Receiver bound to the address</returns>
