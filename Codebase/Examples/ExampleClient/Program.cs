@@ -25,7 +25,7 @@ namespace ExampleClient
                 .RegisterSingleton<UnityContainer>()
                 .RegisterSingleton<App>()
                 .RegisterSingleton<MessagingService>();
-            
+
             var router =
                 UnityBuilder
                     .FromContainer(container)
@@ -50,7 +50,7 @@ namespace ExampleClient
                             .WithTopicHandler<PostedMessage, MessagingService>();
                     })
                     .BuildAndStart();
-            
+
             using (container.Resolve<MessagingService>())
             {
                 var app = container.Resolve<App>();

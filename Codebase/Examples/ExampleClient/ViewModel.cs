@@ -14,7 +14,7 @@ namespace ExampleClient
     public class ViewModel : INotifyPropertyChanged
     {
         private readonly MessagingService messagingService;
-        
+
         private readonly object messagesLock = new object();
         private readonly object usersLock = new object();
 
@@ -63,8 +63,8 @@ namespace ExampleClient
             get => input;
             set => Set(ref input, value);
         }
-        
-        
+
+
         public User User
         {
             get => user;

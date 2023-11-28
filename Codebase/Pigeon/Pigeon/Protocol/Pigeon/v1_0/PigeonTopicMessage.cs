@@ -29,6 +29,8 @@ namespace Pigeon.Protocol.Pigeon.v1_0
             Data = data;
         }
 
+        public override string GetMessageType() => "";
+
 
         public string TopicName { get; }
 

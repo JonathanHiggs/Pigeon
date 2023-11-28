@@ -41,7 +41,7 @@ namespace Pigeon.Protocol
         public virtual void WriteTo(BinaryWriter writer) =>
             writer.Write(GetProtocolName());
 
-        
+
         /// <summary>
         /// Returns the protocol identifier name
         /// </summary>

@@ -42,7 +42,7 @@ namespace Pigeon.Protocol.Pigeon.v1_0
 
 
         /// <summary>
-        /// Gets the GUID identifying the conversation between two peers 
+        /// Gets the GUID identifying the conversation between two peers
         /// </summary>
         public Guid ConversationId { get; }
 
@@ -63,8 +63,8 @@ namespace Pigeon.Protocol.Pigeon.v1_0
         /// Gets a descriptor of the serialization used to encode the request message
         /// </summary>
         public SerializationDescriptor Serialization { get; }
-        
-        
+
+
         /// <summary>
         /// Gets the serialized request message data
         /// </summary>

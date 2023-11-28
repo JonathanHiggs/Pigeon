@@ -59,8 +59,7 @@ namespace Pigeon.Protocol.Pigeon.v1_0
         /// Returns the protocol version
         /// </summary>
         /// <returns></returns>
-        protected override ProtocolVersion GetProtocolVersion() =>
-            ProtocolVersion;
+        protected override ProtocolVersion GetProtocolVersion() => ProtocolVersion;
 
 
         /// <summary>
